@@ -1,17 +1,40 @@
-@font-face {
-    font-family: 'Domaine Text Test';
-    src:
-        url("../fonts/Domaine Text Test/DomaineTextTest-Light.otf") format('truetype') font-weight-light
-        url("../fonts/Domaine Text Test/DomaineTextTest-Regular.otf") format('truetype') font-weight-regular
-        url("../fonts/Domaine Text Test/DomaineTextTest-Medium.otf") format('truetype') font-weight-medium;
-}
+/*@font-face {*/
+/*    font-family: 'Domaine Text Test';*/
+/*    src: url("../fonts/Domaine Text Test/Light.otf") format('truetype');*/
+/*    font-weight: w300;*/
+/*}*/
+
+/*@font-face {*/
+/*    font-family: 'Domaine Text Test';*/
+/*    src: url("../fonts/Domaine Text Test/Regular.otf") format('truetype');*/
+/*    font-weight: w400;*/
+/*}*/
+
+/*@font-face {*/
+/*    font-family: 'Domaine Text Test';*/
+/*    src: url("../fonts/Domaine Text Test/Medium.otf") format('truetype');*/
+/*    font-weight: w500;*/
+/*}*/
 
 @font-face {
-    font-family: 'Domaine Display Test';
-    src:
-        url("../fonts/Domaine Display Test/DomaineDisplayTest-Regular.otf") format('truetype') font-weight-regular
-        url("../fonts/Domaine Display Test/DomaineDisplayTest-Medium.otf") format("truetype") font-weight-medium
-        url("../fonts/Domaine Display Test/DomaineDisplayTest-Semibold.otf") format("truetype") font-weight-semibold;
+    font-family: "Domaine Display Test";
+    src: url("/fonts/Domaine Display Test/Regular.otf");
+}
+
+/*@font-face {*/
+/*    font-family: 'Domaine Display Test';*/
+/*    src: url("../fonts/Domaine Display Test/Medium.otf") format("truetype");*/
+/*    font-weight: w500;*/
+/*}*/
+
+/*@font-face {*/
+/*    font-family: 'Domaine Display Test';*/
+/*    src: url("../fonts/Domaine Display Test/Semibold.otf") format("truetype");*/
+/*    font-weight: w600;*/
+/*}*/
+
+* {
+    -fx-font-family: "Domaine Display Test";
 }
 
 .default-btn {

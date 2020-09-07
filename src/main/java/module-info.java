@@ -1,4 +1,4 @@
-module org.example {
+module org.example.javachessclient {
     requires javafx.controls;
     requires javafx.fxml;
 

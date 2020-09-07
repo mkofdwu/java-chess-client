@@ -10,7 +10,7 @@
    <children>
       <ImageView pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../resources/icons/back.png" />
+            <Image url="@../icons/back.png" />
          </image>
       </ImageView>
       <Label text="Back" />
