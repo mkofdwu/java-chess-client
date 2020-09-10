@@ -1,40 +1,25 @@
-/*@font-face {*/
-/*    font-family: 'Domaine Text Test';*/
-/*    src: url("../fonts/Domaine Text Test/Light.otf") format('truetype');*/
-/*    font-weight: w300;*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: 'Domaine Text Test';*/
-/*    src: url("../fonts/Domaine Text Test/Regular.otf") format('truetype');*/
-/*    font-weight: w400;*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: 'Domaine Text Test';*/
-/*    src: url("../fonts/Domaine Text Test/Medium.otf") format('truetype');*/
-/*    font-weight: w500;*/
-/*}*/
-
 @font-face {
-    font-family: "Domaine Display Test";
-    src: url("/fonts/Domaine Display Test/Regular.otf");
+    src: url("../fonts/DomaineTextTest/Light.otf");
 }
 
-/*@font-face {*/
-/*    font-family: 'Domaine Display Test';*/
-/*    src: url("../fonts/Domaine Display Test/Medium.otf") format("truetype");*/
-/*    font-weight: w500;*/
-/*}*/
+@font-face {
+    src: url("../fonts/DomaineTextTest/Regular.otf");
+}
 
-/*@font-face {*/
-/*    font-family: 'Domaine Display Test';*/
-/*    src: url("../fonts/Domaine Display Test/Semibold.otf") format("truetype");*/
-/*    font-weight: w600;*/
-/*}*/
+@font-face {
+    src: url("../fonts/DomaineTextTest/Medium.otf");
+}
 
-* {
-    -fx-font-family: "Domaine Display Test";
+@font-face {
+    src: url("../fonts/DomaineDisplayTest/Regular.otf");
+}
+
+@font-face {
+    src: url("../fonts/DomaineDisplayTest/Medium.otf");
+}
+
+@font-face {
+    src: url("../fonts/DomaineDisplayTest/Semibold.otf");
 }
 
 .default-btn {
