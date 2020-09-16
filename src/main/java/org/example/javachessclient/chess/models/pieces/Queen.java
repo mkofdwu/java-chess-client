@@ -1,4 +1,7 @@
-package org.example.javachessclient.chess.models;
+package org.example.javachessclient.chess.models.pieces;
+
+import org.example.javachessclient.chess.Board;
+import org.example.javachessclient.chess.Square;
 
 public class Queen extends Piece {
     public Queen(Board board, Square square, boolean isWhite) {

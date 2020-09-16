@@ -1,4 +1,10 @@
-package org.example.javachessclient.chess.models;
+package org.example.javachessclient.chess.models.pieces;
+
+import org.example.javachessclient.chess.AvailableMove;
+import org.example.javachessclient.chess.Board;
+import org.example.javachessclient.chess.Square;
+
+import java.util.ArrayList;
 
 public abstract class Piece {
     protected Board board;
@@ -25,9 +31,7 @@ public abstract class Piece {
 
     public abstract String getIconFilePath();
 
-    public abstract boolean canMoveTo(int toFile, int toRank);
+    public abstract ArrayList<AvailableMove> availableMoves(); // checks everything, including special moves
 
-    public boolean canMoveTo(Square to) {
-        return canMoveTo(to.getFile(), to.getRank());
-    }
+    public abstract void makeSpecialMove(AvailableMove move); // modifies the board according to the special move
 }

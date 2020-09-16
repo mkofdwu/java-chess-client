@@ -1,11 +1,16 @@
-package org.example.javachessclient.chess;
+package org.example.javachessclient.chess.models.specialmoves;
 
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.javachessclient.chess.models.*;
+import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.Square;
+import org.example.javachessclient.chess.models.pieces.King;
+import org.example.javachessclient.chess.models.pieces.Pawn;
+import org.example.javachessclient.chess.models.pieces.Piece;
+import org.example.javachessclient.chess.models.pieces.Rook;
 
-public class SpecialMoves {
+public class SpecialMovesUtil {
 
     public enum MoveType {
         WHITE_CASTLING_KINGSIDE,
@@ -95,7 +100,7 @@ public class SpecialMoves {
 
     private static MoveType checkForPromotion(Chess chess, Piece piece, Square toSquare) {
         Stage promotionPieceStage = new Stage();
-        promotionPieceStage.setScene(FXMLLoader.load(SpecialMoves.class.getResource("/fxml/promotion.fxml")));
+        promotionPieceStage.setScene(FXMLLoader.load(SpecialMovesUtil.class.getResource("/fxml/promotion.fxml")));
         promotionPieceStage.setTitle("Promote pawn");
         promotionPieceStage.initModality(Modality.WINDOW_MODAL);
         promotionPieceStage.showAndWait();
@@ -106,6 +111,10 @@ public class SpecialMoves {
         if (enPassantSquare != null && piece instanceof Pawn && toSquare == enPassantSquare) {
             return piece.getSquare().getRank() == enPassantSquare.getRank() - 1 // TODO
         }
+    }
+
+    private static MoveType checkForAllowEnPassant(Chess chess, Piece piece, Square square) {
+
     }
 
     public static MoveType checkSpecialMove(Chess chess, Piece piece, Square toSquare) {

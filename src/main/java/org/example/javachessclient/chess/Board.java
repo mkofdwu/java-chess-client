@@ -1,4 +1,6 @@
-package org.example.javachessclient.chess.models;
+package org.example.javachessclient.chess;
+
+import org.example.javachessclient.chess.models.pieces.Piece;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package org.example.javachessclient.chess.models;
+package org.example.javachessclient.chess;
 
 public class Square {
     private final int file;
@@ -24,5 +24,17 @@ public class Square {
 
     public int getRank() {
         return rank;
+    }
+
+    @Override
+    public String toString() {
+        return "abcdefgh".charAt(file) + Integer.toString(rank);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Square
+                && file == ((Square) other).getFile()
+                && rank == ((Square) other).getRank();
     }
 }
