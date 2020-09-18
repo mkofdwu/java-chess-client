@@ -1,18 +1,18 @@
 package org.example.javachessclient.chess.models.pieces;
 
-import org.example.javachessclient.chess.AvailableMove;
-import org.example.javachessclient.chess.Board;
-import org.example.javachessclient.chess.Square;
+import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.models.Move;
+import org.example.javachessclient.chess.models.Square;
 
 import java.util.ArrayList;
 
 public abstract class Piece {
-    protected Board board;
+    protected Chess chess;
     protected Square square;
     protected boolean isWhite;
 
-    public Piece(Board board, Square square, boolean isWhite) {
-        this.board = board;
+    public Piece(Chess chess, Square square, boolean isWhite) {
+        this.chess = chess;
         this.square = square;
         this.isWhite = isWhite;
     }
@@ -31,7 +31,12 @@ public abstract class Piece {
 
     public abstract String getIconFilePath();
 
-    public abstract ArrayList<AvailableMove> availableMoves(); // checks everything, including special moves
+    public abstract ArrayList<Move> findAvailableMoves(); // checks everything, including special moves & leaving king in check
 
-    public abstract void makeSpecialMove(AvailableMove move); // modifies the board according to the special move
+    public abstract void makeSpecialMove(Move move); // modifies the board according to the special move
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Piece && square == ((Piece)other).getSquare() && isWhite == ((Piece)other).getIsWhite();
+    }
 }

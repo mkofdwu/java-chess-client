@@ -1,13 +1,10 @@
 package org.example.javachessclient.chess;
 
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import org.springframework.web.socket.client.WebSocketClient;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
-import org.example.javachessclient.chess.models.*;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.example.javachessclient.chess.models.Move;
+import org.example.javachessclient.chess.models.Square;
+import org.example.javachessclient.chess.models.pieces.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -15,17 +12,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Chess {
-    public static final double boardSize = 800;
-    public static final double squareSize = boardSize / 8;
     public static final String startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final Pattern fenRegexPattern = Pattern.compile("(?<piecePlacement>[pnbrqkPNBRQK1-8/]+) (?<activeColor>w|b) (?<cannotCastle>-)?(?<wck>K)?(?<wcq>Q)?(?<bck>k)?(?<bcq>q)? (?<enPassantSquare>-|[a-h][1-8]) (?<halfmoveClock>\\d+) (?<fullmoveNumber>\\d+)");
-    public static final double pieceIconSize = 50; // each piece image is 50x50 px
-    public static final Color whiteColor = Color.valueOf("#dddddd");
-    public static final Color blackColor = Color.valueOf("#c4c4c4");
 
-    private Canvas canvas;
-    private Board board;
-    private ArrayList<Move> record;
+    private final ChessCanvas chessCanvas;
+    private ArrayList<ArrayList<Piece>> board;
+    private ArrayList<Move> recordedMoves;
     private boolean whiteToMove;
     private boolean whiteCanCastleKingside;
     private boolean whiteCanCastleQueenside;
@@ -36,16 +28,18 @@ public class Chess {
     private int fullmoveNumber;
 
     private Square selectedSquare;
+    private ArrayList<Move> availableMoves; // of the selected piece
 
     public Chess() {
-        canvas = new Canvas(boardSize, boardSize);
+        // start a new game
+        chessCanvas = new ChessCanvas(this);
+        recordedMoves = new ArrayList<>();
         try {
             loadFEN(startingFEN);
         } catch (ParseException e) {
             System.out.println("Chess: failed to parse starting position: " + e.getMessage());
         }
-        redrawBoard();
-        setupBindings();
+        chessCanvas.redrawBoard();
     }
 
     private void loadFEN(String fen) throws ParseException {
@@ -55,7 +49,7 @@ public class Chess {
         }
 
         // piece placement
-        board = new Board();
+        board = new ArrayList<>();
         for (String line : matcher.group("piecePlacement").split("/")) {
             board.add(new ArrayList<>());
             for (int i = 0; i < line.length(); ++i) {
@@ -72,22 +66,22 @@ public class Chess {
                     Piece piece;
                     switch (Character.toLowerCase(c)) {
                         case 'p':
-                            piece = new Pawn(board, square, isWhite);
+                            piece = new Pawn(this, square, isWhite);
                             break;
                         case 'n':
-                            piece = new Knight(board, square, isWhite);
+                            piece = new Knight(this, square, isWhite);
                             break;
                         case 'b':
-                            piece = new Bishop(board, square, isWhite);
+                            piece = new Bishop(this, square, isWhite);
                             break;
                         case 'r':
-                            piece = new Rook(board, square, isWhite);
+                            piece = new Rook(this, square, isWhite);
                             break;
                         case 'q':
-                            piece = new Queen(board, square, isWhite);
+                            piece = new Queen(this, square, isWhite);
                             break;
                         case 'k':
-                            piece = new King(board, square, isWhite);
+                            piece = new King(this, square, isWhite);
                             break;
                         default:
                             throw new ParseException("Invalid piece type in FEN string: " + c, i);
@@ -128,59 +122,123 @@ public class Chess {
         fullmoveNumber = Integer.parseInt(matcher.group("fullmoveNumber"));
     }
 
-    private void redrawBoard() {
-        for (int rank = 0; rank < 8; ++rank) {
-            for (int file = 0; file < 8; ++file) {
-                canvasRedrawSquare(new Square(file, rank));
+    // player input
+
+    public void onSquareClicked(Square square) {
+        if (selectedSquare == null) {
+            // select first piece
+
+            selectedSquare = square;
+            chessCanvas.highlightSquare(selectedSquare);
+
+            Piece piece = pieceAt(square);
+            if (piece != null) {
+                availableMoves = piece.findAvailableMoves();
+                chessCanvas.highlightAvailableMoves(availableMoves);
+            }
+        } else {
+            // select second piece
+
+            Move move = null;
+            if (availableMoves == null) {
+                // selected destination first then piece to move
+                Piece piece = pieceAt(square);
+                if (piece == null) return;
+                availableMoves = piece.findAvailableMoves();
+            }
+            // find move from selected square
+            for (Move availableMove : availableMoves) {
+                if (availableMove.getSquare() == square) {
+                    move = availableMove;
+                    break;
+                }
+            }
+            if (move == null) {
+                // invalid move, TODO clear selected piece & highlights
+                return;
+            }
+
+            try {
+                playMove(move);
+            } catch (InvalidMoveException e) {
+                // do nothing
+            } finally {
+                chessCanvas.redrawSquare(selectedSquare); // also clears the outline of the first selected square
+                selectedSquare = null;
+                availableMoves = null;
             }
         }
     }
 
-    private void setupBindings() {
-        canvas.setOnMousePressed(event -> {
-            Square square = new Square((int) (event.getX() / squareSize), (int) (event.getY() / squareSize));
-            if (selectedSquare == null) {
-                // select first piece
-                selectedSquare = square;
-                canvasHighlightSelectedSquare();
-            } else {
-                // select second piece
-                try {
-                    // determine which piece is moving where based on active side
-                    Piece firstPiece = board.pieceAt(selectedSquare);
-                    Piece secondPiece = board.pieceAt(square);
-                    Piece fromPiece;
-                    Square toSquare;
-                    if (firstPiece != null && firstPiece.getIsWhite() == whiteToMove) {
-                        // moving from first selected square
-                        fromPiece = firstPiece;
-                        toSquare = square;
-                    } else if (secondPiece != null && secondPiece.getIsWhite() == whiteToMove) {
-                        // moving from second selected square
-                        fromPiece = secondPiece;
-                        toSquare = selectedSquare;
-                    } else {
-                        throw new InvalidMoveException();
-                    }
+    // board utils
 
-                    movePiece(fromPiece, toSquare);
-                } catch (InvalidMoveException e) {
-                    // do nothing
-                } finally {
-                    canvasRedrawSquare(selectedSquare); // also clears the outline of the first selected square
-                    selectedSquare = null;
-                }
-            }
-        });
-
-        WebSocketClient client = new StandardWebSocketClient();
+    public Piece pieceAt(Square square) {
+        return board.get(square.getRank()).get(square.getFile())
     }
 
-    private void movePiece(Piece piece, Square toSquare) {
+    public ArrayList<Square> diagonalSquares(Square square, boolean pieceIsWhite) {
+        // from initial square
+        ArrayList<Square> availableSquares = new ArrayList<>();
+        int fromFile = square.getFile();
+        int fromRank = square.getRank();
+        for (int fileDir : new int[]{-1, 1}) {
+            for (int rankDir : new int[]{-1, 1}) {
+                squaresInDir(pieceIsWhite, availableSquares, fromFile, fromRank, fileDir, rankDir);
+            }
+        }
+        return availableSquares;
+    }
+
+    public ArrayList<Square> lineSquares(Square square, boolean pieceIsWhite) {
+        // returns line squares the piece can move to. pieceIsWhite is the color of the piece with line reaches
+        ArrayList<Square> availableSquares = new ArrayList<>();
+        int fromFile = square.getFile();
+        int fromRank = square.getRank();
+        for (int[] dir : new int[][] {{0, -1}, {0, 1}, {-1, 0}, {1, 0}}) {
+            int fileDir = dir[0];
+            int rankDir = dir[1];
+            squaresInDir(pieceIsWhite, availableSquares, fromFile, fromRank, fileDir, rankDir);
+        }
+        return availableSquares;
+    }
+
+    private void squaresInDir(boolean pieceIsWhite, ArrayList<Square> availableSquares, int fromFile, int fromRank, int fileDir, int rankDir) {
+        // automatically refractored
+        for (int file = fromFile + fileDir, rank = fromRank + rankDir; 0 <= file && file < 8 && 0 <= rank && rank < 8; file += fileDir, rank += rankDir) {
+            Piece landingPiece = board.get(file).get(rank);
+            if (landingPiece == null) {
+                availableSquares.add(new Square(file, rank));
+            } else if (landingPiece.getIsWhite() == pieceIsWhite) {
+                break;
+            } else {
+                availableSquares.add(new Square(file, rank));
+                break;
+            }
+        }
+    }
+
+    public boolean moveLeavesKingInCheck(Move move) {
+        playMove(move);
+        boolean kingInCheck = activeKingInCheck();
+        undoMove();
+        return kingInCheck;
+    }
+
+    private boolean activeKingInCheck() {
+        // TODO: check if active player is in check
+        for (Piece piece : )
+        if (whiteToMove)
+    }
+
+    private void undoMove() {
+        // called after testing for check
+    }
+
+    // chess utils
+
+    private void playMove(Move move) {
+        // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
-        // TODO: check for leaving king in check
-        // TODO: after a move, check for checkmate
-        // SpecialMoves.MoveType specialMoveType = SpecialMoves.checkSpecialMove(this, piece, toSquare);
         if (piece.canMoveTo(toSquare) /* || specialMoveType != null */) {
 //            if (specialMoveType != null) {
 //                SpecialMoves.specialEffect(chess, piece, toSquare);
@@ -189,30 +247,14 @@ public class Chess {
             board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
             board.get(toSquare.getRank()).set(toSquare.getFile(), piece);
             piece.setSquare(toSquare);
-            canvasRedrawSquare(toSquare);
+            recordedMoves.add(new Move(piece, toSquare, ));
+            chessCanvas.redrawSquare(toSquare);
             whiteToMove = !whiteToMove;
+
+            // TODO check for checkmate, stalemate & other end of game
+            // TODO update game flags based on move
         } else {
             throw new InvalidMoveException();
-        }
-    }
-
-    // canvas utils
-
-    private void canvasHighlightSelectedSquare() {
-        GraphicsContext context = canvas.getGraphicsContext2D();
-        context.strokeRect(selectedSquare.getFile() * squareSize + 1, selectedSquare.getRank() * squareSize + 1, squareSize - 2, squareSize - 2);
-    }
-
-    private void canvasRedrawSquare(Square square) {
-        GraphicsContext context = canvas.getGraphicsContext2D();
-        context.setFill(square.isWhite() ? whiteColor : blackColor);
-        context.fillRect(square.getFile() * squareSize, square.getRank() * squareSize, squareSize, squareSize);
-        Piece piece = board.pieceAt(square);
-        if (piece != null) {
-            Image pieceIcon = new Image(getClass().getResourceAsStream(piece.getIconFilePath()));
-            double x = (square.getFile() + 0.5) * squareSize - pieceIconSize / 2;
-            double y = (square.getRank() + 0.5) * squareSize - pieceIconSize / 2;
-            context.drawImage(pieceIcon, x, y);
         }
     }
 
@@ -227,7 +269,7 @@ public class Chess {
     // getters and setters
 
     public Canvas getCanvas() {
-        return canvas;
+        return chessCanvas.getCanvas();
     }
 
     public boolean isWhiteToMove() {

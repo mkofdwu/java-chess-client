@@ -1,11 +1,11 @@
 package org.example.javachessclient.chess.models.pieces;
 
-import org.example.javachessclient.chess.Board;
-import org.example.javachessclient.chess.Square;
+import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.models.Square;
 
 public class Pawn extends Piece {
-    public Pawn(Board board, Square square, boolean isWhite) {
-        super(board, square, isWhite);
+    public Pawn(Chess chess, Square square, boolean isWhite) {
+        super(chess, square, isWhite);
     }
 
     @Override

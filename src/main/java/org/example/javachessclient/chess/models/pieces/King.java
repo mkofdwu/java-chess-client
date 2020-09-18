@@ -1,9 +1,6 @@
 package org.example.javachessclient.chess.models.pieces;
 
-import org.example.javachessclient.chess.Board;
-import org.example.javachessclient.chess.Square;
-import org.example.javachessclient.chess.models.specialmoves.Castling;
-import org.example.javachessclient.chess.models.specialmoves.SpecialMove;
+import org.example.javachessclient.chess.models.Square;
 
 import java.util.ArrayList;
 
@@ -15,13 +12,6 @@ public class King extends Piece {
     @Override
     public String getIconFilePath() {
         return "/icons/pieces/king-" + (isWhite ? "white" : "black") + ".png";
-    }
-
-    @Override
-    public ArrayList<SpecialMove> getSpecialMoves() {
-        ArrayList<SpecialMove> specialMoves = new ArrayList<SpecialMove>();
-        specialMoves.add(new Castling());
-        return specialMoves;
     }
 
     @Override

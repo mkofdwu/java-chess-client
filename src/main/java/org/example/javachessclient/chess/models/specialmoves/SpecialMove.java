@@ -1,6 +1,6 @@
 package org.example.javachessclient.chess.models.specialmoves;
 
-import org.example.javachessclient.chess.AvailableMove;
+import org.example.javachessclient.chess.models.AvailableMove;
 
 import java.util.ArrayList;
 

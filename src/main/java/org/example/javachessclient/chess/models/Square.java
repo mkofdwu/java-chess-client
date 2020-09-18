@@ -1,4 +1,4 @@
-package org.example.javachessclient.chess;
+package org.example.javachessclient.chess.models;
 
 public class Square {
     private final int file;

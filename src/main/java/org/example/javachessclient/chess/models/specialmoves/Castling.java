@@ -1,7 +1,6 @@
 package org.example.javachessclient.chess.models.specialmoves;
 
-import org.example.javachessclient.chess.AvailableMove;
-import org.example.javachessclient.chess.Board;
+import org.example.javachessclient.chess.models.AvailableMove;
 import org.example.javachessclient.chess.models.pieces.King;
 import org.example.javachessclient.chess.models.pieces.Piece;
 
