@@ -4,8 +4,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import org.example.javachessclient.chess.models.pieces.*;
-import org.example.javachessclient.chess.models.specialmoves.SpecialMovesUtil;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.example.javachessclient.chess.exceptions.InvalidMoveException;
+import org.example.javachessclient.chess.models.*;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -170,49 +172,28 @@ public class Chess {
                 }
             }
         });
+
+        WebSocketClient client = new StandardWebSocketClient();
     }
 
     private void movePiece(Piece piece, Square toSquare) {
         // this is also triggered when socket message from other player is sent
         // TODO: check for leaving king in check
         // TODO: after a move, check for checkmate
-        SpecialMovesUtil.MoveType specialMoveType = SpecialMovesUtil.checkSpecialMove(this, piece, toSquare);
-        if (piece.canMoveTo(toSquare) || specialMoveType != null) {
-            if (specialMoveType != null) {
-                SpecialMovesUtil.specialEffect(chess, piece, toSquare);
-            }
+        // SpecialMoves.MoveType specialMoveType = SpecialMoves.checkSpecialMove(this, piece, toSquare);
+        if (piece.canMoveTo(toSquare) /* || specialMoveType != null */) {
+//            if (specialMoveType != null) {
+//                SpecialMoves.specialEffect(chess, piece, toSquare);
+//            }
 
             board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
             board.get(toSquare.getRank()).set(toSquare.getFile(), piece);
             piece.setSquare(toSquare);
             canvasRedrawSquare(toSquare);
             whiteToMove = !whiteToMove;
-
-            checkForEnd();
         } else {
             throw new InvalidMoveException();
         }
-    }
-
-    private boolean kingIsInCheck() {
-        // check if the active player's king is in check
-        for (ArrayList<Piece>)
-    }
-
-    private void checkForEnd() {
-        // TODO
-        // check for checkmate, stalemate, threefold repetition, 50 move rule
-        for (ArrayList<Piece> rankList : board) {
-            for (Piece piece : rankList) {
-                if (piece instanceof King && piece.getIsWhite() == whiteToMove) {
-                    // check if this piece has anywhere to move / anything can block this
-                }
-            }
-        }
-    }
-
-    private Piece findActiveKing() {
-        // find the active player's king
     }
 
     // canvas utils

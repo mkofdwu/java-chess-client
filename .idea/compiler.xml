@@ -9,8 +9,5 @@
         <module name="javachessclient" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="javachessclient" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>
