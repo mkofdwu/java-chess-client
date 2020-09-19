@@ -1,0 +1,18 @@
+.group-header {
+    -fx-font-family: "Domaine Display Test";
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-fill: -fx-accent;
+    -fx-padding: 70px 0 10px 0;
+}
+
+.separator *.line {
+    -fx-border-style: solid;
+    -fx-border-width: 1px;
+    -fx-border-color: -fx-accent;
+    -fx-margin: 0 0 20px 0;
+}
+
+.game-option-container {
+    
+}

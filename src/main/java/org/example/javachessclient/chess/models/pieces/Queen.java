@@ -1,10 +1,14 @@
 package org.example.javachessclient.chess.models.pieces;
 
+import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 
+import java.util.ArrayList;
+
 public class Queen extends Piece {
-    public Queen(Board board, Square square, boolean isWhite) {
-        super(board, square, isWhite);
+    public Queen(Chess chess, Square square, boolean isWhite) {
+        super(chess, square, isWhite);
     }
 
     @Override
@@ -13,11 +17,20 @@ public class Queen extends Piece {
     }
 
     @Override
-    public boolean canMoveTo(int toFile, int toRank) {
-        int fromFile = square.getFile();
-        int fromRank = square.getRank();
-        if (toFile == fromFile && toRank == fromRank) return false;
-        return Bishop.checkIsAlongDiagonal(board, isWhite, fromFile, fromRank, toFile, toRank)
-                || Rook.checkIsAlongLine(board, isWhite, fromFile, fromRank, toFile, toRank);
+    public ArrayList<Move> findAvailableMoves() {
+        ArrayList<Move> available = new ArrayList<>();
+        ArrayList<Move> movesToCheck = chess.diagonalMoves(this);
+        movesToCheck.addAll(chess.lineMoves(this));
+        for (Move move : movesToCheck) {
+            if (!chess.moveLeavesKingInCheck(move)) {
+                available.add(move);
+            }
+        }
+        return available;
+    }
+
+    @Override
+    public void makeSpecialMove(Move move) {
+        // a queen has no special moves
     }
 }

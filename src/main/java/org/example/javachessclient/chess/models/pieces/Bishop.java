@@ -19,14 +19,16 @@ public class Bishop extends Piece {
     @Override
     public ArrayList<Move> findAvailableMoves() {
         ArrayList<Move> available = new ArrayList<>();
-        for (Square square : chess.diagonalSquares(square, isWhite)) {
-            // TODO
+        for (Move move : chess.diagonalMoves(this)) {
+            if (!chess.moveLeavesKingInCheck(move)) {
+                available.add(move);
+            }
         }
         return available;
     }
 
     @Override
     public void makeSpecialMove(Move move) {
-        // TODO
+        // a bishop has no special moves
     }
 }

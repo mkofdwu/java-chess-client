@@ -1,5 +1,6 @@
 package org.example.javachessclient.chess.models.pieces;
 
+import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 
 import java.util.ArrayList;
@@ -15,15 +16,15 @@ public class King extends Piece {
     }
 
     @Override
-    public ArrayList<Square> availableSquares() {
-        ArrayList<Square> available = new ArrayList<>();
+    public ArrayList<Move> findAvailableMoves() {
+        ArrayList<Move> available = new ArrayList<>();
         int fromFile = square.getFile();
         int fromRank = square.getRank();
 
         for (int filesMoved : new int[] {-1, 0, 1}) {
             for (int ranksMoved : new int[] {-1, 0, 1}) {
                 Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
-                Piece piece = board.pieceAt(newSquare);
+                Piece piece = chess.pieceAt(newSquare);
                 if (piece == null || piece.getIsWhite() != isWhite) {
                     available.add(newSquare);
                 }

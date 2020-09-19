@@ -1,0 +1,12 @@
+.root {
+    -fx-font-family: "Domaine Display Test";
+}
+
+.button {
+    -fx-background-color: -fx-less;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-font-family: "Domaine Text Test";
+    -fx-padding: 10px 16px 10px 16px;
+}

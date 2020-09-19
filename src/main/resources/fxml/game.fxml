@@ -11,7 +11,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
          <children>
             <fx:include source="../components/back-button.fxml" />
-            <Label fx:id="gameTitleLabel" text="Label" />
+            <Label fx:id="gameTitleLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;;" text="Label" />
          </children>
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">

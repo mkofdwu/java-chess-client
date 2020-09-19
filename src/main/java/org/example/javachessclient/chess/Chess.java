@@ -1,6 +1,8 @@
 package org.example.javachessclient.chess;
 
 import javafx.scene.canvas.Canvas;
+import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.exceptions.InvalidBoardException;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
@@ -173,45 +175,45 @@ public class Chess {
     // board utils
 
     public Piece pieceAt(Square square) {
-        return board.get(square.getRank()).get(square.getFile())
+        return board.get(square.getRank()).get(square.getFile());
     }
 
-    public ArrayList<Square> diagonalSquares(Square square, boolean pieceIsWhite) {
+    public ArrayList<Move> diagonalMoves(Piece piece) {
         // from initial square
-        ArrayList<Square> availableSquares = new ArrayList<>();
-        int fromFile = square.getFile();
-        int fromRank = square.getRank();
+        ArrayList<Move> available = new ArrayList<>();
+        int fromFile = piece.getSquare().getFile();
+        int fromRank = piece.getSquare().getRank();
         for (int fileDir : new int[]{-1, 1}) {
             for (int rankDir : new int[]{-1, 1}) {
-                squaresInDir(pieceIsWhite, availableSquares, fromFile, fromRank, fileDir, rankDir);
+                addMovesInDir(piece, available, fromFile, fromRank, fileDir, rankDir);
             }
         }
-        return availableSquares;
+        return available;
     }
 
-    public ArrayList<Square> lineSquares(Square square, boolean pieceIsWhite) {
+    public ArrayList<Move> lineMoves(Piece piece) {
         // returns line squares the piece can move to. pieceIsWhite is the color of the piece with line reaches
-        ArrayList<Square> availableSquares = new ArrayList<>();
-        int fromFile = square.getFile();
-        int fromRank = square.getRank();
+        ArrayList<Move> available = new ArrayList<>();
+        int fromFile = piece.getSquare().getFile();
+        int fromRank = piece.getSquare().getRank();
         for (int[] dir : new int[][] {{0, -1}, {0, 1}, {-1, 0}, {1, 0}}) {
             int fileDir = dir[0];
             int rankDir = dir[1];
-            squaresInDir(pieceIsWhite, availableSquares, fromFile, fromRank, fileDir, rankDir);
+            addMovesInDir(piece, available, fromFile, fromRank, fileDir, rankDir);
         }
-        return availableSquares;
+        return available;
     }
 
-    private void squaresInDir(boolean pieceIsWhite, ArrayList<Square> availableSquares, int fromFile, int fromRank, int fileDir, int rankDir) {
-        // automatically refractored
+    private void addMovesInDir(Piece piece, ArrayList<Move> available, int fromFile, int fromRank, int fileDir, int rankDir) {
+        // automatically refactored
         for (int file = fromFile + fileDir, rank = fromRank + rankDir; 0 <= file && file < 8 && 0 <= rank && rank < 8; file += fileDir, rank += rankDir) {
             Piece landingPiece = board.get(file).get(rank);
             if (landingPiece == null) {
-                availableSquares.add(new Square(file, rank));
-            } else if (landingPiece.getIsWhite() == pieceIsWhite) {
+                available.add(new Move(piece, new Square(file, rank), MoveType.normal));
+            } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
                 break;
             } else {
-                availableSquares.add(new Square(file, rank));
+                available.add(new Move(piece, new Square(file, rank), MoveType.capture));
                 break;
             }
         }
@@ -225,9 +227,30 @@ public class Chess {
     }
 
     private boolean activeKingInCheck() {
-        // TODO: check if active player is in check
-        for (Piece piece : )
-        if (whiteToMove)
+        King activeKing = activeKing();
+        if (activeKing == null) throw new InvalidBoardException();
+        for (ArrayList<Piece> rankList : board) {
+            for (Piece piece : rankList) {
+                // TODO: add `canMoveTo(Square square) -> MoveType` if this is too slow
+                for (Move availableMove : piece.findAvailableMoves()) {
+                    if (availableMove.getType() == MoveType.capture && availableMove.getSquare() == activeKing.getSquare()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private King activeKing() {
+        for (ArrayList<Piece> rankList : board) {
+            for (Piece piece : rankList) {
+                if (piece instanceof King && piece.getIsWhite() == whiteToMove) {
+                    return (King)piece;
+                }
+            }
+        }
+        return null;
     }
 
     private void undoMove() {
@@ -239,23 +262,52 @@ public class Chess {
     private void playMove(Move move) {
         // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
-        if (piece.canMoveTo(toSquare) /* || specialMoveType != null */) {
-//            if (specialMoveType != null) {
-//                SpecialMoves.specialEffect(chess, piece, toSquare);
-//            }
+        Piece piece = move.getPiece();
+        Square square = move.getSquare();
+        MoveType type = move.getType();
 
-            board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
-            board.get(toSquare.getRank()).set(toSquare.getFile(), piece);
-            piece.setSquare(toSquare);
-            recordedMoves.add(new Move(piece, toSquare, ));
-            chessCanvas.redrawSquare(toSquare);
-            whiteToMove = !whiteToMove;
+        board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
+        board.get(square.getRank()).set(square.getFile(), piece);
+        piece.setSquare(square);
 
-            // TODO check for checkmate, stalemate & other end of game
-            // TODO update game flags based on move
-        } else {
-            throw new InvalidMoveException();
+        recordedMoves.add(move);
+        chessCanvas.redrawSquare(square);
+        whiteToMove = !whiteToMove;
+
+        if (type != MoveType.normal && type != MoveType.capture) {
+            piece.makeSpecialMove(move);
         }
+
+        // check for end of game
+        checkForCheckmate();
+        checkForStalemate();
+        checkForThreefoldRepetition();
+        checkForFiftyMoveRule();
+
+        // todo: update game flags based on move
+    }
+
+    private boolean checkForCheckmate() {
+        // check if the active player is checkmated
+        if (activeKingInCheck()) {
+            King activeKing = activeKing();
+        }
+    }
+
+    private boolean checkForStalemate() {
+
+    }
+
+    private boolean checkForThreefoldRepetition() {
+
+    }
+
+    private boolean checkForFiftyMoveRule() {
+
+    }
+
+    private boolean checkForPreventCastling() {
+
     }
 
     // misc tasks
@@ -270,65 +322,5 @@ public class Chess {
 
     public Canvas getCanvas() {
         return chessCanvas.getCanvas();
-    }
-
-    public boolean isWhiteToMove() {
-        return whiteToMove;
-    }
-
-    public boolean getWhiteCanCastleKingside() {
-        return whiteCanCastleKingside;
-    }
-
-    public void setWhiteCanCastleKingside(boolean whiteCanCastleKingside) {
-        this.whiteCanCastleKingside = whiteCanCastleKingside;
-    }
-
-    public boolean getWhiteCanCastleQueenside() {
-        return whiteCanCastleQueenside;
-    }
-
-    public void setWhiteCanCastleQueenside(boolean whiteCanCastleQueenside) {
-        this.whiteCanCastleQueenside = whiteCanCastleQueenside;
-    }
-
-    public boolean getBlackCanCastleKingside() {
-        return blackCanCastleKingside;
-    }
-
-    public void setBlackCanCastleKingside(boolean blackCanCastleKingside) {
-        this.blackCanCastleKingside = blackCanCastleKingside;
-    }
-
-    public boolean getBlackCanCastleQueenside() {
-        return blackCanCastleQueenside;
-    }
-
-    public void setBlackCanCastleQueenside(boolean blackCanCastleQueenside) {
-        this.blackCanCastleQueenside = blackCanCastleQueenside;
-    }
-
-    public Square getEnPassantSquare() {
-        return enPassantSquare;
-    }
-
-    public void setEnPassantSquare(Square enPassantSquare) {
-        this.enPassantSquare = enPassantSquare;
-    }
-
-    public int getHalfmoveClock() {
-        return halfmoveClock;
-    }
-
-    public void setHalfmoveClock(int halfmoveClock) {
-        this.halfmoveClock = halfmoveClock;
-    }
-
-    public int getFullmoveNumber() {
-        return fullmoveNumber;
-    }
-
-    public void setFullmoveNumber(int fullmoveNumber) {
-        this.fullmoveNumber = fullmoveNumber;
     }
 }

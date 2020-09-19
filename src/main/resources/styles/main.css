@@ -1,32 +1,44 @@
-@font-face {
-    src: url("../fonts/DomaineTextTest/Light.otf");
-}
+/*@font-face {*/
+/*    src: url("../fonts/DomaineTextTest/Light.otf");*/
+/*}*/
 
 @font-face {
     src: url("../fonts/DomaineTextTest/Regular.otf");
 }
 
-@font-face {
-    src: url("../fonts/DomaineTextTest/Medium.otf");
-}
+/*@font-face {*/
+/*    src: url("../fonts/DomaineTextTest/Medium.otf");*/
+/*}*/
 
 @font-face {
     src: url("../fonts/DomaineDisplayTest/Regular.otf");
 }
 
-@font-face {
-    src: url("../fonts/DomaineDisplayTest/Medium.otf");
+/*@font-face {*/
+/*    src: url("../fonts/DomaineDisplayTest/Medium.otf");*/
+/*}*/
+
+/*@font-face {*/
+/*    src: url("../fonts/DomaineDisplayTest/Semibold.otf");*/
+/*}*/
+
+* {
+    -fx-bg: #fafafa;
+    -fx-lesser: #c4c4c4;
+    -fx-less: #515151;
+    -fx-text: #000000;
+    -fx-accent: #336a89;
 }
 
-@font-face {
-    src: url("../fonts/DomaineDisplayTest/Semibold.otf");
+.root {
+    -fx-font-family: "Domaine Text Test";
 }
 
 .default-btn {
-    -fx-background-color: #336A89;
+    -fx-background-color: -fx-accent;
     -fx-text-fill: white;
     -fx-border-radius: 5px;
-    -fx-font-size: 18px;
+    -fx-font-size: 14px;
     -fx-font-family: "Domaine Text Test";
 }
 
@@ -40,4 +52,10 @@
 
 .nav-bar-link.active {
     -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-background-color: -fx-lesser, -fx-bg;
+    -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
+    -fx-background-radius: 0;
 }

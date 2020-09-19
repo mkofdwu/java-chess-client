@@ -14,9 +14,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Parent root = FXMLLoader.load(getClass().getResource("/fxml/game.fxml"));
-        Chess chess = new Chess(); // testing
-        Parent root = new Pane(chess.getCanvas());
+         Parent root = FXMLLoader.load(getClass().getResource("/fxml/game.fxml"));
+//        Chess chess = new Chess(); // testing
+//        Parent root = new Pane(chess.getCanvas());
         Scene scene = new Scene(root);
         stage.setTitle("JavaChess");
         stage.setResizable(false);

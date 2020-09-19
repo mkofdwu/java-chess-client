@@ -1,6 +1,7 @@
 package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 
