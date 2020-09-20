@@ -34,28 +34,23 @@
     -fx-font-family: "Domaine Text Test";
 }
 
-.default-btn {
+.button {
     -fx-background-color: -fx-accent;
     -fx-text-fill: white;
     -fx-border-radius: 5px;
     -fx-font-size: 14px;
     -fx-font-family: "Domaine Text Test";
-}
-
-.nav-bar-link {
-    -fx-padding: 0;
-    -fx-background-color: none;
-    -fx-font-size: 24px;
-    -fx-text-fill: rgba(255, 255, 255, 0.6);
-    -fx-font-family: "Domaine Text Test";
-}
-
-.nav-bar-link.active {
-    -fx-text-fill: white;
+    -fx-padding: 10px 16px 10px 16px;
 }
 
 .text-field {
     -fx-background-color: -fx-lesser, -fx-bg;
     -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
     -fx-background-radius: 0;
+}
+
+.separator *.line {
+    -fx-border-style: solid;
+    -fx-border-width: 0.5px;
+    -fx-border-color: -fx-text;
 }

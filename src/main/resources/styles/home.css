@@ -2,17 +2,21 @@
     -fx-font-family: "Domaine Display Test";
     -fx-font-weight: bold;
     -fx-font-size: 20px;
-    -fx-fill: -fx-accent;
-    -fx-padding: 70px 0 10px 0;
+    -fx-text-fill: -fx-accent;
+    -fx-padding: 50px 0 5px 0;
 }
 
 .separator *.line {
-    -fx-border-style: solid;
-    -fx-border-width: 1px;
     -fx-border-color: -fx-accent;
-    -fx-margin: 0 0 20px 0;
 }
 
 .game-option-container {
-    
+    -fx-background-color: white;
+    -fx-border-radius: 5px;
+    -fx-border-color: -fx-text;
+    -fx-pref-width: 140px;
+    -fx-pref-height: 140px;
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-alignment: center;
 }
