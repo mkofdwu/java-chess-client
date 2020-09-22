@@ -174,6 +174,10 @@ public class Chess {
 
     // board utils
 
+    public Piece pieceAt(int file, int rank) {
+        return board.get(rank).get(file);
+    }
+
     public Piece pieceAt(Square square) {
         return board.get(square.getRank()).get(square.getFile());
     }
@@ -196,7 +200,7 @@ public class Chess {
         ArrayList<Move> available = new ArrayList<>();
         int fromFile = piece.getSquare().getFile();
         int fromRank = piece.getSquare().getRank();
-        for (int[] dir : new int[][] {{0, -1}, {0, 1}, {-1, 0}, {1, 0}}) {
+        for (int[] dir : new int[][]{{0, -1}, {0, 1}, {-1, 0}, {1, 0}}) {
             int fileDir = dir[0];
             int rankDir = dir[1];
             addMovesInDir(piece, available, fromFile, fromRank, fileDir, rankDir);
@@ -246,11 +250,22 @@ public class Chess {
         for (ArrayList<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece instanceof King && piece.getIsWhite() == whiteToMove) {
-                    return (King)piece;
+                    return (King) piece;
                 }
             }
         }
-        return null;
+        throw new InvalidBoardException();
+    }
+
+    private boolean activePlayerCannotMove() {
+        for (ArrayList<Piece> rankList : board) {
+            for (Piece piece : rankList) {
+                if (piece != null && piece.getIsWhite() == whiteToMove) {
+                    if (!piece.findAvailableMoves().isEmpty()) return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void undoMove() {
@@ -271,42 +286,76 @@ public class Chess {
         piece.setSquare(square);
 
         recordedMoves.add(move);
-        chessCanvas.redrawSquare(square);
         whiteToMove = !whiteToMove;
 
         if (type != MoveType.normal && type != MoveType.capture) {
             piece.makeSpecialMove(move);
         }
 
-        // check for end of game
-        checkForCheckmate();
-        checkForStalemate();
-        checkForThreefoldRepetition();
-        checkForFiftyMoveRule();
+        // check for pawn promotion (show modal)
+        if (piece instanceof Pawn && square.getRank() == (piece.getIsWhite() ? 0 : 7)) {
+            // TODO
+        }
 
-        // todo: update game flags based on move
+        // check for end of game
+        if (checkForCheckmate()) {
+            // TODO
+            return;
+        }
+        if (checkForStalemate()) {
+            // TODO
+            return;
+        }
+        if (checkForThreefoldRepetition()) {
+            // TODO
+            return;
+        }
+        if (checkForFiftyMoveRule()) {
+            // TODO
+            return;
+        }
+
+        // update game flags based on move
+        updateCastlingAvailability();
+        updateEnPassantSquare();
+        updateThreefoldRepetition();
+        updateFiftyMoveRule();
+
+        // redraw canvas after all computation is done
+        chessCanvas.redrawSquare(square);
     }
 
     private boolean checkForCheckmate() {
-        // check if the active player is checkmated
-        if (activeKingInCheck()) {
-            King activeKing = activeKing();
-        }
+        return activePlayerCannotMove() && activeKingInCheck();
     }
 
     private boolean checkForStalemate() {
-
+        return activePlayerCannotMove() && !activeKingInCheck(); // currently this method call is redundant since checkForCheckmate is called before this
     }
 
     private boolean checkForThreefoldRepetition() {
-
+        // TODO
+        return false;
     }
 
     private boolean checkForFiftyMoveRule() {
+        // TODO
+        return false;
+    }
+
+    private void updateCastlingAvailability() {
 
     }
 
-    private boolean checkForPreventCastling() {
+    private void updateEnPassantSquare() {
+
+    }
+
+    private void updateThreefoldRepetition() {
+
+    }
+
+    private void updateFiftyMoveRule() {
 
     }
 
@@ -322,5 +371,33 @@ public class Chess {
 
     public Canvas getCanvas() {
         return chessCanvas.getCanvas();
+    }
+
+    public boolean getWhiteCanCastleKingside() {
+        return whiteCanCastleKingside;
+    }
+
+    public boolean getWhiteCanCastleQueenside() {
+        return whiteCanCastleQueenside;
+    }
+
+    public boolean getBlackCanCastleKingside() {
+        return blackCanCastleKingside;
+    }
+
+    public boolean getBlackCanCastleQueenside() {
+        return blackCanCastleQueenside;
+    }
+
+    public Square getEnPassantSquare() {
+        return enPassantSquare;
+    }
+
+    public int getHalfmoveClock() {
+        return halfmoveClock;
+    }
+
+    public int getFullmoveNumber() {
+        return fullmoveNumber;
     }
 }

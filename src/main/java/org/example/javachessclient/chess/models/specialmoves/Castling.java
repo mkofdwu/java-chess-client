@@ -1,6 +1,9 @@
 package org.example.javachessclient.chess.models.specialmoves;
 
-import org.example.javachessclient.chess.models.AvailableMove;
+import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.models.Move;
+import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.King;
 import org.example.javachessclient.chess.models.pieces.Piece;
 
@@ -8,40 +11,33 @@ import java.util.ArrayList;
 
 public class Castling extends SpecialMove {
     @Override
-    public ArrayList<AvailableMove> checkForMoves(Piece piece, Board board) {
+    public ArrayList<Move> findMoves(Piece piece) {
+        ArrayList<Move> available = new ArrayList<>();
+        Chess chess = piece.getChess();
+        // TODO: check for leaving king in check / blocking pieces
         if (piece instanceof King) {
             if (piece.getIsWhite()) {
-                if (toSquare.getRank() != 7) return null;
-                if (toSquare.getFile() == 6 && chess.getWhiteCanCastleKingside()) {
-                    chess.setWhiteCanCastleKingside(false);
-                    chess.setWhiteCanCastleQueenside(false);
-                    return SpecialMovesUtil.MoveType.WHITE_CASTLING_KINGSIDE;
+                if (chess.getWhiteCanCastleKingside()) {
+                    available.add(new Move(piece, new Square(6, 7), MoveType.castling));
                 }
-                if (toSquare.getFile() == 2 && chess.getWhiteCanCastleQueenside()) {
-                    chess.setWhiteCanCastleKingside(false);
-                    chess.setWhiteCanCastleQueenside(false);
-                    return SpecialMovesUtil.MoveType.WHITE_CASTLING_QUEENSIDE;
+                if (chess.getWhiteCanCastleQueenside()) {
+                    available.add(new Move(piece, new Square(1, 7), MoveType.castling));
                 }
-                return null;
             } else {
-                if (toSquare.getRank() != 0) return null;
-                if (toSquare.getFile() == 6 && chess.getBlackCanCastleKingside()) {
-                    chess.setBlackCanCastleKingside(false);
-                    chess.setBlackCanCastleQueenside(false);
-                    return SpecialMovesUtil.MoveType.BLACK_CASTLING_KINGSIDE;
+                if (chess.getBlackCanCastleKingside()) {
+                    available.add(new Move(piece, new Square(6, 0), MoveType.castling));
                 }
-                if (toSquare.getFile() == 2 && chess.getBlackCanCastleQueenside()) {
-                    chess.setBlackCanCastleKingside(false);
-                    chess.setBlackCanCastleQueenside(false);
-                    return SpecialMovesUtil.MoveType.BLACK_CASTLING_QUEENSIDE;
+                if (chess.getBlackCanCastleQueenside()) {
+                    available.add(new Move(piece, new Square(1, 0), MoveType.castling));
                 }
             }
         }
-        return null;
+        return available;
     }
 
     @Override
-    public void perform(AvailableMove move) {
-
+    public void perform(Move move) {
+        Chess chess = move.getPiece().getChess();
+        // TODO
     }
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Knight extends Piece {
     public Knight(Chess chess, Square square, boolean isWhite) {
-        super(board, square, isWhite);
+        super(chess, square, isWhite);
     }
 
     @Override
@@ -42,6 +42,7 @@ public class Knight extends Piece {
             }
         }
 
+        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 

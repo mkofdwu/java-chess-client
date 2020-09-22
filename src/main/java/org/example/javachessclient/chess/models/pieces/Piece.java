@@ -18,8 +18,8 @@ public abstract class Piece {
         this.isWhite = isWhite;
     }
 
-    public boolean getIsWhite() {
-        return isWhite;
+    public Chess getChess() {
+        return chess;
     }
 
     public Square getSquare() {
@@ -30,6 +30,10 @@ public abstract class Piece {
         this.square = square;
     }
 
+    public boolean getIsWhite() {
+        return isWhite;
+    }
+
     public abstract String getIconFilePath();
 
     public abstract ArrayList<Move> findAvailableMoves(); // checks everything, including special moves & leaving king in check
@@ -38,6 +42,6 @@ public abstract class Piece {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof Piece && square == ((Piece)other).getSquare() && isWhite == ((Piece)other).getIsWhite();
+        return other instanceof Piece && square == ((Piece) other).getSquare() && isWhite == ((Piece) other).getIsWhite();
     }
 }

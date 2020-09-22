@@ -20,7 +20,7 @@ public class ChessCanvas {
     public static final Color blackColor = Color.valueOf("#c4c4c4");
 
     private final Chess chess;
-    private Canvas canvas;
+    private final Canvas canvas;
 
     public ChessCanvas(Chess chess) {
         this.chess = chess;
@@ -37,8 +37,6 @@ public class ChessCanvas {
             Square square = new Square((int) (event.getX() / squareSize), (int) (event.getY() / squareSize));
             chess.onSquareClicked(square);
         });
-
-        WebSocketClient client = new StandardWebSocketClient();
     }
 
     public void highlightSquare(Square square) {
@@ -47,8 +45,14 @@ public class ChessCanvas {
     }
 
     public void highlightAvailableMoves(ArrayList<Move> availableMoves) {
-        // TODO
-
+        GraphicsContext context = canvas.getGraphicsContext2D();
+        context.setFill(Color.valueOf("#ff0000aa")); // temp FIXME
+        for (Move move : availableMoves) {
+            int file = move.getSquare().getFile();
+            int rank = move.getSquare().getRank();
+            // TEMP
+            context.fillOval(rank * squareSize + 10, file * squareSize + 10, squareSize - 20, squareSize - 20);
+        }
     }
 
     public void redrawBoard() {

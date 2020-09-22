@@ -1,9 +1,17 @@
 package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
+import org.example.javachessclient.chess.models.specialmoves.EnPassant;
+
+import java.util.ArrayList;
 
 public class Pawn extends Piece {
+    // special moves
+    EnPassant enPassant = new EnPassant();
+
     public Pawn(Chess chess, Square square, boolean isWhite) {
         super(chess, square, isWhite);
     }
@@ -14,29 +22,38 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public boolean canMoveTo(int toFile, int toRank) {
+    public ArrayList<Move> findAvailableMoves() {
+        ArrayList<Move> available = new ArrayList<>();
         int fromFile = square.getFile();
         int fromRank = square.getRank();
-        int direction = isWhite ? -1 : 1;
-        if (fromFile == toFile
-                && toRank - fromRank == 2 * direction
-                && fromRank == (isWhite ? 6 : 1)
-                && board.get(fromRank + direction).get(fromFile) == null
-                && board.get(fromRank + direction * 2).get(fromFile) == null) {
-            // moving 2 squares forward
-            return true;
+
+        // check for normal moves
+        for (int rankDir = 1; rankDir < 3; ++rankDir) {
+            Square newSquare = new Square(fromFile, fromRank + rankDir);
+            Piece piece = chess.pieceAt(newSquare);
+            if (piece == null) available.add(new Move(this, newSquare, MoveType.normal));
+            else break;
         }
-        if (fromFile == toFile
-                && toRank - fromRank == direction
-                && board.get(toRank).get(fromFile) == null) {
-            // move one square forward
-            return true;
+
+        // check for capture
+        for (int fileDir : new int[]{-1, 1}) {
+            Square newSquare = new Square(fromFile + fileDir, fromRank);
+            Piece piece = chess.pieceAt(newSquare);
+            if (piece != null && piece.getIsWhite() != isWhite) {
+                available.add(new Move(this, newSquare, MoveType.capture));
+            }
         }
-        if (Math.abs(toFile - fromFile) == 1 && toRank - fromRank == direction) {
-            // capture
-            Piece piece = board.get(toRank).get(toFile);
-            return piece != null && isWhite ^ piece.isWhite;
+
+        available.addAll(enPassant.findMoves(this));
+
+        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        return available;
+    }
+
+    @Override
+    public void makeSpecialMove(Move move) {
+        if (move.getType() == MoveType.enPassant) {
+            enPassant.perform(move);
         }
-        return false;
     }
 }
