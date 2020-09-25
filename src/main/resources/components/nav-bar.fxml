@@ -5,18 +5,17 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="300.0" spacing="20.0" style="-fx-background-color: -fx-accent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <padding>
-      <Insets left="50.0" top="100.0" />
-   </padding>
-   <children>
-      <Label text="Home" />
-      <Label layoutX="60.0" layoutY="110.0" text="History" />
-      <Label layoutX="60.0" layoutY="163.0" styleClass="active" text="Profile" />
-   </children>
-   <stylesheets>
-      <URL value="@../styles/main.css" />
-      <URL value="@../styles/nav-bar.css" />
-   </stylesheets>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="300.0" spacing="20.0" style="-fx-background-color: -fx-accent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.NavBarController">
+    <padding>
+        <Insets left="50.0" top="100.0" />
+    </padding>
+    <children>
+        <Label onMouseClicked="#onSelectHome" text="Home" />
+        <Label layoutX="60.0" layoutY="110.0" onMouseClicked="#onSelectHistory" text="History" />
+        <Label layoutX="60.0" layoutY="163.0" onMouseClicked="#onSelectProfile" styleClass="selected" text="Profile" />
+    </children>
+    <stylesheets>
+        <URL value="@../styles/main.css" />
+        <URL value="@../styles/nav-bar.css" />
+    </stylesheets>
 </VBox>

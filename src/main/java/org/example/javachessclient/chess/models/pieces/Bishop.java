@@ -27,4 +27,9 @@ public class Bishop extends Piece {
     public void makeSpecialMove(Move move) {
         // a bishop has no special moves
     }
+
+    @Override
+    public void undoSpecialMove(Move move) {
+
+    }
 }

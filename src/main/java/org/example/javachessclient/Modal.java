@@ -2,6 +2,8 @@ package org.example.javachessclient;
 
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class Modal {
@@ -20,7 +22,11 @@ public class Modal {
         bgPane.setVisible(true);
     }
 
-    public void showMessage() {
-        // TODO
+    public void showMessage(String message) {
+        // FIXME
+        Pane pane = new Pane();
+        pane.setPrefSize(300, 200);
+        pane.getChildren().add(new Label(message));
+        show(pane);
     }
 }

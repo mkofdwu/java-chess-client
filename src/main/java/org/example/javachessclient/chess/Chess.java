@@ -1,6 +1,7 @@
 package org.example.javachessclient.chess;
 
 import javafx.scene.canvas.Canvas;
+import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.exceptions.InvalidBoardException;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
@@ -145,27 +146,28 @@ public class Chess {
             if (availableMoves == null) {
                 // selected destination first then piece to move
                 Piece piece = pieceAt(square);
-                if (piece == null) return;
-                availableMoves = piece.findAvailableMoves();
+                if (piece == null) availableMoves = new ArrayList<>();
+                else availableMoves = piece.findAvailableMoves();
             }
             // find move from selected square
             for (Move availableMove : availableMoves) {
-                if (availableMove.getSquare() == square) {
+                if (availableMove.getToSquare() == square) {
                     move = availableMove;
                     break;
                 }
             }
-            if (move == null) {
-                // invalid move, TODO clear selected piece & highlights
-                return;
-            }
 
             try {
-                playMove(move);
+                if (move != null)
+                    playMove(move);
             } catch (InvalidMoveException e) {
                 // do nothing
             } finally {
                 chessCanvas.redrawSquare(selectedSquare); // also clears the outline of the first selected square
+                for (Move availableMove : availableMoves) {
+                    // clear highlighted available moves
+                    chessCanvas.redrawSquare(availableMove.getToSquare());
+                }
                 selectedSquare = null;
                 availableMoves = null;
             }
@@ -180,6 +182,16 @@ public class Chess {
 
     public Piece pieceAt(Square square) {
         return board.get(square.getRank()).get(square.getFile());
+    }
+
+    public Piece removeAt(int file, int rank) {
+        return board.get(rank).remove(file);
+    }
+
+    public void moveTo(Piece piece, Square square) {
+        board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
+        board.get(square.getRank()).set(square.getFile(), piece);
+        piece.setSquare(square);
     }
 
     public ArrayList<Move> diagonalMoves(Piece piece) {
@@ -210,14 +222,15 @@ public class Chess {
 
     private void addMovesInDir(Piece piece, ArrayList<Move> available, int fromFile, int fromRank, int fileDir, int rankDir) {
         // automatically refactored
+        Square fromSquare = new Square(fromFile, fromRank);
         for (int file = fromFile + fileDir, rank = fromRank + rankDir; 0 <= file && file < 8 && 0 <= rank && rank < 8; file += fileDir, rank += rankDir) {
             Piece landingPiece = board.get(file).get(rank);
             if (landingPiece == null) {
-                available.add(new Move(piece, new Square(file, rank), MoveType.normal));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal));
             } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
                 break;
             } else {
-                available.add(new Move(piece, new Square(file, rank), MoveType.capture));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.capture));
                 break;
             }
         }
@@ -230,20 +243,8 @@ public class Chess {
         return kingInCheck;
     }
 
-    private boolean activeKingInCheck() {
-        King activeKing = activeKing();
-        if (activeKing == null) throw new InvalidBoardException();
-        for (ArrayList<Piece> rankList : board) {
-            for (Piece piece : rankList) {
-                // TODO: add `canMoveTo(Square square) -> MoveType` if this is too slow
-                for (Move availableMove : piece.findAvailableMoves()) {
-                    if (availableMove.getType() == MoveType.capture && availableMove.getSquare() == activeKing.getSquare()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    public boolean activeKingInCheck() {
+        return squareIsAttacked(activeKing().getSquare());
     }
 
     private King activeKing() {
@@ -257,6 +258,20 @@ public class Chess {
         throw new InvalidBoardException();
     }
 
+    public boolean squareIsAttacked(Square square) {
+        for (ArrayList<Piece> rankList : board) {
+            for (Piece piece : rankList) {
+                // FIXME: add `canMoveTo(Square square) -> MoveType` if this is too slow
+                for (Move availableMove : piece.findAvailableMoves()) {
+                    if (availableMove.getType() == MoveType.capture && availableMove.getToSquare() == square) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean activePlayerCannotMove() {
         for (ArrayList<Piece> rankList : board) {
             for (Piece piece : rankList) {
@@ -268,25 +283,17 @@ public class Chess {
         return true;
     }
 
-    private void undoMove() {
-        // called after testing for check
-    }
-
     // chess utils
 
     private void playMove(Move move) {
         // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
         Piece piece = move.getPiece();
-        Square square = move.getSquare();
+        Square fromSquare = piece.getSquare();
+        Square square = move.getToSquare();
         MoveType type = move.getType();
 
-        board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
-        board.get(square.getRank()).set(square.getFile(), piece);
-        piece.setSquare(square);
-
-        recordedMoves.add(move);
-        whiteToMove = !whiteToMove;
+        moveTo(piece, square);
 
         if (type != MoveType.normal && type != MoveType.capture) {
             piece.makeSpecialMove(move);
@@ -294,24 +301,28 @@ public class Chess {
 
         // check for pawn promotion (show modal)
         if (piece instanceof Pawn && square.getRank() == (piece.getIsWhite() ? 0 : 7)) {
-            // TODO
+            Store.modal.show(new PromotionOptionsModal().buildPane());
         }
 
         // check for end of game
         if (checkForCheckmate()) {
-            // TODO
+            // FIXME
+            Store.modal.showMessage("checkmate, game over");
             return;
         }
         if (checkForStalemate()) {
-            // TODO
+            // FIXME
+            Store.modal.showMessage("stalemate, game over");
             return;
         }
         if (checkForThreefoldRepetition()) {
-            // TODO
+            // FIXME
+            Store.modal.showMessage("threefold repetition, GO");
             return;
         }
         if (checkForFiftyMoveRule()) {
-            // TODO
+            // FIXME
+            Store.modal.showMessage("fifty move, GO");
             return;
         }
 
@@ -321,8 +332,29 @@ public class Chess {
         updateThreefoldRepetition();
         updateFiftyMoveRule();
 
+        // the last step of completing the move
+        recordedMoves.add(move);
+        whiteToMove = !whiteToMove;
+
         // redraw canvas after all computation is done
         chessCanvas.redrawSquare(square);
+    }
+
+    private void undoMove() {
+        Move move = recordedMoves.remove(recordedMoves.size() - 1);
+        Piece piece = move.getPiece();
+        Square fromSquare = move.getFromSquare();
+        Square toSquare = move.getToSquare();
+        MoveType type = move.getType();
+
+        moveTo(piece, fromSquare);
+        if (type != MoveType.normal && type != MoveType.capture) {
+            move.getPiece().undoSpecialMove(move);
+        }
+        whiteToMove = !whiteToMove;
+        // FIXME: undo promotion, change game flags
+        chessCanvas.redrawSquare(fromSquare);
+        chessCanvas.redrawSquare(toSquare);
     }
 
     private boolean checkForCheckmate() {
@@ -344,19 +376,37 @@ public class Chess {
     }
 
     private void updateCastlingAvailability() {
-
+        Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
+        if (lastMove.getPiece() instanceof King) {
+            if (whiteToMove) {
+                whiteCanCastleKingside = false;
+                whiteCanCastleQueenside = false;
+            } else {
+                blackCanCastleKingside = false;
+                blackCanCastleQueenside = false;
+            }
+        } else if (lastMove.getPiece() instanceof Rook) {
+            int fromFile = lastMove.getFromSquare().getFile();
+            if (whiteToMove) {
+                if (fromFile == 0) whiteCanCastleQueenside = false;
+                else if (fromFile == 7) whiteCanCastleKingside = false;
+            } else {
+                if (fromFile == 0) blackCanCastleQueenside = false;
+                else if (fromFile == 7) blackCanCastleKingside = false;
+            }
+        }
     }
 
     private void updateEnPassantSquare() {
-
+        // TODO
     }
 
     private void updateThreefoldRepetition() {
-
+        // TODO
     }
 
     private void updateFiftyMoveRule() {
-
+        // TODO
     }
 
     // misc tasks

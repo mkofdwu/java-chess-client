@@ -5,12 +5,14 @@ import org.example.javachessclient.chess.models.pieces.Piece;
 
 public class Move {
     private final Piece piece;
-    private final Square square;
+    private final Square fromSquare;
+    private final Square toSquare;
     private final MoveType type;
 
-    public Move(Piece piece, Square square, MoveType type) {
+    public Move(Piece piece, Square fromSquare, Square toSquare, MoveType type) {
         this.piece = piece;
-        this.square = square;
+        this.fromSquare = fromSquare;
+        this.toSquare = toSquare;
         this.type = type;
     }
 
@@ -18,8 +20,12 @@ public class Move {
         return piece;
     }
 
-    public Square getSquare() {
-        return square;
+    public Square getFromSquare() {
+        return fromSquare;
+    }
+
+    public Square getToSquare() {
+        return toSquare;
     }
 
     public MoveType getType() {

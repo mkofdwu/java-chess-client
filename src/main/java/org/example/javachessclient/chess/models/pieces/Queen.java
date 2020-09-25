@@ -28,4 +28,9 @@ public class Queen extends Piece {
     public void makeSpecialMove(Move move) {
         // a queen has no special moves
     }
+
+    @Override
+    public void undoSpecialMove(Move move) {
+        // a queen has no special moves
+    }
 }

@@ -40,6 +40,8 @@ public abstract class Piece {
 
     public abstract void makeSpecialMove(Move move); // modifies the board according to the special move
 
+    public abstract void undoSpecialMove(Move move);
+
     @Override
     public boolean equals(Object other) {
         return other instanceof Piece && square == ((Piece) other).getSquare() && isWhite == ((Piece) other).getIsWhite();

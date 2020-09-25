@@ -4,7 +4,6 @@ import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
-import org.example.javachessclient.chess.models.specialmoves.SpecialMove;
 
 import java.util.ArrayList;
 
@@ -34,9 +33,9 @@ public class Knight extends Piece {
                     Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
                     Piece piece = chess.pieceAt(newSquare);
                     if (piece == null) {
-                        available.add(new Move(this, newSquare, MoveType.normal));
+                        available.add(new Move(this, square, newSquare, MoveType.normal));
                     } else if (piece.getIsWhite() != isWhite) {
-                        available.add(new Move(this, newSquare, MoveType.capture));
+                        available.add(new Move(this, square, newSquare, MoveType.capture));
                     }
                 }
             }
@@ -48,6 +47,11 @@ public class Knight extends Piece {
 
     @Override
     public void makeSpecialMove(Move move) {
+        // a knight has no special moves
+    }
+
+    @Override
+    public void undoSpecialMove(Move move) {
         // a knight has no special moves
     }
 }

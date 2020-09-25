@@ -2,16 +2,13 @@ package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
-import org.example.javachessclient.chess.models.specialmoves.EnPassant;
 
 import java.util.ArrayList;
 
 public class Pawn extends Piece {
-    // special moves
-    EnPassant enPassant = new EnPassant();
-
     public Pawn(Chess chess, Square square, boolean isWhite) {
         super(chess, square, isWhite);
     }
@@ -31,7 +28,7 @@ public class Pawn extends Piece {
         for (int rankDir = 1; rankDir < 3; ++rankDir) {
             Square newSquare = new Square(fromFile, fromRank + rankDir);
             Piece piece = chess.pieceAt(newSquare);
-            if (piece == null) available.add(new Move(this, newSquare, MoveType.normal));
+            if (piece == null) available.add(new Move(this, square, newSquare, MoveType.normal));
             else break;
         }
 
@@ -40,20 +37,48 @@ public class Pawn extends Piece {
             Square newSquare = new Square(fromFile + fileDir, fromRank);
             Piece piece = chess.pieceAt(newSquare);
             if (piece != null && piece.getIsWhite() != isWhite) {
-                available.add(new Move(this, newSquare, MoveType.capture));
+                available.add(new Move(this, square, newSquare, MoveType.capture));
             }
         }
 
-        available.addAll(enPassant.findMoves(this));
+        available.addAll(findEnPassantMoves());
 
         available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        return available;
+    }
+
+    private ArrayList<Move> findEnPassantMoves() {
+        ArrayList<Move> available = new ArrayList<>();
+        Square enPassantSquare = chess.getEnPassantSquare();
+        if (enPassantSquare != null) {
+            int enPassantFile = enPassantSquare.getFile();
+            int enPassantRank = enPassantSquare.getRank();
+            int file = square.getFile();
+            int rank = square.getRank();
+            int rankDir = isWhite ? -1 : 1; // fixme ?
+            if (rank + rankDir == enPassantRank && Math.abs(file - enPassantFile) == 1) {
+                available.add(new Move(this, square, enPassantSquare, MoveType.enPassant));
+            }
+        }
         return available;
     }
 
     @Override
     public void makeSpecialMove(Move move) {
         if (move.getType() == MoveType.enPassant) {
-            enPassant.perform(move);
+            // make the second move, removing the pawn behind where the current pawn is now
+            Piece pieceRemoved = chess.removeAt(move.getToSquare().getFile(), move.getToSquare().getRank() + (isWhite ? 1 : -1));
+            // just checking
+            if (!(pieceRemoved instanceof Pawn) || pieceRemoved.getIsWhite() == isWhite) {
+                throw new InvalidMoveException();
+            }
+        }
+    }
+
+    @Override
+    public void undoSpecialMove(Move move) {
+        if (move.getType() == MoveType.enPassant) {
+            // TODO
         }
     }
 }

@@ -2,11 +2,7 @@ package org.example.javachessclient;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.javachessclient.chess.Chess;
@@ -20,7 +16,10 @@ public class App extends Application {
 //        Chess chess = new Chess(); // testing
 //        Parent root = new Pane(chess.getCanvas());
         StackPane root = new StackPane();
+        root.getChildren().add(new Chess().getCanvas());
+
         Store.modal = new Modal(root);
+
         Scene scene = new Scene(root);
         stage.setTitle("JavaChess");
         stage.setResizable(false);

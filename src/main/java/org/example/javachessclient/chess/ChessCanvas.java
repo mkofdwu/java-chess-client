@@ -7,8 +7,6 @@ import javafx.scene.paint.Color;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.Piece;
-import org.springframework.web.socket.client.WebSocketClient;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import java.util.ArrayList;
 
@@ -48,8 +46,8 @@ public class ChessCanvas {
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.setFill(Color.valueOf("#ff0000aa")); // temp FIXME
         for (Move move : availableMoves) {
-            int file = move.getSquare().getFile();
-            int rank = move.getSquare().getRank();
+            int file = move.getToSquare().getFile();
+            int rank = move.getToSquare().getRank();
             // TEMP
             context.fillOval(rank * squareSize + 10, file * squareSize + 10, squareSize - 20, squareSize - 20);
         }

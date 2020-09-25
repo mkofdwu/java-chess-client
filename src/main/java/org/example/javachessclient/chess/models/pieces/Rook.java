@@ -27,4 +27,9 @@ public class Rook extends Piece {
     public void makeSpecialMove(Move move) {
         // A rook has no special moves
     }
+
+    @Override
+    public void undoSpecialMove(Move move) {
+
+    }
 }
