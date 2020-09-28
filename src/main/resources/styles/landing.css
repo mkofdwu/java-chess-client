@@ -1,0 +1,5 @@
+.small-link {
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-lesser;
+    -fx-cursor: hand;
+}

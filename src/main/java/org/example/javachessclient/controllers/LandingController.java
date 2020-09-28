@@ -3,9 +3,9 @@ package org.example.javachessclient.controllers;
 import javafx.fxml.FXML;
 import org.example.javachessclient.Store;
 
-public class BackButtonController {
+public class LandingController {
     @FXML
-    public void onBack() {
-        Store.router.pop();
+    public void onStart() {
+        Store.router.push("/fxml/login.fxml");
     }
 }

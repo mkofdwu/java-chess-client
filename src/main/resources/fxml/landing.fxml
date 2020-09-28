@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: -fx-bg;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.LandingController">
+   <children>
+      <Rectangle fill="WHITE" height="700.0" layoutX="600.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="400.0" />
+      <HBox layoutX="70.0" layoutY="650.0" spacing="20.0">
+         <children>
+            <Label styleClass="small-link" text="Version 0.1.0" />
+            <Label styleClass="small-link" text="About" />
+            <Label styleClass="small-link" text="Licenses" />
+         </children>
+      </HBox>
+      <VBox layoutX="418.0" layoutY="242.0" prefWidth="300.0">
+         <children>
+            <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 48;" text="JavaChess">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Label>
+            <Label text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In massa habitant non vitae, pretium, scelerisque feugiat." wrapText="true">
+               <VBox.margin>
+                  <Insets bottom="30.0" />
+               </VBox.margin>
+            </Label>
+            <Separator prefWidth="200.0" style="-fx-max-width: 70px;" />
+         </children>
+      </VBox>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="168.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true" />
+      <HBox alignment="CENTER_LEFT" layoutX="860.0" layoutY="642.0" onMouseClicked="#onStart" spacing="10.0" style="-fx-cursor: hand;">
+         <children>
+            <Label style="-fx-font-size: 18px;" text="Start" />
+            <ImageView pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/next.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <ImageView layoutX="90.0" layoutY="185.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/landing-graphic.png" />
+         </image>
+      </ImageView>
+   </children>
+   <stylesheets>
+      <URL value="@../styles/main.css" />
+      <URL value="@../styles/landing.css" />
+   </stylesheets>
+</Pane>

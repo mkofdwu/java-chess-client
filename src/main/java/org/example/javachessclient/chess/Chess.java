@@ -307,22 +307,22 @@ public class Chess {
         // check for end of game
         if (checkForCheckmate()) {
             // FIXME
-            Store.modal.showMessage("checkmate, game over");
+            Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
             return;
         }
         if (checkForStalemate()) {
             // FIXME
-            Store.modal.showMessage("stalemate, game over");
+            Store.modal.showMessage("Stalemate", "It's a draw.");
             return;
         }
         if (checkForThreefoldRepetition()) {
             // FIXME
-            Store.modal.showMessage("threefold repetition, GO");
+            Store.modal.showMessage("Threefold Repetition", "It's a draw.");
             return;
         }
         if (checkForFiftyMoveRule()) {
             // FIXME
-            Store.modal.showMessage("fifty move, GO");
+            Store.modal.showMessage("Fifty Move", "It's a draw");
             return;
         }
 

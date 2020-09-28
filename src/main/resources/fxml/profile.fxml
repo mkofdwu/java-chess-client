@@ -12,96 +12,99 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="700.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="700.0" prefWidth="760.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.ProfileController">
     <children>
-      <GridPane hgap="50.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
-          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-          <RowConstraints vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-                  <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper" GridPane.columnIndex="1" />
-                  <Label text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Button maxHeight="50.0" mnemonicParsing="false" styleClass="default-btn" text="Change password" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                      <padding>
-                          <Insets left="20.0" right="20.0" />
-                      </padding>
-                  </Button>
+        <GridPane hgap="50.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36px;" text="Jane Cooper" GridPane.columnIndex="1" />
+                <Label text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button maxHeight="50.0" mnemonicParsing="false" text="Change password" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <padding>
+                        <Insets left="20.0" right="20.0" />
+                    </padding>
+                </Button>
                 <ImageView fx:id="profilePicView" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="3">
-               <viewport>
-                  <Rectangle2D />
-               </viewport></ImageView>
-         </children>
-         <VBox.margin>
-            <Insets bottom="50.0" />
-         </VBox.margin>
-      </GridPane>
-      <Separator prefWidth="200.0">
-         <VBox.margin>
-            <Insets bottom="20.0" />
-         </VBox.margin>
-      </Separator>
-      <HBox>
-         <children>
-            <VBox prefWidth="230.0">
-               <children>
-                  <Label style="-fx-font-size: 20;" text="20 Friends" />
-                  <Label style="-fx-text-fill: -fx-accent;" text="View all" />
-               </children>
-            </VBox>
-            <VBox HBox.hgrow="ALWAYS">
-               <children>
-                  <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;" text="Settings">
-                     <VBox.margin>
-                        <Insets bottom="14.0" />
-                     </VBox.margin></Label>
-                  <Label style="-fx-text-fill: -fx-less;" text="Theme">
-                     <VBox.margin>
-                        <Insets bottom="8.0" />
-                     </VBox.margin></Label>
-                  <HBox>
-                     <children>
-                        <Button mnemonicParsing="false" style="-fx-background-color: white;" styleClass="color-option">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Button>
-                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: black;" styleClass="color-option" />
-                     </children>
-                     <VBox.margin>
-                        <Insets bottom="14.0" />
-                     </VBox.margin>
-                  </HBox>
-                  <Label layoutX="10.0" layoutY="38.0" style="-fx-text-fill: -fx-less;" text="Accent">
-                     <VBox.margin>
-                        <Insets bottom="8.0" />
-                     </VBox.margin></Label>
-                  <HBox layoutX="10.0" layoutY="79.0">
-                     <children>
-                        <Button mnemonicParsing="false" style="-fx-background-color: #515151;" styleClass="color-option">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Button>
-                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #336a89;" styleClass="color-option" />
-                        <Button layoutX="50.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #50846E;" styleClass="color-option" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
+                    <viewport>
+                    </viewport>
+                </ImageView>
+            </children>
+            <VBox.margin>
+                <Insets bottom="50.0" />
+            </VBox.margin>
+        </GridPane>
+        <Separator prefWidth="200.0">
+            <VBox.margin>
+                <Insets bottom="20.0" />
+            </VBox.margin>
+        </Separator>
+        <HBox>
+            <children>
+                <VBox prefWidth="230.0">
+                    <children>
+                        <Label style="-fx-font-size: 20px;" text="20 Friends" />
+                        <Label style="-fx-text-fill: -fx-accent;" text="View all" />
+                    </children>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20px;" text="Settings">
+                            <VBox.margin>
+                                <Insets bottom="14.0" />
+                            </VBox.margin>
+                        </Label>
+                        <Label style="-fx-text-fill: -fx-less;" text="Theme">
+                            <VBox.margin>
+                                <Insets bottom="8.0" />
+                            </VBox.margin>
+                        </Label>
+                        <HBox>
+                            <children>
+                                <Button mnemonicParsing="false" style="-fx-background-color: white;" styleClass="color-option">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </Button>
+                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: black;" styleClass="color-option" />
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="14.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="38.0" style="-fx-text-fill: -fx-less;" text="Accent">
+                            <VBox.margin>
+                                <Insets bottom="8.0" />
+                            </VBox.margin>
+                        </Label>
+                        <HBox layoutX="10.0" layoutY="79.0">
+                            <children>
+                                <Button mnemonicParsing="false" style="-fx-background-color: #515151;" styleClass="color-option">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </Button>
+                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #336a89;" styleClass="color-option" />
+                                <Button layoutX="50.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #50846E;" styleClass="color-option" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
     </children>
-   <stylesheets>
-      <URL value="@../styles/main.css" />
-      <URL value="@../styles/profile.css" />
-   </stylesheets>
-   <padding>
-      <Insets bottom="70.0" left="70.0" right="70.0" top="70.0" />
-   </padding>
+    <stylesheets>
+        <URL value="@../styles/main.css" />
+        <URL value="@../styles/profile.css" />
+    </stylesheets>
+    <padding>
+        <Insets bottom="70.0" left="70.0" right="70.0" top="70.0" />
+    </padding>
 </VBox>

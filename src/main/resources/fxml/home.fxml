@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label styleClass="group-header" text="New game" />
       <Separator prefWidth="200.0">
@@ -29,7 +29,7 @@
                         <Image url="@../icons/help.png" />
                      </image>
                   </ImageView>
-                  <Label style="-fx-font-size: 16;" text="Random opponent" textAlignment="CENTER" wrapText="true" />
+                  <Label style="-fx-font-size: 16px;" text="Random opponent" textAlignment="CENTER" wrapText="true" />
                </children>
                <HBox.margin>
                   <Insets right="30.0" />
@@ -42,7 +42,7 @@
                         <Image url="@../icons/people.png" />
                      </image>
                   </ImageView>
-                  <Label style="-fx-font-size: 16;" text="Play with someone" textAlignment="CENTER" wrapText="true" />
+                  <Label style="-fx-font-size: 16px;" text="Play with someone" textAlignment="CENTER" wrapText="true" />
                </children>
             </VBox>
          </children>

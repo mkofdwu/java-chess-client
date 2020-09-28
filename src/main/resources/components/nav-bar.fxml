@@ -16,6 +16,6 @@
     </children>
     <stylesheets>
         <URL value="@../styles/main.css" />
-        <URL value="@../styles/nav-bar.css" />
+        <URL value="@../styles/layout.css" />
     </stylesheets>
 </VBox>

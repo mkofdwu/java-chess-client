@@ -1,9 +1,10 @@
-.label {
+.nav-label {
     -fx-font-family: "Domaine Display Test";
     -fx-font-size: 24px;
     -fx-text-fill: #ffffff99;
+    -fx-cursor: hand;
 }
 
-.label.selected {
+.nav-label.selected {
     -fx-text-fill: #ffffff;
 }
