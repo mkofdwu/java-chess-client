@@ -1,19 +1,27 @@
 package org.example.javachessclient.models;
 
-public class TokenAuthResponse {
-    private final String token;
-    private final User user;
+import org.example.javachessclient.models.User;
 
-    public TokenAuthResponse(String token, User user) {
-        this.token = token;
-        this.user = user;
+public class TokenAuthResponse {
+    private String token;
+    private User user;
+
+    public TokenAuthResponse() {
     }
 
     public String getToken() {
         return token;
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

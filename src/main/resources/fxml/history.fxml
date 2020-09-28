@@ -4,11 +4,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.HistoryController">
    <stylesheets>
       <URL value="@../styles/main.css" />
       <URL value="@../styles/history.css" />
@@ -23,7 +26,7 @@
             </Pane>
             <Label style="-fx-font-size: 16; -fx-text-fill: -fx-accent;" text="Result">
                <HBox.margin>
-                  <Insets right="20.0" />
+                  <Insets right="40.0" />
                </HBox.margin>
             </Label>
             <Label style="-fx-font-size: 16; -fx-text-fill: -fx-accent;" text="Date" />
@@ -34,9 +37,21 @@
       </HBox>
       <Separator prefWidth="200.0">
          <VBox.margin>
-            <Insets left="-50.0" right="-50.0" />
+            <Insets bottom="30.0" left="-50.0" right="-50.0" />
          </VBox.margin>
       </Separator>
+      <GridPane fx:id="pastGamesGrid">
+        <columnConstraints>
+          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" prefWidth="76.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
    </children>
    <padding>
       <Insets left="50.0" right="50.0" />

@@ -3,6 +3,7 @@ package org.example.javachessclient;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -33,19 +34,27 @@ public class Modal {
         // FIXME
         VBox modal = new VBox();
         modal.setMaxWidth(400);
+        modal.setMaxHeight(200);
         modal.setPadding(new Insets(20, 20, 20, 20));
         modal.setStyle("-fx-background-color: white; -fx-background-radius: 5px;");
 
         Label titleLabel = new Label(title);
         titleLabel.setFont(new Font("Domaine Display Test", 18));
-        titleLabel.setStyle("-fx-font-weight: medium;");
+        titleLabel.setStyle("-fx-font-weight: bold;");
 
         Label messageLabel = new Label(message);
+        messageLabel.setFont(new Font("Domaine Display Test", 14));
 
+        VBox optionsBox = new VBox();
+        optionsBox.setAlignment(Pos.CENTER_LEFT);
+        Button closeBtn = new Button("Close");
+        closeBtn.setOnAction((e) -> hide());
+        optionsBox.getChildren().add(closeBtn);
 
         modal.getChildren().addAll(
                 titleLabel,
-                messageLabel
+                messageLabel,
+                optionsBox
         );
 
         show(modal);

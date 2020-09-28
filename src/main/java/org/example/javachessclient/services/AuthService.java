@@ -2,7 +2,8 @@ package org.example.javachessclient.services;
 
 import org.example.javachessclient.Store;
 import org.example.javachessclient.apis.AuthApi;
-import org.example.javachessclient.apis.UserApi;
+import org.example.javachessclient.models.LoginDetails;
+import org.example.javachessclient.models.RegisterDetails;
 import org.example.javachessclient.models.TokenAuthResponse;
 import org.example.javachessclient.models.User;
 import retrofit2.Call;
@@ -16,9 +17,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 public class AuthService {
-    private static final String jwtFilePath = System.getenv("APPDATA") + "/JavaChess/token.txt"; // stores the jwt unencrypted
+    // currently only supports windows else linux
+    private final static String dataDir = System.getProperty("os.name").equals("Windows")
+            ? System.getenv("APPDATA") + "/JavaChess"
+            : System.getProperty("user.home") + "/.JavaChess";
+    private static final String jwtFilePath = dataDir + "/token.txt"; // NOTE: stores the jwt unencrypted
 
-    private static final Retrofit retrofit = new Retrofit.Builder().baseUrl("http://localhost:8081/api/").addConverterFactory(GsonConverterFactory.create()).build();
+    private static final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://localhost:8081/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
     private static final AuthApi authApi = retrofit.create(AuthApi.class);
 
     public static boolean attemptAuthenticateFromFile() {
@@ -28,6 +36,9 @@ public class AuthService {
             String token = br.readLine();
             br.close();
             Response<User> response = authApi.getUser("Bearer " + token).execute();
+            if (response.body() == null) {
+                return false;
+            }
             Store.user = response.body();
             return true;
         } catch (IOException exception) {
@@ -37,34 +48,30 @@ public class AuthService {
     }
 
     public static boolean authenticate(String username, String password, boolean register) {
-        CompletableFuture<TokenAuthResponse> authResponseFuture = new CompletableFuture<>();
-        (register ? authApi.register(username, password) : authApi.login(username, password)).enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<TokenAuthResponse> call, Response<TokenAuthResponse> response) {
-                authResponseFuture.complete(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<TokenAuthResponse> call, Throwable throwable) {
-                authResponseFuture.completeExceptionally(throwable);
-            }
-        });
         try {
-            TokenAuthResponse authResponse = authResponseFuture.join();
-            // save token to file
-            try {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(jwtFilePath));
-                bw.write(authResponse.getToken());
-                bw.close();
-            } catch (IOException exception) {
-                System.out.println("Failed to write token to file: " + exception.getMessage());
+            Response<TokenAuthResponse> response = (
+                    register
+                            ? authApi.register(new RegisterDetails(username, password))
+                            : authApi.login(new LoginDetails(username, password))
+            ).execute();
+            if (response.body() == null) {
                 return false;
             }
+
+            TokenAuthResponse authResponse = response.body();
+            // save token to file
+            File parent = new File(jwtFilePath).getParentFile();
+            if (!parent.exists() && !parent.mkdirs()) {
+                throw new IOException("Failed to create jwt file at " + jwtFilePath);
+            }
+            BufferedWriter bw = new BufferedWriter(new FileWriter(jwtFilePath));
+            bw.write(authResponse.getToken());
+            bw.close();
             // update Store.user
             Store.user = authResponse.getUser();
             return true;
-        } catch (CompletionException exception) {
-            System.out.println("Failed to authenticate: " + exception.getMessage());
+        } catch (IOException exception) {
+            System.out.println("Failed to authenticate or write token to file: " + exception.getMessage());
             return false;
         }
     }

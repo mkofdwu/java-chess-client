@@ -25,14 +25,14 @@
                 <RowConstraints vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36px;" text="Jane Cooper" GridPane.columnIndex="1" />
-                <Label text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Button maxHeight="50.0" mnemonicParsing="false" text="Change password" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Label fx:id="usernameLabel" onMouseClicked="#onChangeUsername" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36px;" text="Jane Cooper" GridPane.columnIndex="1" />
+                <Label fx:id="bioLabel" onMouseClicked="#onChangeBio" text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button maxHeight="50.0" mnemonicParsing="false" onMouseClicked="#onRequestChangePassword" text="Change password" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <padding>
                         <Insets left="20.0" right="20.0" />
                     </padding>
                 </Button>
-                <ImageView fx:id="profilePicView" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="3">
+                <ImageView fx:id="profilePicView" fitHeight="180.0" fitWidth="180.0" onMouseClicked="#onChangeProfilePic" onMouseEntered="#onHoverProfilePic" onMouseExited="#onExitHoverProfilePic" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="3">
                     <viewport>
                     </viewport>
                 </ImageView>
