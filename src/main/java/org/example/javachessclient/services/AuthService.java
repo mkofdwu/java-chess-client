@@ -13,8 +13,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 public class AuthService {
     // currently only supports windows else linux
@@ -24,7 +22,7 @@ public class AuthService {
     private static final String jwtFilePath = dataDir + "/token.txt"; // NOTE: stores the jwt unencrypted
 
     private static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://localhost:8081/api/")
+            .baseUrl("http://localhost:8081/api/auth/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
     private static final AuthApi authApi = retrofit.create(AuthApi.class);

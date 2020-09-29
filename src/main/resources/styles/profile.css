@@ -3,3 +3,23 @@
     -fx-pref-width: 40px;
     -fx-pref-height: 40px;
 }
+
+.text-field {
+    -fx-background-color: none;
+    -fx-padding: 0;
+}
+
+.text-area {
+    -fx-font-family: "Domaine Text Test";
+    -fx-font-size: 14px;
+    -fx-background-color: none;
+}
+
+.text-area .content {
+    -fx-padding: 0;
+    -fx-background-color: none;
+}
+
+.text-area:focused .content {
+    -fx-background-color: none;
+}

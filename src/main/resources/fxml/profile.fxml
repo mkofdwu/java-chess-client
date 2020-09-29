@@ -5,42 +5,44 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox prefHeight="700.0" prefWidth="760.0" HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.ProfileController">
     <children>
-        <GridPane hgap="50.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" />
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                <RowConstraints vgrow="SOMETIMES" />
-            </rowConstraints>
+        <HBox>
             <children>
-                <Label fx:id="usernameLabel" onMouseClicked="#onChangeUsername" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36px;" text="Jane Cooper" GridPane.columnIndex="1" />
-                <Label fx:id="bioLabel" onMouseClicked="#onChangeBio" text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Button maxHeight="50.0" mnemonicParsing="false" onMouseClicked="#onRequestChangePassword" text="Change password" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <padding>
-                        <Insets left="20.0" right="20.0" />
-                    </padding>
-                </Button>
                 <ImageView fx:id="profilePicView" fitHeight="180.0" fitWidth="180.0" onMouseClicked="#onChangeProfilePic" onMouseEntered="#onHoverProfilePic" onMouseExited="#onExitHoverProfilePic" pickOnBounds="true" preserveRatio="true" GridPane.rowSpan="3">
                     <viewport>
                     </viewport>
+               <HBox.margin>
+                  <Insets right="50.0" />
+               </HBox.margin>
                 </ImageView>
+                <VBox spacing="10.0">
+                    <children>
+                        <TextField fx:id="usernameInput" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper" GridPane.columnIndex="1" />
+                        <TextArea fx:id="bioInput" prefRowCount="3" promptText="Add bio..." text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <GridPane.margin>
+                                <Insets bottom="10.0" top="10.0" />
+                            </GridPane.margin>
+                        </TextArea>
+                        <Button maxHeight="50.0" mnemonicParsing="false" onMouseClicked="#onRequestChangePassword" text="Change password" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <padding>
+                                <Insets left="20.0" right="20.0" />
+                            </padding>
+                        </Button>
+                    </children>
+                </VBox>
             </children>
-            <VBox.margin>
-                <Insets bottom="50.0" />
-            </VBox.margin>
-        </GridPane>
+         <VBox.margin>
+            <Insets bottom="50.0" />
+         </VBox.margin>
+        </HBox>
         <Separator prefWidth="200.0">
             <VBox.margin>
                 <Insets bottom="20.0" />

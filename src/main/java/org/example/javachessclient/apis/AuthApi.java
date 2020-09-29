@@ -8,7 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface AuthApi {
-    @GET("auth")
+    @GET("user")
     Call<User> getUser(@Header("Authorization") String authorization);
 
     @POST("login")
