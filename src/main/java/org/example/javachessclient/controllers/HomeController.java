@@ -14,7 +14,7 @@ public class HomeController {
     @FXML
     public void onPlayRandom() {
         // TODO
-        // Store.router.push("/")
+        Store.router.push("/fxml/game.fxml");
     }
 
     @FXML

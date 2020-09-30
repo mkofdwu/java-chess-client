@@ -38,4 +38,9 @@ public class Router {
         Parent page = history.get(history.size() - 1);
         root.getChildren().set(childIndex, page);
     }
+
+    public void clearAndPush(String fxmlPath) {
+        history.clear();
+        push(fxmlPath);
+    }
 }

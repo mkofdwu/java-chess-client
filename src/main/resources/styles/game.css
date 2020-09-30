@@ -1,0 +1,18 @@
+.option-button {
+    -fx-background-color: white;
+    -fx-text-fill: -fx-text;
+}
+
+.tab {
+    -fx-background-color: -fx-less;
+    -fx-cursor: hand;
+}
+
+.tab.selected {
+    -fx-background-color: black;
+}
+
+.message-input {
+    -fx-background-color: -fx-lesser, black;
+    -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
+}

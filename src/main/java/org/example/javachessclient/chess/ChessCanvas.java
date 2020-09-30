@@ -11,9 +11,9 @@ import org.example.javachessclient.chess.models.pieces.Piece;
 import java.util.ArrayList;
 
 public class ChessCanvas {
-    public static final double boardSize = 800;
+    public static final double boardSize = 531;
     public static final double squareSize = boardSize / 8;
-    public static final double pieceIconSize = 50; // each piece image is 50x50 px
+    public static final double pieceIconSize = 41; // each piece image is 41x41 px
     public static final Color whiteColor = Color.valueOf("#dddddd");
     public static final Color blackColor = Color.valueOf("#c4c4c4");
 
