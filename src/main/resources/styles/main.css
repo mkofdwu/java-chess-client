@@ -37,6 +37,10 @@
     -fx-text-fill: -fx-text;
 }
 
+.text-field {
+    -fx-font-family: "Domaine Text Test";
+}
+
 .button {
     -fx-background-color: -fx-accent;
     -fx-text-fill: white;

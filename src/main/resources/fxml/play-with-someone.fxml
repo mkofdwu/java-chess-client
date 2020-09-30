@@ -12,27 +12,31 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: -fx-bg;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox HBox.hgrow="ALWAYS">
+      <VBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
          <padding>
-            <Insets left="100.0" right="200.0" top="70.0" />
+            <Insets bottom="260.0" left="100.0" right="200.0" top="70.0" />
          </padding>
          <children>
-            <fx:include source="../components/back-button.fxml" />
-            <Label prefWidth="200.0" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 40; -fx-text-fill: -fx-accent;" text="Play with someone" wrapText="true">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="70.0" />
-               </VBox.margin>
-            </Label>
-            <Separator maxWidth="100.0" prefWidth="100.0">
-               <VBox.margin>
-                  <Insets bottom="40.0" />
-               </VBox.margin>
-            </Separator>
-            <TextField promptText="Enter a username...">
-               <VBox.margin>
-                  <Insets bottom="70.0" />
-               </VBox.margin>
-            </TextField>
+            <VBox VBox.vgrow="ALWAYS">
+               <children>
+                  <fx:include source="../components/back-button.fxml" />
+                  <Label prefWidth="200.0" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 40; -fx-text-fill: -fx-accent;" text="Play with someone" wrapText="true">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="70.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Separator maxWidth="100.0" prefWidth="100.0">
+                     <VBox.margin>
+                        <Insets bottom="40.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <TextField promptText="Enter a username...">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
             <Button mnemonicParsing="false" text="Send request" />
          </children>
       </VBox>

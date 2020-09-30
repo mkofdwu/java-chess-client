@@ -15,7 +15,7 @@ public class Modal {
 
     public Modal(StackPane rootPane) {
         bgPane = new StackPane();
-        bgPane.setStyle("-fx-background-color: #000000bb");
+        bgPane.setStyle("-fx-background-color: #000000aa");
         bgPane.setVisible(false);
         rootPane.getChildren().add(bgPane);
     }
