@@ -7,5 +7,4 @@ public class Store {
     public static Router router;
     public static Modal modal;
     public static User user;
-    public static WebSocketStompClient stompClient;
 }
