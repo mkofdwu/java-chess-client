@@ -4,7 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import org.example.javachessclient.Store;
-import org.example.javachessclient.models.Game;
+import org.example.javachessclient.models.OngoingGame;
+import org.example.javachessclient.models.PastGame;
 import org.example.javachessclient.models.UserGame;
 import org.example.javachessclient.services.GameService;
 
@@ -21,7 +22,7 @@ public class HistoryController {
         List<UserGame> pastGames = Store.user.getPastGames();
         for (int i = 0; i < pastGames.size(); ++i) {
             UserGame userGame = pastGames.get(i);
-            Game game = GameService.getGame(userGame.getGameId());
+            PastGame game = (PastGame) GameService.getGame(userGame.getGameId());
             pastGamesGrid.add(new Label(userGame.getName()), i, 0);
             pastGamesGrid.add(new Label(formatGameResult(game.getResult())), i, 1);
             pastGamesGrid.add(new Label(gameDateFormat.format(game.getTimestamp())), i, 2);

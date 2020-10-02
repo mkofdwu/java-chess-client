@@ -3,6 +3,7 @@ package org.example.javachessclient;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
+import org.example.javachessclient.controllers.Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,18 @@ public class Router {
     public void push(String fxmlPath) {
         try {
             Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
+            root.getChildren().set(childIndex, page);
+            history.add(page);
+        } catch (IOException exception) {
+            System.out.println("Failed to load fxml: " + exception.getMessage());
+        }
+    }
+
+    public void push(String fxmlPath, Object data) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            ((Controller)loader.getController()).loadData(data);
+            Parent page = loader.load();
             root.getChildren().set(childIndex, page);
             history.add(page);
         } catch (IOException exception) {

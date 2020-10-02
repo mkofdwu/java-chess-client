@@ -5,18 +5,21 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.Chess;
-import org.example.javachessclient.socketgame.GameStompSessionHandler;
-import org.example.javachessclient.socketgame.SocketGameService;
+import org.example.javachessclient.chess.models.Move;
+import org.example.javachessclient.models.OngoingGame;
+import org.example.javachessclient.models.UserGame;
+import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.socketgame.models.Message;
-import org.example.javachessclient.socketgame.models.Move;
-import org.springframework.messaging.simp.stomp.StompSession;
+import org.example.javachessclient.socketgame.models.SocketMove;
 
-public class GameController {
+import java.text.ParseException;
+
+public class GameController implements Controller {
     private Chess chess;
-    private StompSession stompSession;
-    private boolean waiting;
     private String otherUserId;
+    private String gameId;
 
     @FXML
     private Label gameNameLabel;
@@ -35,34 +38,40 @@ public class GameController {
 
     public void initialize() {
         chess = new Chess();
-        stompSession = SocketGameService.createStompSession(this);
-        // TODO: show loading screen until game is found
-
+        Store.gameController = this;
         box.getChildren().add(0, chess.getCanvas());
     }
 
-    public void requestGame(String otherUserId) {
-        // if otherUserId == null, random
-        if (otherUserId == null) {
-            stompSession.send("/socket/game/random");
-        } else {
-            stompSession.send("/socket/game/")
+    @Override
+    public void loadData(Object data) {
+        UserGame userGame = (UserGame) data;
+        OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
+        otherUserId = userGame.getIsWhite() ? game.getBlack() : game.getWhite();
+        gameId = game.getId();
+        try {
+            gameNameLabel.setText(userGame.getName());
+            chess.loadFEN(game.getFenPosition());
+            // TODO: more loading based on the game object
+        } catch (ParseException exception) {
+            Store.modal.showMessage("Error", "Error parsing fen string: " + game.getFenPosition());
         }
     }
 
-    public void onSocketNewGame(String otherUserId) {
-
-    }
-
-    public void onSocketMove(Move move) {
-
+    public void onSocketMove(SocketMove socketMove) {
+        // check if move is made in THIS game
+        if (socketMove.getGameId().equals(gameId)) {
+            chess.playSocketMove(socketMove);
+        }
     }
 
     public void onSocketMessage(Message message) {
+        if (message.getGameId().equals(gameId)) {
+            // TODO
+        }
     }
 
     public void onSocketError(Throwable throwable) {
-        // TODO: modal error message
+        Store.modal.showMessage("Error", "An unexpected websocket error has occurred: " + throwable.getMessage());
     }
 
     @FXML

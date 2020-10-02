@@ -11,11 +11,11 @@ import java.util.concurrent.ExecutionException;
 public class SocketGameService {
     private static final String socketServerUrl = "http://localhost:8081/api/socket/game/";
 
-    public static StompSession createStompSession(GameController gameController) {
+    public static StompSession createStompSession() {
         try {
             WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
             stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-            return stompClient.connect(socketServerUrl, new GameStompSessionHandler(gameController)).get();
+            return stompClient.connect(socketServerUrl, new GameStompSessionHandler()).get();
         } catch (InterruptedException | ExecutionException exception) {
             System.out.println("Failed to connect to socket server: " + exception.getMessage());
             return null;

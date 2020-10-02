@@ -3,19 +3,23 @@ package org.example.javachessclient.models;
 import java.util.Date;
 import java.util.List;
 
-public class Game {
+public class OngoingGame {
     private String _id;
     private String white;
     private String black;
     private List<List<Integer>> moves; // in the format [ (file1, rank1, file2, rank2) ]
-    private int result; // 1 - white wins, -1 - black wins, 0 - draw
+    private String fenPosition; // includes game flags
     private Date timestamp;
 
-    public Game() {
+    public OngoingGame() {
     }
 
     public String getId() {
         return _id;
+    }
+
+    public void setId(String _id) {
+        this._id = _id;
     }
 
     public String getWhite() {
@@ -42,12 +46,12 @@ public class Game {
         this.moves = moves;
     }
 
-    public int getResult() {
-        return result;
+    public String getFenPosition() {
+        return fenPosition;
     }
 
-    public void setResult(int result) {
-        this.result = result;
+    public void setFenPosition(String fenPosition) {
+        this.fenPosition = fenPosition;
     }
 
     public Date getTimestamp() {
@@ -56,14 +60,5 @@ public class Game {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "Game{" +
-                "_id='" + _id + '\'' +
-                ", white='" + white + '\'' +
-                ", black='" + black + '\'' +
-                '}';
     }
 }

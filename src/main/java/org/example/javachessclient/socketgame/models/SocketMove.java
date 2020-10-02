@@ -1,12 +1,23 @@
 package org.example.javachessclient.socketgame.models;
 
-public class Move {
+public class SocketMove {
+    private String gameId;
     private int fromFile;
     private int fromRank;
     private int toFile;
     private int toRank;
+    private String updatedFenPosition; // temporary solution but may pose security concerns
 
-    public Move() {}
+    public SocketMove() {
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
 
     public int getFromFile() {
         return fromFile;
@@ -38,5 +49,13 @@ public class Move {
 
     public void setToRank(int toRank) {
         this.toRank = toRank;
+    }
+
+    public String getUpdatedFenPosition() {
+        return updatedFenPosition;
+    }
+
+    public void setUpdatedFenPosition(String updatedFenPosition) {
+        this.updatedFenPosition = updatedFenPosition;
     }
 }

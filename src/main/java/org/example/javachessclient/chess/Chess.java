@@ -8,6 +8,7 @@ import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
+import org.example.javachessclient.socketgame.models.SocketMove;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -42,10 +43,9 @@ public class Chess {
         } catch (ParseException e) {
             System.out.println("Chess: failed to parse starting position: " + e.getMessage());
         }
-        chessCanvas.redrawBoard();
     }
 
-    private void loadFEN(String fen) throws ParseException {
+    public void loadFEN(String fen) throws ParseException {
         Matcher matcher = fenRegexPattern.matcher(fen);
         if (!matcher.find()) {
             throw new ParseException("Invalid FEN string", 0);
@@ -123,6 +123,8 @@ public class Chess {
 
         // fullmove number
         fullmoveNumber = Integer.parseInt(matcher.group("fullmoveNumber"));
+
+        chessCanvas.redrawBoard();
     }
 
     // player input
@@ -283,9 +285,21 @@ public class Chess {
         return true;
     }
 
-    // chess utils
+    public void playSocketMove(SocketMove move) {
+        // todo play a move received from the other player
+        int fromFile = move.getFromFile();
+        int fromRank = move.getFromRank();
+        int toFile = move.getToFile();
+        int toRank = move.getToRank();
+        new Move(
+                pieceAt(move.getFromFile(), move.getFromRank()),
+                new Square(fromFile, fromRank),
+                new Square(toFile, toRank),
 
-    private void playMove(Move move) {
+                );
+    }
+
+    public void playMove(Move move) {
         // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
         Piece piece = move.getPiece();
@@ -340,7 +354,7 @@ public class Chess {
         chessCanvas.redrawSquare(square);
     }
 
-    private void undoMove() {
+    public void undoMove() {
         Move move = recordedMoves.remove(recordedMoves.size() - 1);
         Piece piece = move.getPiece();
         Square fromSquare = move.getFromSquare();

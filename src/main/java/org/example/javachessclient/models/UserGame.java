@@ -3,15 +3,15 @@ package org.example.javachessclient.models;
 public class UserGame {
     private String gameId;
     private String name;
-    private Boolean side; // which side the user was playing on, 0 - black, 1 - white
+    private Boolean isWhite; // which side the user was playing on, 0 - black, 1 - white
 
     public UserGame() {
     }
 
-    public UserGame(String gameId, String name, Boolean side) {
+    public UserGame(String gameId, String name, Boolean isWhite) {
         this.gameId = gameId;
         this.name = name;
-        this.side = side;
+        this.isWhite = isWhite;
     }
 
     public String getGameId() {
@@ -26,11 +26,11 @@ public class UserGame {
         this.name = name;
     }
 
-    public Boolean getSide() {
-        return side;
+    public Boolean getIsWhite() {
+        return isWhite;
     }
 
-    public void setSide(Boolean side) {
-        this.side = side;
+    public void setIsWhite(Boolean isWhite) {
+        this.isWhite = isWhite;
     }
 }

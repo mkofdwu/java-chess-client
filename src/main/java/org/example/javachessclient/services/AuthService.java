@@ -33,7 +33,8 @@ public class AuthService {
             BufferedReader br = new BufferedReader(new FileReader(jwtFilePath));
             String token = br.readLine();
             br.close();
-            Response<User> response = authApi.getUser("Bearer " + token).execute();
+            Store.token = token;
+            Response<User> response = authApi.getUser().execute();
             if (response.body() == null) {
                 return false;
             }

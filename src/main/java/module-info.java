@@ -4,6 +4,7 @@ module org.example.javachessclient {
     requires java.sql; // required by retrofit2.converter.gson
     requires retrofit2;
     requires retrofit2.converter.gson;
+    requires okhttp3;
     requires spring.websocket;
     requires spring.messaging;
 

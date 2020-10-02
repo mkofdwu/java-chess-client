@@ -9,12 +9,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.example.javachessclient.models.ModalCallback;
 
 public class Modal {
-    private final StackPane bgPane;
+    private final Pane bgPane;
 
     public Modal(StackPane rootPane) {
-        bgPane = new StackPane();
+        bgPane = new Pane();
         bgPane.setStyle("-fx-background-color: #000000aa");
         bgPane.setVisible(false);
         rootPane.getChildren().add(bgPane);
@@ -22,7 +23,6 @@ public class Modal {
 
     public void show(Parent parent) {
         bgPane.getChildren().add(parent);
-        StackPane.setAlignment(parent, Pos.CENTER);
         bgPane.setVisible(true);
     }
 
@@ -58,5 +58,10 @@ public class Modal {
         );
 
         show(modal);
+    }
+
+    public void showQuestion(String title, String message, String[] options, ModalCallback cb) {
+        // TODO
+
     }
 }

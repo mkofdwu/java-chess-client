@@ -9,7 +9,7 @@ import retrofit2.http.*;
 
 public interface AuthApi {
     @GET("user")
-    Call<User> getUser(@Header("Authorization") String authorization);
+    Call<User> getUser();
 
     @POST("login")
     Call<TokenAuthResponse> login(@Body LoginDetails loginDetails);
