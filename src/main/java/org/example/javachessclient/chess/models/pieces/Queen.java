@@ -20,7 +20,7 @@ public class Queen extends Piece {
     public ArrayList<Move> findAvailableMoves() {
         ArrayList<Move> available = chess.diagonalMoves(this);
         available.addAll(chess.lineMoves(this));
-        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 

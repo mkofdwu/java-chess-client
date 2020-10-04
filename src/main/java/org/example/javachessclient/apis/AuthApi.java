@@ -8,12 +8,12 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface AuthApi {
-    @GET("user")
+    @GET("auth/user")
     Call<User> getUser();
 
-    @POST("login")
+    @POST("auth/login")
     Call<TokenAuthResponse> login(@Body LoginDetails loginDetails);
 
-    @POST("register")
+    @POST("auth/register")
     Call<TokenAuthResponse> register(@Body RegisterDetails registerDetails);
 }

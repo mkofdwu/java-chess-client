@@ -8,6 +8,7 @@ import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
+import org.example.javachessclient.models.UserMoveCallback;
 import org.example.javachessclient.socketgame.models.SocketMove;
 
 import java.text.ParseException;
@@ -16,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Chess {
-    public static final String startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final Pattern fenRegexPattern = Pattern.compile("(?<piecePlacement>[pnbrqkPNBRQK1-8/]+) (?<activeColor>w|b) (?<cannotCastle>-)?(?<wck>K)?(?<wcq>Q)?(?<bck>k)?(?<bcq>q)? (?<enPassantSquare>-|[a-h][1-8]) (?<halfmoveClock>\\d+) (?<fullmoveNumber>\\d+)");
 
     private final ChessCanvas chessCanvas;
@@ -34,15 +34,12 @@ public class Chess {
     private Square selectedSquare;
     private ArrayList<Move> availableMoves; // of the selected piece
 
+    // for socket
+    private UserMoveCallback onUserMove;
+
     public Chess() {
-        // start a new game
         chessCanvas = new ChessCanvas(this);
         recordedMoves = new ArrayList<>();
-        try {
-            loadFEN(startingFEN);
-        } catch (ParseException e) {
-            System.out.println("Chess: failed to parse starting position: " + e.getMessage());
-        }
     }
 
     public void loadFEN(String fen) throws ParseException {
@@ -127,63 +124,139 @@ public class Chess {
         chessCanvas.redrawBoard();
     }
 
+    public String toFEN() {
+        // convert the current position to FEN
+        StringBuilder fen = new StringBuilder();
+        int emptySpaces = 0;
+        for (ArrayList<Piece> rankList : board) {
+            for (Piece piece : rankList) {
+                if (piece == null) emptySpaces++;
+                else {
+                    if (emptySpaces > 0) {
+                        fen.append(emptySpaces);
+                        emptySpaces = 0;
+                    }
+                    if (piece.getClass() == Pawn.class) {
+                        fen.append(piece.getIsWhite() ? 'P' : 'p');
+                    } else if (piece.getClass() == Knight.class) {
+                        fen.append(piece.getIsWhite() ? 'N' : 'n');
+                    } else if (piece.getClass() == Bishop.class) {
+                        fen.append(piece.getIsWhite() ? 'B' : 'b');
+                    } else if (piece.getClass() == Rook.class) {
+                        fen.append(piece.getIsWhite() ? 'R' : 'r');
+                    } else if (piece.getClass() == Queen.class) {
+                        fen.append(piece.getIsWhite() ? 'Q' : 'q');
+                    } else if (piece.getClass() == King.class) {
+                        fen.append(piece.getIsWhite() ? 'K' : 'k');
+                    }
+                }
+            }
+            if (emptySpaces > 0) {
+                fen.append(emptySpaces);
+                emptySpaces = 0;
+            }
+            fen.append('/');
+        }
+
+        fen.append(whiteToMove ? " w " : " b ");
+
+        if (!whiteCanCastleKingside && !whiteCanCastleQueenside && !blackCanCastleKingside && !blackCanCastleQueenside) {
+            fen.append('-');
+        } else {
+            if (whiteCanCastleKingside) fen.append('K');
+            if (whiteCanCastleQueenside) fen.append('Q');
+            if (blackCanCastleKingside) fen.append('k');
+            if (blackCanCastleQueenside) fen.append('q');
+        }
+
+        fen.append(' ' + enPassantSquare.toString() + ' ' + halfmoveClock + ' ' + fullmoveNumber);
+
+        return fen.toString();
+    }
+
+    public String toPgn() {
+        // TODO
+        // convert the current game to a string with the pgn notation
+        return "";
+    }
+
+    public void rotateBoard() {
+        chessCanvas.rotateBoard();
+    }
+
     // player input
 
     public void onSquareClicked(Square square) {
         if (selectedSquare == null) {
             // select first piece
-
-            selectedSquare = square;
-            chessCanvas.highlightSquare(selectedSquare);
-
-            Piece piece = pieceAt(square);
-            if (piece != null) {
-                availableMoves = piece.findAvailableMoves();
-                chessCanvas.highlightAvailableMoves(availableMoves);
-            }
+            onFirstSquareSelected(square);
         } else {
             // select second piece
+            onSecondSquareSelected(square);
+        }
+    }
 
-            Move move = null;
-            if (availableMoves == null) {
-                // selected destination first then piece to move
-                Piece piece = pieceAt(square);
-                if (piece == null) availableMoves = new ArrayList<>();
-                else availableMoves = piece.findAvailableMoves();
-            }
-            // find move from selected square
-            for (Move availableMove : availableMoves) {
-                if (availableMove.getToSquare() == square) {
-                    move = availableMove;
-                    break;
-                }
-            }
+    public void onFirstSquareSelected(Square square) {
+        selectedSquare = square;
+        chessCanvas.highlightSquare(selectedSquare);
+        Piece piece = pieceAt(square);
+        if (piece != null && piece.getIsWhite() == whiteToMove) {
+            availableMoves = piece.findAvailableMoves();
+            chessCanvas.markAvailableMoves(availableMoves);
+        }
+    }
 
-            try {
-                if (move != null)
-                    playMove(move);
-            } catch (InvalidMoveException e) {
-                // do nothing
-            } finally {
-                chessCanvas.redrawSquare(selectedSquare); // also clears the outline of the first selected square
-                for (Move availableMove : availableMoves) {
-                    // clear highlighted available moves
-                    chessCanvas.redrawSquare(availableMove.getToSquare());
-                }
-                selectedSquare = null;
-                availableMoves = null;
+    public void onSecondSquareSelected(Square square) {
+        Move move = null;
+        if (availableMoves == null) {
+            // selected destination first then piece to move
+            Piece piece = pieceAt(square);
+            if (piece == null) availableMoves = new ArrayList<>();
+            else {
+                chessCanvas.redrawSquare(selectedSquare);
+                availableMoves = piece.findAvailableMoves();
+                Square temp = selectedSquare;
+                selectedSquare = square;
+                square = temp; // `square` is basically square to move to in this situation, while selectedSquare is fromSquare
             }
+        }
+        // find move from selected square
+        for (Move availableMove : availableMoves) {
+            if (availableMove.getToSquare().equals(square)) {
+                move = availableMove;
+                break;
+            }
+        }
+
+        if (move != null) {
+            playMove(move);
+            if (onUserMove != null)
+                onUserMove.callback(move);
+        }
+
+        chessCanvas.redrawSquare(selectedSquare); // also clears the outline of the first selected square
+        for (Move availableMove : availableMoves) {
+            // clear highlighted available moves
+            chessCanvas.redrawSquare(availableMove.getToSquare());
+        }
+        selectedSquare = null;
+        availableMoves = null;
+
+        if (move == null && pieceAt(square) != null && pieceAt(square).getIsWhite() == whiteToMove) {
+            // invalid move, but selecting another piece
+            onFirstSquareSelected(square);
         }
     }
 
     // board utils
 
     public Piece pieceAt(int file, int rank) {
+        if (file < 0 || 7 < file || rank < 0 || 7 < rank) return null;
         return board.get(rank).get(file);
     }
 
     public Piece pieceAt(Square square) {
-        return board.get(square.getRank()).get(square.getFile());
+        return pieceAt(square.getFile(), square.getRank());
     }
 
     public Piece removeAt(int file, int rank) {
@@ -225,8 +298,8 @@ public class Chess {
     private void addMovesInDir(Piece piece, ArrayList<Move> available, int fromFile, int fromRank, int fileDir, int rankDir) {
         // automatically refactored
         Square fromSquare = new Square(fromFile, fromRank);
-        for (int file = fromFile + fileDir, rank = fromRank + rankDir; 0 <= file && file < 8 && 0 <= rank && rank < 8; file += fileDir, rank += rankDir) {
-            Piece landingPiece = board.get(file).get(rank);
+        for (int file = fromFile + fileDir, rank = fromRank + rankDir; 0 <= file && file <= 7 && 0 <= rank && rank <= 7; file += fileDir, rank += rankDir) {
+            Piece landingPiece = board.get(rank).get(file);
             if (landingPiece == null) {
                 available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal));
             } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
@@ -246,7 +319,7 @@ public class Chess {
     }
 
     public boolean activeKingInCheck() {
-        return squareIsAttacked(activeKing().getSquare());
+        return squareIsAttacked(activeKing().getSquare(), !whiteToMove);
     }
 
     private King activeKing() {
@@ -260,13 +333,15 @@ public class Chess {
         throw new InvalidBoardException();
     }
 
-    public boolean squareIsAttacked(Square square) {
+    public boolean squareIsAttacked(Square square, boolean byWhite) {
         for (ArrayList<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 // FIXME: add `canMoveTo(Square square) -> MoveType` if this is too slow
-                for (Move availableMove : piece.findAvailableMoves()) {
-                    if (availableMove.getType() == MoveType.capture && availableMove.getToSquare() == square) {
-                        return true;
+                if (piece != null && piece.getIsWhite() == byWhite) {
+                    for (Move availableMove : piece.findAvailableMoves()) {
+                        if (availableMove.getType() == MoveType.capture && availableMove.getToSquare() == square) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -285,18 +360,18 @@ public class Chess {
         return true;
     }
 
-    public void playSocketMove(SocketMove move) {
-        // todo play a move received from the other player
-        int fromFile = move.getFromFile();
-        int fromRank = move.getFromRank();
-        int toFile = move.getToFile();
-        int toRank = move.getToRank();
-        new Move(
-                pieceAt(move.getFromFile(), move.getFromRank()),
+    public void playSocketMove(SocketMove socketMove) {
+        // play a move received from the other player
+        int fromFile = socketMove.getFromFile();
+        int fromRank = socketMove.getFromRank();
+        int toFile = socketMove.getToFile();
+        int toRank = socketMove.getToRank();
+        playMove(new Move(
+                pieceAt(socketMove.getFromFile(), socketMove.getFromRank()),
                 new Square(fromFile, fromRank),
                 new Square(toFile, toRank),
-
-                );
+                Enum.valueOf(MoveType.class, socketMove.getMoveType())
+        ));
     }
 
     public void playMove(Move move) {
@@ -314,8 +389,9 @@ public class Chess {
         }
 
         // check for pawn promotion (show modal)
-        if (piece instanceof Pawn && square.getRank() == (piece.getIsWhite() ? 0 : 7)) {
-            Store.modal.show(new PromotionOptionsModal().buildPane());
+        if ((piece instanceof Pawn) && square.getRank() == (piece.getIsWhite() ? 0 : 7)) {
+            System.out.println("valid promotion");
+            // Store.modal.show(new PromotionOptionsModal().buildModal());
         }
 
         // check for end of game
@@ -340,6 +416,8 @@ public class Chess {
             return;
         }
 
+        recordedMoves.add(move);
+
         // update game flags based on move
         updateCastlingAvailability();
         updateEnPassantSquare();
@@ -347,7 +425,6 @@ public class Chess {
         updateFiftyMoveRule();
 
         // the last step of completing the move
-        recordedMoves.add(move);
         whiteToMove = !whiteToMove;
 
         // redraw canvas after all computation is done
@@ -423,14 +500,6 @@ public class Chess {
         // TODO
     }
 
-    // misc tasks
-
-    public String toPgn() {
-        // TODO
-        // convert the current game to a string with the pgn notation
-        return "";
-    }
-
     // getters and setters
 
     public Canvas getCanvas() {
@@ -463,5 +532,9 @@ public class Chess {
 
     public int getFullmoveNumber() {
         return fullmoveNumber;
+    }
+
+    public void setOnUserMove(UserMoveCallback onUserMove) {
+        this.onUserMove = onUserMove;
     }
 }

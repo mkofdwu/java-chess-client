@@ -66,7 +66,7 @@
         <HBox>
             <children>
                 <VBox prefWidth="230.0" />
-                <VBox HBox.hgrow="ALWAYS">
+                <VBox prefWidth="230.0">
                     <children>
                         <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20px;" text="Settings">
                             <VBox.margin>
@@ -109,6 +109,21 @@
                         </HBox>
                     </children>
                 </VBox>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20px;" text="Options">
+                     <VBox.margin>
+                        <Insets bottom="14.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label onMouseClicked="#onRequestLogout" style="-fx-text-fill: -fx-red; -fx-font-size: 16;" text="Logout">
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label onMouseClicked="#onRequestDeleteAccount" style="-fx-text-fill: -fx-red; -fx-font-size: 16;" text="Delete account" />
+               </children>
+            </VBox>
             </children>
         </HBox>
     </children>

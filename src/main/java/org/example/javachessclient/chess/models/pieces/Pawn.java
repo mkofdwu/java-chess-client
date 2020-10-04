@@ -23,10 +23,11 @@ public class Pawn extends Piece {
         ArrayList<Move> available = new ArrayList<>();
         int fromFile = square.getFile();
         int fromRank = square.getRank();
+        int dir = isWhite ? -1 : 1;
 
         // check for normal moves
-        for (int rankDir = 1; rankDir < 3; ++rankDir) {
-            Square newSquare = new Square(fromFile, fromRank + rankDir);
+        for (int ranks = 1; ranks < 3; ++ranks) {
+            Square newSquare = new Square(fromFile, fromRank + dir * ranks);
             Piece piece = chess.pieceAt(newSquare);
             if (piece == null) available.add(new Move(this, square, newSquare, MoveType.normal));
             else break;
@@ -34,7 +35,7 @@ public class Pawn extends Piece {
 
         // check for capture
         for (int fileDir : new int[]{-1, 1}) {
-            Square newSquare = new Square(fromFile + fileDir, fromRank);
+            Square newSquare = new Square(fromFile + fileDir, fromRank + dir);
             Piece piece = chess.pieceAt(newSquare);
             if (piece != null && piece.getIsWhite() != isWhite) {
                 available.add(new Move(this, square, newSquare, MoveType.capture));
@@ -43,7 +44,7 @@ public class Pawn extends Piece {
 
         available.addAll(findEnPassantMoves());
 
-        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 
@@ -55,7 +56,7 @@ public class Pawn extends Piece {
             int enPassantRank = enPassantSquare.getRank();
             int file = square.getFile();
             int rank = square.getRank();
-            int rankDir = isWhite ? -1 : 1; // fixme ?
+            int rankDir = isWhite ? -1 : 1;
             if (rank + rankDir == enPassantRank && Math.abs(file - enPassantFile) == 1) {
                 available.add(new Move(this, square, enPassantSquare, MoveType.enPassant));
             }

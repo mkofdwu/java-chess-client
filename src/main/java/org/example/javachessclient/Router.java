@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import org.example.javachessclient.controllers.Controller;
+import org.example.javachessclient.controllers.GameController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ public class Router {
     public void push(String fxmlPath, Object data) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            ((Controller)loader.getController()).loadData(data);
             Parent page = loader.load();
+            ((Controller) loader.getController()).loadData(data);
             root.getChildren().set(childIndex, page);
             history.add(page);
         } catch (IOException exception) {

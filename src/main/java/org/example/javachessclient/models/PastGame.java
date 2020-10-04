@@ -8,7 +8,7 @@ public class PastGame {
     private String white;
     private String black;
     private List<List<Integer>> moves; // in the format [ (file1, rank1, file2, rank2) ]
-    private int result; // 1 - white wins, -1 - black wins, 0 - draw
+    private int result; // 0 - draw, 1 - white wins, 2 - black wins
     private Date timestamp;
 
     public PastGame() {

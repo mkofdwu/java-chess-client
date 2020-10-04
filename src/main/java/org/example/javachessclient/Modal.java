@@ -21,8 +21,10 @@ public class Modal {
         rootPane.getChildren().add(bgPane);
     }
 
-    public void show(Parent parent) {
-        bgPane.getChildren().add(parent);
+    public void show(VBox modal) {
+        modal.layoutXProperty().bind(bgPane.widthProperty().subtract(modal.widthProperty()).divide(2));
+        modal.layoutYProperty().bind(bgPane.heightProperty().subtract(modal.heightProperty()).divide(2));
+        bgPane.getChildren().add(modal);
         bgPane.setVisible(true);
     }
 
@@ -33,27 +35,38 @@ public class Modal {
     public void showMessage(String title, String message) {
         // FIXME
         VBox modal = new VBox();
-        modal.setMaxWidth(400);
-        modal.setMaxHeight(200);
-        modal.setPadding(new Insets(20, 20, 20, 20));
+        modal.setPrefWidth(400);
+        modal.setPadding(new Insets(20, 24, 20, 24));
         modal.setStyle("-fx-background-color: white; -fx-background-radius: 5px;");
 
+        VBox content = new VBox();
+        content.setAlignment(Pos.TOP_LEFT);
         Label titleLabel = new Label(title);
-        titleLabel.setFont(new Font("Domaine Display Test", 18));
+        titleLabel.setFont(new Font("Domaine Display Test", 20));
         titleLabel.setStyle("-fx-font-weight: bold;");
-
+        VBox.setMargin(titleLabel, new Insets(0, 0, 10, 0));
         Label messageLabel = new Label(message);
+        messageLabel.setWrapText(true);
         messageLabel.setFont(new Font("Domaine Display Test", 14));
+        content.getChildren().addAll(titleLabel, messageLabel);
+        VBox.setMargin(content, new Insets(0, 0, 40, 0));
 
         VBox optionsBox = new VBox();
-        optionsBox.setAlignment(Pos.CENTER_LEFT);
+        optionsBox.setAlignment(Pos.BOTTOM_RIGHT);
         Button closeBtn = new Button("Close");
+        closeBtn.setStyle("-fx-background-color: -fx-accent, white;" +
+                "-fx-background-insets: 0 -1 -2 -1, 0 -1 0 -1;" +
+                "-fx-background-radius: 0;" +
+                "-fx-text-fill: -fx-accent;" +
+                "-fx-font-size: 14px;" +
+                "-fx-font-family: \"Domaine Text Test\";" +
+                "-fx-padding: 0;" +
+                "-fx-cursor: hand;");
         closeBtn.setOnAction((e) -> hide());
         optionsBox.getChildren().add(closeBtn);
 
         modal.getChildren().addAll(
-                titleLabel,
-                messageLabel,
+                content,
                 optionsBox
         );
 

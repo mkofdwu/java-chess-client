@@ -1,11 +1,17 @@
 package org.example.javachessclient.socketgame.models;
 
-public class Message {
+public class SocketMessage {
     private String gameId;
     private String userId;
     private String text;
 
-    public Message() {
+    public SocketMessage() {
+    }
+
+    public SocketMessage(String gameId, String userId, String text) {
+        this.gameId = gameId;
+        this.userId = userId;
+        this.text = text;
     }
 
     public String getGameId() {

@@ -19,7 +19,7 @@ public class Bishop extends Piece {
     @Override
     public ArrayList<Move> findAvailableMoves() {
         ArrayList<Move> available = chess.diagonalMoves(this);
-        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 

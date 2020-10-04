@@ -60,16 +60,8 @@
         </columnConstraints>
         <rowConstraints>
           <RowConstraints prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
-          <RowConstraints prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
-          <RowConstraints prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Devon Lane" />
-            <Label text="Your turn" GridPane.columnIndex="1" />
-            <Label text="Jacob Jones" GridPane.rowIndex="1" />
-            <Label text="Annette Black" GridPane.rowIndex="2" />
-            <Label GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Your turn" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <Label layoutX="60.0" layoutY="285.0" styleClass="group-header" text="Game requests" />
@@ -86,31 +78,8 @@
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Jane Cooper" />
-            <Label layoutX="10.0" layoutY="15.0" text="Marvin McKinney" GridPane.rowIndex="1" />
-            <ImageView pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-               <image>
-                  <Image url="@../icons/accept.png" />
-               </image>
-            </ImageView>
-            <ImageView pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <image>
-                  <Image url="@../icons/accept.png" />
-               </image>
-            </ImageView>
-            <ImageView pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
-               <image>
-                  <Image url="@../icons/reject.png" />
-               </image>
-            </ImageView>
-            <ImageView pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <image>
-                  <Image url="@../icons/reject.png" />
-               </image>
-            </ImageView>
          </children>
       </GridPane>
    </children>

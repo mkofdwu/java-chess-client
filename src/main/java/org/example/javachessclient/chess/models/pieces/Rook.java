@@ -19,7 +19,7 @@ public class Rook extends Piece {
     @Override
     public ArrayList<Move> findAvailableMoves() {
         ArrayList<Move> available = chess.lineMoves(this);
-        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 

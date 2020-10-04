@@ -16,3 +16,15 @@
     -fx-background-color: -fx-lesser, black;
     -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
 }
+
+.record-text-area {
+    -fx-text-fill: white;
+    -fx-background-color: black;
+    -fx-background-radius: 0;
+}
+
+.record-text-area .content {
+    -fx-padding: 20px;
+    -fx-background-color: black;
+    -fx-background-radius: 0;
+}

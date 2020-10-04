@@ -34,9 +34,9 @@ public class LayoutController {
 
     private void loadPage(int i) {
         try {
-            Parent page = FXMLLoader.load(getClass().getResource(pageFxml[i]));
             allNavLabels[selectedIndex].getStyleClass().remove("selected");
             allNavLabels[i].getStyleClass().add("selected");
+            Parent page = FXMLLoader.load(getClass().getResource(pageFxml[i]));
             rootHBox.getChildren().set(1, page);
             selectedIndex = i;
         } catch (IOException exception) {

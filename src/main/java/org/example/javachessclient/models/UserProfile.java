@@ -1,11 +1,20 @@
 package org.example.javachessclient.models;
 
 public class UserProfile {
+    private String id;
     private String username;
     private String profilePic;
     private String bio;
 
     public UserProfile() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {

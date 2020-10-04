@@ -8,15 +8,18 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface GameApi {
-    @GET("{gameId}")
+    @GET("game/{gameId}")
     Call<OngoingGame> getGame(@Path("gameId") String gameId);
 
-    @POST("random")
+    @POST("game/random")
     Call<Void> randomGame();
 
-    @POST("request")
+    @POST("game/random/cancel")
+    Call<Void> cancelSearchForRandomGame();
+
+    @POST("game/request")
     Call<Void> requestGame(@Query("otherUserId") String otherUserId);
 
-    @POST("request-response")
+    @POST("game/request-response")
     Call<Void> respondToGameRequest(@Query("otherUserId") String otherUserId, @Query("accept") boolean accept);
 }

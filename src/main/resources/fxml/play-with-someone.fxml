@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: -fx-bg;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: -fx-bg;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.PlayWithSomeoneController">
    <children>
       <VBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
          <padding>
@@ -30,14 +30,14 @@
                         <Insets bottom="40.0" />
                      </VBox.margin>
                   </Separator>
-                  <TextField promptText="Enter a username...">
+                  <TextField fx:id="usernameInput" promptText="Enter a username...">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </TextField>
                </children>
             </VBox>
-            <Button mnemonicParsing="false" text="Send request" />
+            <Button mnemonicParsing="false" onMouseClicked="#onSendRequest" text="Send request" />
          </children>
       </VBox>
       <Pane prefWidth="300.0" style="-fx-background-color: -fx-accent;" />

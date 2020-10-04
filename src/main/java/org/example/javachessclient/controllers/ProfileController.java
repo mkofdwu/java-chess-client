@@ -12,6 +12,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.models.UpdateProfileDetails;
+import org.example.javachessclient.services.AuthService;
 import org.example.javachessclient.services.UserService;
 
 import java.io.File;
@@ -86,6 +87,37 @@ public class ProfileController {
     @FXML
     void onRequestChangePassword() {
         Store.router.push("/fxml/change-password.fxml");
+    }
+
+    @FXML
+    void onRequestLogout() {
+        Store.modal.showQuestion(
+                "Are you sure?",
+                "Log out out of your account?",
+                new String[]{"Yes", "No"},
+                (option) -> {
+                    if (option.equals("Yes")) {
+                        AuthService.logout();
+                        Store.router.clearAndPush("/fxml/landing.fxml");
+                    }
+                }
+        );
+    }
+
+    @FXML
+    void onRequestDeleteAccount() {
+        Store.modal.showQuestion(
+                "Are you sure?",
+                "Deleting your account is irreversible!",
+                new String[]{"Yes", "No"},
+                (option) -> {
+                    if (option.equals("Yes")) {
+                        AuthService.logout();
+                        UserService.deleteUser();
+                        Store.router.clearAndPush("/fxml/landing.fxml");
+                    }
+                }
+        );
     }
 }
 

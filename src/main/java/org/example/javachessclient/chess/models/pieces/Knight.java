@@ -41,7 +41,7 @@ public class Knight extends Piece {
             }
         }
 
-        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 

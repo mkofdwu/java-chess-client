@@ -5,6 +5,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -12,121 +13,105 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-      prefWidth="1000.0" spacing="40.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.javachessclient.controllers.GameController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" spacing="40.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.GameController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="40.0">
             <children>
-                <fx:include source="../components/back-button.fxml"/>
-                <Label fx:id="gameNameLabel"
-                       style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;"
-                       text="Jane Cooper - Benedict Yap"/>
+                <fx:include source="../components/back-button.fxml" />
+                <Label fx:id="gameNameLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper - Benedict Yap" />
             </children>
         </HBox>
-        <HBox fx:id="box" prefHeight="100.0" prefWidth="200.0"
-              style="-fx-effect: dropshadow(gaussian, #00000040, 50, 0, 0, 20);" VBox.vgrow="ALWAYS">
+        <HBox fx:id="box" prefHeight="100.0" prefWidth="200.0" style="-fx-effect: dropshadow(gaussian, #00000040, 50, 0, 0, 20);" VBox.vgrow="ALWAYS">
             <children>
+            <Rectangle fill="#ffffff00" height="531.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="531.0" />
                 <VBox HBox.hgrow="ALWAYS">
                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0"
-                              style="-fx-background-color: black;">
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: black;">
                             <children>
                                 <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label style="-fx-text-fill: white; -fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;"
-                                               text="Benedict Yap"/>
-                                        <Label style="-fx-text-fill: white;" text="No captured pieces"/>
+                                        <Label fx:id="blackUsernameLabel" style="-fx-text-fill: white; -fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;" text="Benedict Yap" />
+                                        <Label style="-fx-text-fill: white;" text="No captured pieces" />
                                     </children>
                                 </VBox>
-                                <Label style="-fx-text-fill: -fx-accent; -fx-font-size: 40;" text="3:31"/>
                             </children>
                             <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                             </padding>
                         </HBox>
                         <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                             <children>
-                                <Pane fx:id="recordPane" style="-fx-background-color: black;" visible="false"/>
-                                <VBox fx:id="chatPane" style="-fx-background-color: black;">
+                        <TextArea fx:id="recordTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="record-text-area" text="Test" />
+                                <VBox fx:id="chatPane" style="-fx-background-color: black;" visible="false">
                                     <children>
-                                        <VBox VBox.vgrow="ALWAYS"/>
-                                        <TextField promptText="Say something..." styleClass="message-input">
+                                        <VBox fx:id="messagesBox" VBox.vgrow="ALWAYS" />
+                                        <TextField fx:id="messageInput" onAction="#onSendMessage" promptText="Say something..." styleClass="message-input">
                                             <VBox.margin>
-                                                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0"/>
+                                                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                                             </VBox.margin>
                                         </TextField>
                                     </children>
                                 </VBox>
-                                <VBox fx:id="optionsPane" spacing="20.0" style="-fx-background-color: black;"
-                                      visible="false">
+                                <VBox fx:id="optionsPane" spacing="20.0" style="-fx-background-color: black;" visible="false">
                                     <padding>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                     </padding>
                                     <children>
-                                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                                                onMouseClicked="#onRequestResign" styleClass="option-button"
-                                                text="Resign"/>
-                                        <Button layoutX="30.0" layoutY="30.0" maxWidth="1.7976931348623157E308"
-                                                mnemonicParsing="false" onMouseClicked="#onRequestOfferDraw"
-                                                styleClass="option-button" text="Offer draw"/>
+                              <Button layoutX="30.0" layoutY="30.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onRotateBoard" styleClass="option-button" text="Rotate board" />
+                                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onRequestResign" styleClass="option-button" text="Resign" />
+                                        <Button layoutX="30.0" layoutY="30.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onRequestOfferDraw" styleClass="option-button" text="Offer draw" />
                                     </children>
                                 </VBox>
                             </children>
                         </StackPane>
                         <HBox>
                             <children>
-                                <Pane prefHeight="40.0" prefWidth="130.0" styleClass="tab">
+                                <Pane fx:id="recordTab" prefHeight="40.0" prefWidth="130.0">
                                     <children>
-                                        <ImageView layoutX="56.0" layoutY="11.0" pickOnBounds="true"
-                                                   preserveRatio="true">
+                                        <ImageView layoutX="56.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../icons/note.png"/>
+                                                <Image url="@../icons/note.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                           <styleClass>
+                              <String fx:value="tab" />
+                              <String fx:value="selected" />
+                           </styleClass>
+                                </Pane>
+                                <Pane fx:id="chatTab" prefHeight="40.0" prefWidth="129.0" styleClass="tab">
+                                    <children>
+                                        <ImageView layoutX="55.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../icons/chat.png" />
                                             </image>
                                         </ImageView>
                                     </children>
                                 </Pane>
-                                <Pane prefHeight="40.0" prefWidth="129.0">
+                                <Pane fx:id="optionsTab" prefHeight="40.0" prefWidth="130.0" styleClass="tab">
                                     <children>
-                                        <ImageView layoutX="55.0" layoutY="11.0" pickOnBounds="true"
-                                                   preserveRatio="true">
+                                        <ImageView layoutX="56.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../icons/chat.png"/>
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                    <styleClass>
-                                        <String fx:value="tab"/>
-                                        <String fx:value="selected"/>
-                                    </styleClass>
-                                </Pane>
-                                <Pane prefHeight="40.0" prefWidth="130.0" styleClass="tab">
-                                    <children>
-                                        <ImageView layoutX="56.0" layoutY="11.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <image>
-                                                <Image url="@../icons/more.png"/>
+                                                <Image url="@../icons/more.png" />
                                             </image>
                                         </ImageView>
                                     </children>
                                 </Pane>
                             </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0"
-                              style="-fx-background-color: white;">
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: white;">
                             <children>
                                 <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;"
-                                               text="Jane Cooper"/>
-                                        <Label text="No captured pieces"/>
+                                        <Label fx:id="whiteUsernameLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;" text="Jane Cooper" />
+                                        <Label text="No captured pieces" />
                                     </children>
                                 </VBox>
-                                <Label style="-fx-text-fill: -fx-accent; -fx-font-size: 40;" text="2.06"/>
                             </children>
                             <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                             </padding>
                         </HBox>
                     </children>
@@ -135,10 +120,10 @@
         </HBox>
     </children>
     <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
     <stylesheets>
-        <URL value="@../styles/main.css"/>
-        <URL value="@../styles/game.css"/>
+        <URL value="@../styles/main.css" />
+        <URL value="@../styles/game.css" />
     </stylesheets>
 </VBox>

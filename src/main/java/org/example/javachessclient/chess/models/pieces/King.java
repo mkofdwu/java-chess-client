@@ -37,7 +37,7 @@ public class King extends Piece {
 
         available.addAll(findCastlingMoves());
 
-        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 
@@ -72,7 +72,7 @@ public class King extends Piece {
             Square checkSquare = new Square(file, rank);
             Piece piece = chess.pieceAt(checkSquare);
             if (piece == null) {
-                if (chess.squareIsAttacked(checkSquare)) return false;
+                if (chess.squareIsAttacked(checkSquare, !isWhite))return false;
             } else return false;
         }
 

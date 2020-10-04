@@ -17,6 +17,8 @@ public class ChessCanvas {
     public static final Color whiteColor = Color.valueOf("#dddddd");
     public static final Color blackColor = Color.valueOf("#c4c4c4");
 
+    private boolean isRotate;
+
     private final Chess chess;
     private final Canvas canvas;
 
@@ -30,46 +32,57 @@ public class ChessCanvas {
         return canvas;
     }
 
+    private int applyRotation(int rank) {
+        return isRotate ? 7 - rank : rank;
+    }
+
     private void setupBindings() {
         canvas.setOnMousePressed(event -> {
-            Square square = new Square((int) (event.getX() / squareSize), (int) (event.getY() / squareSize));
+            int rank = applyRotation((int) (event.getY() / squareSize));
+            Square square = new Square((int) (event.getX() / squareSize), rank);
             chess.onSquareClicked(square);
         });
     }
 
-    public void highlightSquare(Square square) {
-        GraphicsContext context = canvas.getGraphicsContext2D();
-        context.strokeRect(square.getFile() * squareSize + 1, square.getRank() * squareSize + 1, squareSize - 2, squareSize - 2);
+    public void rotateBoard() {
+        isRotate = !isRotate;
+        redrawBoard();
     }
 
-    public void highlightAvailableMoves(ArrayList<Move> availableMoves) {
+    public void highlightSquare(Square square) {
         GraphicsContext context = canvas.getGraphicsContext2D();
-        context.setFill(Color.valueOf("#ff0000aa")); // temp FIXME
+        context.setLineWidth(2);
+        context.strokeRect(square.getFile() * squareSize + 2, applyRotation(square.getRank()) * squareSize + 2, squareSize - 4, squareSize - 4);
+    }
+
+    public void markAvailableMoves(ArrayList<Move> availableMoves) {
+        GraphicsContext context = canvas.getGraphicsContext2D();
+        context.setFill(Color.valueOf("#336a89"));
         for (Move move : availableMoves) {
             int file = move.getToSquare().getFile();
-            int rank = move.getToSquare().getRank();
-            // TEMP
-            context.fillOval(rank * squareSize + 10, file * squareSize + 10, squareSize - 20, squareSize - 20);
+            int rank = applyRotation(move.getToSquare().getRank());
+            context.fillOval(file * squareSize + 28, rank * squareSize + 28, 10, 10);
         }
     }
 
     public void redrawBoard() {
         for (int rank = 0; rank < 8; ++rank) {
             for (int file = 0; file < 8; ++file) {
-                redrawSquare(new Square(file, rank));
+                redrawSquare(new Square(file, applyRotation(rank)));
             }
         }
     }
 
     public void redrawSquare(Square square) {
+        int rank = applyRotation(square.getRank());
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.setFill(square.isWhite() ? whiteColor : blackColor);
-        context.fillRect(square.getFile() * squareSize, square.getRank() * squareSize, squareSize, squareSize);
+        context.fillRect(square.getFile() * squareSize, rank * squareSize, squareSize, squareSize);
         Piece piece = chess.pieceAt(square);
         if (piece != null) {
             Image pieceIcon = new Image(getClass().getResourceAsStream(piece.getIconFilePath()));
             double x = (square.getFile() + 0.5) * squareSize - pieceIconSize / 2;
-            double y = (square.getRank() + 0.5) * squareSize - pieceIconSize / 2;
+            double y = (rank + 0.5) * squareSize - pieceIconSize / 2;
             context.drawImage(pieceIcon, x, y);
         }
     }

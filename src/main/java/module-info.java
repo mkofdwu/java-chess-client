@@ -7,9 +7,10 @@ module org.example.javachessclient {
     requires okhttp3;
     requires spring.websocket;
     requires spring.messaging;
+    requires spring.core;
 
     opens org.example.javachessclient to javafx.fxml;
     exports org.example.javachessclient;
+    opens org.example.javachessclient.models to gson, com.fasterxml.jackson.databind;
     opens org.example.javachessclient.controllers to javafx.fxml;
-    opens org.example.javachessclient.models to gson;
 }

@@ -10,26 +10,22 @@ import retrofit2.http.*;
 import java.util.concurrent.Executor;
 
 public interface UserApi {
-    @PUT
+    @PUT("user")
     Call<Void> updateUser(@Body UpdateProfileDetails details);
 
-    @DELETE
+    @DELETE("user")
     Call<Void> deleteUser();
 
     @FormUrlEncoded // TODO: test if this works, sending content as application/json
-    @PUT("password")
+    @PUT("user/password")
     Call<Void> updateUserPassword(@Field("oldPassword") String oldPassword, @Field("newPassword") String newPassword);
 
-    @PUT("game/{gameId}")
+    @PUT("user/game/{gameId}")
     Call<Void> updateUserGame(@Path("gameId") String gameId, @Body UserGameUpdateDetails details);
 
-    @GET("{userId}/profile")
+    @GET("user/{userId}/profile")
     Call<UserProfile> getUserProfile(@Path("userId") String userId);
 
-    @POST("{userId}/request")
-    Call<Void> requestGame(@Path("userId") String userId);
-
-    @FormUrlEncoded
-    @POST("{userId}/request-response")
-    Call<Void> respondToGameRequest(@Path("userId") String userId, @Field("accept") boolean accept);
+    @GET("user/search")
+    Call<UserProfile> searchByUsername(@Query("username") String username);
 }

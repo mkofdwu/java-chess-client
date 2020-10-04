@@ -3,6 +3,7 @@ package org.example.javachessclient.models;
 import java.util.List;
 
 public class User {
+    private String _id;
     private String username;
     private String password;
     private String profilePic;
@@ -14,6 +15,14 @@ public class User {
     private UserSettings settings;
 
     public User() {
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getUsername() {

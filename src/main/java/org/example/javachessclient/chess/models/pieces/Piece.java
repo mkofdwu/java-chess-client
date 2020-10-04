@@ -44,6 +44,6 @@ public abstract class Piece {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof Piece && square == ((Piece) other).getSquare() && isWhite == ((Piece) other).getIsWhite();
+        return other instanceof Piece && square.equals(((Piece) other).getSquare()) && isWhite == ((Piece) other).getIsWhite();
     }
 }

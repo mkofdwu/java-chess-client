@@ -23,9 +23,12 @@ public class HistoryController {
         for (int i = 0; i < pastGames.size(); ++i) {
             UserGame userGame = pastGames.get(i);
             PastGame game = (PastGame) GameService.getGame(userGame.getGameId());
-            pastGamesGrid.add(new Label(userGame.getName()), i, 0);
-            pastGamesGrid.add(new Label(formatGameResult(game.getResult())), i, 1);
-            pastGamesGrid.add(new Label(gameDateFormat.format(game.getTimestamp())), i, 2);
+            pastGamesGrid.addRow(
+                    i,
+                    new Label(userGame.getName()),
+                    new Label(formatGameResult(game.getResult())),
+                    new Label(gameDateFormat.format(game.getTimestamp()))
+            );
         }
     }
 

@@ -28,6 +28,7 @@
     -fx-less: #515151;
     -fx-text: #000000;
     -fx-accent: #336a89;
+    -fx-red: #c13e3e;
 }
 
 .label {
@@ -60,4 +61,20 @@
     -fx-border-style: solid;
     -fx-border-width: 0.5px;
     -fx-border-color: -fx-text;
+}
+
+.text-area {
+    -fx-font-family: "Domaine Text Test";
+    -fx-font-size: 14px;
+    -fx-background-insets: 0;
+    -fx-background-color: none;
+}
+
+.text-area .content {
+    -fx-padding: 0;
+    -fx-background-color: none;
+}
+
+.text-area:focused .content {
+    -fx-background-color: none;
 }
