@@ -412,22 +412,22 @@ public class Chess {
 
         // check for end of game
         if (checkForCheckmate()) {
-            // FIXME
             Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
+            // FIXME: cleanup
             return;
         }
 //        if (checkForStalemate()) {
-//            // FIXME
+        // fixme: cleanup
 //            Store.modal.showMessage("Stalemate", "It's a draw.");
 //            return;
 //        }
         if (checkForThreefoldRepetition()) {
-            // FIXME
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
+            // todo: cleanup
             return;
         }
         if (checkForFiftyMoveRule()) {
-            // FIXME
+            // FIXME: cleanup
             Store.modal.showMessage("Fifty Move", "It's a draw");
             return;
         }
@@ -447,22 +447,22 @@ public class Chess {
         chessCanvas.redrawSquare(square);
     }
 
-    public void undoMove() {
-        Move move = recordedMoves.remove(recordedMoves.size() - 1);
-        Piece piece = move.getPiece();
-        Square fromSquare = move.getFromSquare();
-        Square toSquare = move.getToSquare();
-        MoveType type = move.getType();
-
-        moveTo(piece, fromSquare);
-        if (type != MoveType.normal && type != MoveType.capture) {
-            move.getPiece().undoSpecialMove(move);
-        }
-        whiteToMove = !whiteToMove;
-        // FIXME: undo promotion, change game flags
-        chessCanvas.redrawSquare(fromSquare);
-        chessCanvas.redrawSquare(toSquare);
-    }
+//    public void undoMove() {
+//        Move move = recordedMoves.remove(recordedMoves.size() - 1);
+//        Piece piece = move.getPiece();
+//        Square fromSquare = move.getFromSquare();
+//        Square toSquare = move.getToSquare();
+//        MoveType type = move.getType();
+//
+//        moveTo(piece, fromSquare);
+//        if (type != MoveType.normal && type != MoveType.capture) {
+//            move.getPiece().undoSpecialMove(move);
+//        }
+//        whiteToMove = !whiteToMove;
+//        // todo: undo promotion, change game flags
+//        chessCanvas.redrawSquare(fromSquare);
+//        chessCanvas.redrawSquare(toSquare);
+//    }
 
     private void testMove(Move move) {
         Piece piece = move.getPiece();

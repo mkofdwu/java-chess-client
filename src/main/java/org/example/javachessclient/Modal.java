@@ -33,7 +33,6 @@ public class Modal {
     }
 
     public void showMessage(String title, String message) {
-        // FIXME
         VBox modal = new VBox();
         modal.setPrefWidth(400);
         modal.setPadding(new Insets(20, 24, 20, 24));

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Router {
     private final Pane root;
     private final int childIndex;
-    private final ArrayList<Parent> history; // TODO: test if storing parent / scene persists state
+    private final ArrayList<Parent> history;
 
     public Router(Pane root, int childIndex) {
         this.root = root;

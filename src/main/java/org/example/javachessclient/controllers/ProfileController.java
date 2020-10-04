@@ -45,7 +45,7 @@ public class ProfileController {
             addProfilePicBox.setVisible(true);
             profilePicView.setVisible(false);
         } else {
-            profilePicView.setPreserveRatio(false);  // TODO: cover fit image
+            profilePicView.setPreserveRatio(false);  // FIXME: cover fit image
             profilePicView.setImage(new Image(Store.user.getProfilePic()));
         }
     }

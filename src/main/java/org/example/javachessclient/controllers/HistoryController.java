@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class HistoryController {
-    private static final SimpleDateFormat gameDateFormat = new SimpleDateFormat("dd/MM/yyyy"); // FIXME: improve date format
+    private static final SimpleDateFormat gameDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     @FXML
     private GridPane pastGamesGrid;

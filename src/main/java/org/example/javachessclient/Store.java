@@ -16,7 +16,7 @@ public class Store {
     public static Modal modal;
 
     public static Retrofit retrofit;
-    // FIXME: this is a temporary solution. In the future, replace these with instances of AuthService, UserService, other Services, etc
+    // this is a temporary solution. In the future, replace these with instances of AuthService, UserService, other Services, etc
     public static AuthApi authApi;
     public static UserApi userApi;
     public static GameApi gameApi;

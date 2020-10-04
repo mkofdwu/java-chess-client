@@ -32,9 +32,4 @@ public class RegisterController {
             Store.modal.showMessage("Failed to register", "The passwords entered don't match.");
         }
     }
-
-    @FXML
-    public void onRegisterWithGoogle() {
-        // TODO
-    }
 }

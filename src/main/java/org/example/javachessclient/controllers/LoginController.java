@@ -26,9 +26,4 @@ public class LoginController {
             Store.modal.showMessage("Failed to login", "Please check your username and password again.");
         }
     }
-
-    @FXML
-    void onLoginWithGoogle() {
-        // TODO
-    }
 }
