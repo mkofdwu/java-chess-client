@@ -45,7 +45,6 @@
             </PasswordField>
                 <HBox alignment="CENTER_RIGHT" spacing="30.0">
                     <children>
-                        <Button mnemonicParsing="false" onMouseClicked="#onRegisterWithGoogle" text="Register with Google" />
                         <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onRegister" text="Register" />
                     </children>
                 </HBox>

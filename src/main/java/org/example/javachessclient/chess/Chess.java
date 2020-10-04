@@ -34,8 +34,8 @@ public class Chess {
     private ArrayList<Move> availableMoves; // of the selected piece
 
     // for interface with the actual app
-    private boolean canPlayWhite;
-    private boolean canPlayBlack;
+    private boolean canPlayWhite = false;
+    private boolean canPlayBlack = false;
     private UserMoveCallback onUserMove;
 
     public Chess() {
@@ -313,29 +313,40 @@ public class Chess {
             if (landingPiece == null) {
                 available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal));
             } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
-                break;
+                return;
             } else {
                 available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.capture));
-                break;
+                return;
             }
         }
     }
 
+    public boolean squaresClearUntil(int fromFile, int fromRank, int targetFile, int targetRank) {
+        int filesMoved = targetFile - fromFile;
+        int ranksMoved = targetRank - fromRank;
+        int fileDir = filesMoved == 0 ? 0 : filesMoved / Math.abs(filesMoved);
+        int rankDir = ranksMoved == 0 ? 0 : ranksMoved / Math.abs(ranksMoved);
+        for (int file = fromFile + fileDir, rank = fromRank + rankDir; file != targetFile && rank != targetRank; file += fileDir, rank += rankDir) {
+            if (board.get(rank).get(file) != null) return false;
+        }
+        return true;
+    }
+
     public boolean moveLeavesKingInCheck(Move move) {
-        playMove(move);
-        boolean kingInCheck = activeKingInCheck();
-        undoMove();
+        testMove(move);
+        boolean kingInCheck = kingInCheck(whiteToMove);
+        undoTestMove(move);
         return kingInCheck;
     }
 
-    public boolean activeKingInCheck() {
-        return squareIsAttacked(activeKing().getSquare(), !whiteToMove);
+    public boolean kingInCheck(boolean isWhite) {
+        return squareIsAttacked(findKing(isWhite).getSquare(), !isWhite);
     }
 
-    private King activeKing() {
+    private King findKing(boolean isWhite) {
         for (ArrayList<Piece> rankList : board) {
             for (Piece piece : rankList) {
-                if (piece instanceof King && piece.getIsWhite() == whiteToMove) {
+                if (piece instanceof King && piece.getIsWhite() == isWhite) {
                     return (King) piece;
                 }
             }
@@ -346,23 +357,18 @@ public class Chess {
     public boolean squareIsAttacked(Square square, boolean byWhite) {
         for (ArrayList<Piece> rankList : board) {
             for (Piece piece : rankList) {
-                // FIXME: add `canMoveTo(Square square) -> MoveType` if this is too slow
-                if (piece != null && piece.getIsWhite() == byWhite) {
-                    for (Move availableMove : piece.findAvailableMoves()) {
-                        if (availableMove.getType() == MoveType.capture && availableMove.getToSquare() == square) {
-                            return true;
-                        }
-                    }
+                if (piece != null && piece.getIsWhite() == byWhite && piece.isAttackingSquare(square)) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    private boolean activePlayerCannotMove() {
+    private boolean otherPlayerCannotMove() {
         for (ArrayList<Piece> rankList : board) {
             for (Piece piece : rankList) {
-                if (piece != null && piece.getIsWhite() == whiteToMove) {
+                if (piece != null && piece.getIsWhite() == !whiteToMove) {
                     if (!piece.findAvailableMoves().isEmpty()) return false;
                 }
             }
@@ -410,11 +416,11 @@ public class Chess {
             Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
             return;
         }
-        if (checkForStalemate()) {
-            // FIXME
-            Store.modal.showMessage("Stalemate", "It's a draw.");
-            return;
-        }
+//        if (checkForStalemate()) {
+//            // FIXME
+//            Store.modal.showMessage("Stalemate", "It's a draw.");
+//            return;
+//        }
         if (checkForThreefoldRepetition()) {
             // FIXME
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
@@ -458,12 +464,36 @@ public class Chess {
         chessCanvas.redrawSquare(toSquare);
     }
 
+    private void testMove(Move move) {
+        Piece piece = move.getPiece();
+        Square toSquare = move.getToSquare();
+        MoveType type = move.getType();
+
+        moveTo(piece, toSquare);
+
+        if (type != MoveType.normal && type != MoveType.capture) {
+            piece.makeSpecialMove(move);
+        }
+    }
+
+    private void undoTestMove(Move move) {
+        Piece piece = move.getPiece();
+        Square fromSquare = move.getFromSquare();
+        MoveType type = move.getType();
+
+        moveTo(piece, fromSquare);
+
+        if (type != MoveType.normal && type != MoveType.capture) {
+            move.getPiece().undoSpecialMove(move);
+        }
+    }
+
     private boolean checkForCheckmate() {
-        return activePlayerCannotMove() && activeKingInCheck();
+        return otherPlayerCannotMove() && kingInCheck(!whiteToMove);
     }
 
     private boolean checkForStalemate() {
-        return activePlayerCannotMove() && !activeKingInCheck(); // currently this method call is redundant since checkForCheckmate is called before this
+        return otherPlayerCannotMove() && !kingInCheck(!whiteToMove); // currently this method call is redundant since checkForCheckmate is called before this
     }
 
     private boolean checkForThreefoldRepetition() {

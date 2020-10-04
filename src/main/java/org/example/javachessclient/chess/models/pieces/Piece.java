@@ -38,6 +38,8 @@ public abstract class Piece {
 
     public abstract ArrayList<Move> findAvailableMoves(); // checks everything, including special moves & leaving king in check
 
+    public abstract boolean isAttackingSquare(Square otherSquare);
+
     public abstract void makeSpecialMove(Move move); // modifies the board according to the special move
 
     public abstract void undoSpecialMove(Move move);
@@ -45,5 +47,10 @@ public abstract class Piece {
     @Override
     public boolean equals(Object other) {
         return other instanceof Piece && square.equals(((Piece) other).getSquare()) && isWhite == ((Piece) other).getIsWhite();
+    }
+
+    @Override
+    public String toString() {
+        return (isWhite ? "white" : "black") + " " + getClass().getSimpleName() + " on " + square;
     }
 }

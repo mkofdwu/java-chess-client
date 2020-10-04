@@ -44,7 +44,7 @@ public class Pawn extends Piece {
 
         available.addAll(findEnPassantMoves());
 
-        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 
@@ -62,6 +62,12 @@ public class Pawn extends Piece {
             }
         }
         return available;
+    }
+
+    @Override
+    public boolean isAttackingSquare(Square otherSquare) {
+        int dir = isWhite ? -1 : 1;
+        return Math.abs(square.getFile() - otherSquare.getFile()) == 1 && otherSquare.getRank() - square.getRank() == dir;
     }
 
     @Override

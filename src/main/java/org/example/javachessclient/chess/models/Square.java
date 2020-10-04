@@ -1,5 +1,7 @@
 package org.example.javachessclient.chess.models;
 
+import org.example.javachessclient.chess.exceptions.BadSquare;
+
 public class Square {
     private final int file;
     private final int rank;
@@ -11,7 +13,11 @@ public class Square {
 
     public Square(String square) { // square using standard notation, (e.g. e3, h6)
         file = "abcdefgh".indexOf(square.charAt(0));
-        rank = Character.digit(square.charAt(1), 10);
+        rank = 8 - Character.digit(square.charAt(1), 10);
+    }
+
+    public boolean isValid() {
+        return 0 <= file && file <= 7 && 0 <= rank && rank <= 7;
     }
 
     public boolean isWhite() {
@@ -28,7 +34,7 @@ public class Square {
 
     @Override
     public String toString() {
-        return "abcdefgh".charAt(file) + Integer.toString(rank);
+        return "abcdefgh".charAt(file) + Integer.toString(8 - rank);
     }
 
     @Override

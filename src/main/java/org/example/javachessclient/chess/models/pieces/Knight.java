@@ -31,18 +31,27 @@ public class Knight extends Piece {
                     int filesMoved = absFilesMoved * fileDir;
                     int ranksMoved = absRanksMoved * rankDir;
                     Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
-                    Piece piece = chess.pieceAt(newSquare);
-                    if (piece == null) {
-                        available.add(new Move(this, square, newSquare, MoveType.normal));
-                    } else if (piece.getIsWhite() != isWhite) {
-                        available.add(new Move(this, square, newSquare, MoveType.capture));
+                    if (newSquare.isValid()) {
+                        Piece piece = chess.pieceAt(newSquare);
+                        if (piece == null) {
+                            available.add(new Move(this, square, newSquare, MoveType.normal));
+                        } else if (piece.getIsWhite() != isWhite) {
+                            available.add(new Move(this, square, newSquare, MoveType.capture));
+                        }
                     }
                 }
             }
         }
 
-        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
+    }
+
+    @Override
+    public boolean isAttackingSquare(Square otherSquare) {
+        int absFilesMoved = Math.abs(otherSquare.getFile() - square.getFile());
+        int absRanksMoved = Math.abs(otherSquare.getRank() - square.getRank());
+        return (absFilesMoved == 2 && absRanksMoved == 1) || (absFilesMoved == 1 && absRanksMoved == 2);
     }
 
     @Override

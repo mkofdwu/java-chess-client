@@ -19,8 +19,15 @@ public class Bishop extends Piece {
     @Override
     public ArrayList<Move> findAvailableMoves() {
         ArrayList<Move> available = chess.diagonalMoves(this);
-        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
+    }
+
+    @Override
+    public boolean isAttackingSquare(Square otherSquare) {
+        boolean alongDiagonal = Math.abs(square.getFile() - otherSquare.getFile()) == Math.abs(square.getRank() - otherSquare.getRank());
+        if (!alongDiagonal) return false;
+        return chess.squaresClearUntil(square.getFile(), square.getRank(), otherSquare.getFile(), otherSquare.getRank());
     }
 
     @Override

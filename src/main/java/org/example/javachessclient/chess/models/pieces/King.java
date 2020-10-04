@@ -37,13 +37,13 @@ public class King extends Piece {
 
         available.addAll(findCastlingMoves());
 
-        // available.removeIf(move -> chess.moveLeavesKingInCheck(move));
+        available.removeIf(move -> chess.moveLeavesKingInCheck(move));
         return available;
     }
 
     private ArrayList<Move> findCastlingMoves() {
         ArrayList<Move> available = new ArrayList<>();
-        if (chess.activeKingInCheck()) return available; // cannot castle when in check
+        if (chess.squareIsAttacked(square, !isWhite)) return available; // cannot castle when in check
         if (isWhite) {
             if (chess.getWhiteCanCastleKingside() && checkIfCanCastle(true)) {
                 available.add(new Move(this, square, new Square(6, 7), MoveType.castling));
@@ -72,11 +72,17 @@ public class King extends Piece {
             Square checkSquare = new Square(file, rank);
             Piece piece = chess.pieceAt(checkSquare);
             if (piece == null) {
-                if (chess.squareIsAttacked(checkSquare, !isWhite))return false;
+                if (chess.squareIsAttacked(checkSquare, !isWhite)) return false;
             } else return false;
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isAttackingSquare(Square otherSquare) {
+        return Math.abs(square.getFile() - otherSquare.getFile()) == 1
+                && Math.abs(square.getRank() - otherSquare.getRank()) == 1;
     }
 
     @Override
