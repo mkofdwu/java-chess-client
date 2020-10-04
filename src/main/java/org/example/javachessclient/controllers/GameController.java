@@ -93,14 +93,17 @@ public class GameController implements Controller {
         UserGame userGame = (UserGame) data;
         OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
         gameId = game.getId();
-        otherUserId = userGame.getIsWhite() ? game.getBlack() : game.getWhite();
+        boolean isWhite = userGame.getIsWhite();
+        otherUserId = isWhite ? game.getBlack() : game.getWhite();
         UserProfile otherProfile = UserService.getUserProfile(otherUserId);
         try {
             gameNameLabel.setText(userGame.getName());
-            whiteUsernameLabel.setText(userGame.getIsWhite() ? Store.user.getUsername() : otherProfile.getUsername());
-            blackUsernameLabel.setText(userGame.getIsWhite() ? otherProfile.getUsername() : Store.user.getUsername());
+            whiteUsernameLabel.setText(isWhite ? Store.user.getUsername() : otherProfile.getUsername());
+            blackUsernameLabel.setText(isWhite ? otherProfile.getUsername() : Store.user.getUsername());
             chess.loadFEN(game.getFenPosition());
-            if (!userGame.getIsWhite()) chess.rotateBoard();
+            chess.setCanPlayWhite(isWhite);
+            chess.setCanPlayBlack(!isWhite);
+            if (!isWhite) chess.rotateBoard();
         } catch (ParseException exception) {
             Store.modal.showMessage("Error", "Error parsing fen string: " + game.getFenPosition());
         }

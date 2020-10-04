@@ -4,7 +4,6 @@ import javafx.scene.canvas.Canvas;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.exceptions.InvalidBoardException;
-import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
@@ -34,7 +33,9 @@ public class Chess {
     private Square selectedSquare;
     private ArrayList<Move> availableMoves; // of the selected piece
 
-    // for socket
+    // for interface with the actual app
+    private boolean canPlayWhite;
+    private boolean canPlayBlack;
     private UserMoveCallback onUserMove;
 
     public Chess() {
@@ -200,13 +201,22 @@ public class Chess {
         selectedSquare = square;
         chessCanvas.highlightSquare(selectedSquare);
         Piece piece = pieceAt(square);
-        if (piece != null && piece.getIsWhite() == whiteToMove) {
+        boolean canPlay = (whiteToMove && canPlayWhite) || (!whiteToMove && canPlayBlack);
+        if (canPlay && piece != null && piece.getIsWhite() == whiteToMove) {
             availableMoves = piece.findAvailableMoves();
             chessCanvas.markAvailableMoves(availableMoves);
         }
     }
 
     public void onSecondSquareSelected(Square square) {
+        boolean canPlay = (whiteToMove && canPlayWhite) || (!whiteToMove && canPlayBlack);
+        if (!canPlay) {
+            chessCanvas.redrawSquare(selectedSquare);
+            chessCanvas.highlightSquare(square);
+            selectedSquare = square;
+            return;
+        }
+
         Move move = null;
         if (availableMoves == null) {
             // selected destination first then piece to move
@@ -532,6 +542,14 @@ public class Chess {
 
     public int getFullmoveNumber() {
         return fullmoveNumber;
+    }
+
+    public void setCanPlayWhite(boolean canPlayWhite) {
+        this.canPlayWhite = canPlayWhite;
+    }
+
+    public void setCanPlayBlack(boolean canPlayBlack) {
+        this.canPlayBlack = canPlayBlack;
     }
 
     public void setOnUserMove(UserMoveCallback onUserMove) {
