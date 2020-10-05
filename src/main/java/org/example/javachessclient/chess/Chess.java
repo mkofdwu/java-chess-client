@@ -426,11 +426,11 @@ public class Chess {
             // FIXME: cleanup
             return;
         }
-//        if (checkForStalemate()) {
-        // fixme: cleanup
-//            Store.modal.showMessage("Stalemate", "It's a draw.");
-//            return;
-//        }
+        if (checkForStalemate()) {
+            // fixme: cleanup
+            Store.modal.showMessage("Stalemate", "It's a draw.");
+            return;
+        }
         if (checkForThreefoldRepetition()) {
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
             // todo: cleanup
@@ -461,7 +461,7 @@ public class Chess {
 //            move.getPiece().undoSpecialMove(move);
 //        }
 //        whiteToMove = !whiteToMove;
-//        // todo: undo promotion, change game flags
+//        // FUTURE: undo promotion, change game flags
 //        chessCanvas.redrawSquare(fromSquare);
 //        chessCanvas.redrawSquare(toSquare);
 //    }
