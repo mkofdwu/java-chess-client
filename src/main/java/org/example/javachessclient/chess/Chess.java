@@ -169,7 +169,7 @@ public class Chess {
             if (blackCanCastleQueenside) fen.append('q');
         }
 
-        fen.append(' ' + enPassantSquare.toString() + ' ' + halfmoveClock + ' ' + fullmoveNumber);
+        fen.append(" " + (enPassantSquare == null ? '-' : enPassantSquare.toString()) + ' ' + halfmoveClock + ' ' + fullmoveNumber);
 
         return fen.toString();
     }
@@ -334,7 +334,7 @@ public class Chess {
 
     public boolean moveLeavesKingInCheck(Move move) {
         testMove(move);
-        boolean kingInCheck = kingInCheck(whiteToMove);
+        boolean kingInCheck = kingInCheck(move.getPiece().getIsWhite());
         undoTestMove(move);
         return kingInCheck;
     }
@@ -380,10 +380,11 @@ public class Chess {
         // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
         Piece piece = move.getPiece();
-        Square square = move.getToSquare();
+        Square fromSquare = move.getFromSquare();
+        Square toSquare = move.getToSquare();
         MoveType type = move.getType();
 
-        moveTo(piece, square);
+        moveTo(piece, toSquare);
 
         if (type != MoveType.normal && type != MoveType.capture) {
             Square squareToRedraw = piece.makeSpecialMoveAndGetAffectedSquare(move);
@@ -392,22 +393,22 @@ public class Chess {
         }
 
         // check for pawn promotion (show modal)
-        if ((piece instanceof Pawn) && square.getRank() == (piece.getIsWhite() ? 0 : 7)) {
+        if ((piece instanceof Pawn) && toSquare.getRank() == (piece.getIsWhite() ? 0 : 7)) {
             Store.modal.show(new PromotionOptionsModal().buildModal((pieceName) -> {
                 Piece newPiece;
                 if (pieceName.equals("Queen")) {
-                    newPiece = new Queen(this, square, piece.getIsWhite());
+                    newPiece = new Queen(this, toSquare, piece.getIsWhite());
                 } else if (pieceName.equals("Rook")) {
-                    newPiece = new Rook(this, square, piece.getIsWhite());
+                    newPiece = new Rook(this, toSquare, piece.getIsWhite());
                 } else if (pieceName.equals("Bishop")) {
-                    newPiece = new Bishop(this, square, piece.getIsWhite());
+                    newPiece = new Bishop(this, toSquare, piece.getIsWhite());
                 } else if (pieceName.equals("Knight")) {
-                    newPiece = new Knight(this, square, piece.getIsWhite());
+                    newPiece = new Knight(this, toSquare, piece.getIsWhite());
                 } else {
                     return;
                 }
-                board.get(square.getRank()).set(square.getFile(), newPiece);
-                chessCanvas.redrawSquare(square);
+                board.get(toSquare.getRank()).set(toSquare.getFile(), newPiece);
+                chessCanvas.redrawSquare(toSquare);
             }));
         }
 
@@ -421,23 +422,18 @@ public class Chess {
 
         // check for end of game
         if (checkForCheckmate()) {
-            System.out.println("checkmate");
             Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
-            // FIXME: cleanup
             return;
         }
         if (checkForStalemate()) {
-            // fixme: cleanup
             Store.modal.showMessage("Stalemate", "It's a draw.");
             return;
         }
         if (checkForThreefoldRepetition()) {
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
-            // fixme: cleanup
             return;
         }
         if (checkForFiftyMoveRule()) {
-            // FIXME: cleanup
             Store.modal.showMessage("Fifty Move", "It's a draw");
             return;
         }
@@ -446,7 +442,8 @@ public class Chess {
         whiteToMove = !whiteToMove;
 
         // redraw canvas after all computation is done
-        chessCanvas.redrawSquare(square);
+        chessCanvas.redrawSquare(fromSquare); // this is only necessary when getting moves via websockets from the other opponent
+        chessCanvas.redrawSquare(toSquare);
     }
 
     private void testMove(Move move) {
@@ -556,6 +553,10 @@ public class Chess {
         } else {
             ++halfmoveClock;
         }
+    }
+
+    private void endGame() {
+
     }
 
     // getters and setters

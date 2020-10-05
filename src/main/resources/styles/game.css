@@ -17,13 +17,13 @@
     -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
 }
 
-.record-text-area {
+.record-text-area, .record-text-area:focused {
     -fx-text-fill: white;
     -fx-background-color: black;
     -fx-background-radius: 0;
 }
 
-.record-text-area .content {
+.record-text-area .content, .record-text-area:focused .content {
     -fx-padding: 20px;
     -fx-background-color: black;
     -fx-background-radius: 0;

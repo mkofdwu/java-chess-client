@@ -25,6 +25,10 @@ import org.example.javachessclient.models.SocketMove;
 import java.text.ParseException;
 
 public class GameController implements Controller {
+    private static final String resignMessageText = "I resign";
+    private static final String offerDrawMessageText = "Do you want a draw?";
+    private static final String acceptDrawMessageText = "Sure";
+
     private Chess chess;
     private String otherUserId;
     private String gameId;
@@ -75,15 +79,15 @@ public class GameController implements Controller {
         box.getChildren().set(0, chess.getCanvas());
 
         Pane[] allTabs = new Pane[]{recordTab, chatTab, optionsTab};
-        Parent[] parent = new Parent[]{recordTextArea, chatPane, optionsPane};
+        Parent[] parents = new Parent[]{recordTextArea, chatPane, optionsPane};
 
         for (int i = 0; i < 3; ++i) {
             int finalI = i;
             allTabs[i].setOnMouseClicked((e) -> {
                 allTabs[selectedIndex].getStyleClass().remove("selected");
                 allTabs[finalI].getStyleClass().add("selected");
-                parent[selectedIndex].setVisible(false);
-                parent[selectedIndex].setVisible(true);
+                parents[selectedIndex].setVisible(false);
+                parents[finalI].setVisible(true);
                 selectedIndex = finalI;
             });
         }
@@ -93,7 +97,7 @@ public class GameController implements Controller {
     public void loadData(Object data) {
         UserGame userGame = (UserGame) data;
         OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
-        gameId = game.getId();
+        gameId = game.get_id();
         boolean isWhite = userGame.getIsWhite();
         otherUserId = isWhite ? game.getBlack() : game.getWhite();
         UserProfile otherProfile = UserService.getUserProfile(otherUserId);
@@ -146,24 +150,70 @@ public class GameController implements Controller {
     public void onSocketMessage(SocketMessage message) {
         if (message.getGameId().equals(gameId)) {
             addMessage(message.getText(), false);
+
+            String messageText = message.getText();
+            if (messageText.equals(resignMessageText)) {
+                Store.modal.showMessage("Congratulations!", "Your opponent has resigned and you win the game.");
+                chess.setCanPlayWhite(false);
+                chess.setCanPlayBlack(false);
+            } else if (messageText.equals(offerDrawMessageText)) {
+                Store.modal.showOptions(
+                        "Accept draw?",
+                        "Your opponent has offered a draw. Accept it?",
+                        new String[]{"Yes", "No"},
+                        (option) -> {
+                            if (option.equals("Yes")) {
+                                sendMessage("Sure");
+                                chess.setCanPlayWhite(false);
+                                chess.setCanPlayBlack(false);
+                            }
+                        }
+                );
+            } else if (messageText.equals(acceptDrawMessageText)) {
+                Label prevMessage = (Label) messagesBox.getChildren().get(messagesBox.getChildren().size() - 2);
+                if (prevMessage.getTextAlignment() == TextAlignment.RIGHT && prevMessage.getText().equals(offerDrawMessageText)) {
+                    // the above checks for message sent by me requesting for a draw
+                    Store.modal.showMessage("It's a draw", "Your opponent accepted your draw offer");
+                    chess.setCanPlayWhite(false);
+                    chess.setCanPlayBlack(false);
+                }
+            }
         }
     }
 
     @FXML
     void onSendMessage() {
-        addMessage(messageInput.getText(), true);
-        Store.stompSession.send("/app/message/" + otherUserId, new SocketMessage(gameId, Store.user.get_id(), messageInput.getText()));
+        sendMessage(messageInput.getText());
     }
 
     @FXML
     void onRequestOfferDraw() {
-        // TODO
+        Store.modal.showOptions(
+                "Offer draw?",
+                "Are you sure you want to offer a draw?",
+                new String[]{"Yes", "No"},
+                (option) -> {
+                    if (option.equals("Yes")) {
+                        sendMessage(offerDrawMessageText);
+                    }
+                }
+        );
     }
 
     @FXML
     void onRequestResign() {
-        // TODO
-        // Store.modal.showQuestion();
+        Store.modal.showOptions(
+                "Concede match?",
+                "Are you sure you want to resign and concede the match?",
+                new String[]{"Yes", "No"},
+                (option) -> {
+                    if (option.equals("Yes")) {
+                        sendMessage(resignMessageText);
+                        chess.setCanPlayWhite(false);
+                        chess.setCanPlayBlack(false);
+                    }
+                }
+        );
     }
 
     @FXML
@@ -176,5 +226,10 @@ public class GameController implements Controller {
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(fromMe ? TextAlignment.RIGHT : TextAlignment.LEFT);
         messagesBox.getChildren().add(messageLabel);
+    }
+
+    private void sendMessage(String text) {
+        addMessage(text, true);
+        Store.stompSession.send("/app/message/" + otherUserId, new SocketMessage(gameId, Store.user.get_id(), text));
     }
 }

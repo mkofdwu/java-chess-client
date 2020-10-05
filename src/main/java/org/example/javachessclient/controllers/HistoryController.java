@@ -23,9 +23,13 @@ public class HistoryController {
         for (int i = 0; i < pastGames.size(); ++i) {
             UserGame userGame = pastGames.get(i);
             PastGame game = (PastGame) GameService.getGame(userGame.getGameId());
+            Label gameLabel = new Label(userGame.getName());
+            gameLabel.setOnMouseClicked((e) -> {
+                Store.router.push("/fxml/game.fxml", userGame);
+            });
             pastGamesGrid.addRow(
                     i,
-                    new Label(userGame.getName()),
+                    gameLabel,
                     new Label(formatGameResult(game.getResult())),
                     new Label(gameDateFormat.format(game.getTimestamp()))
             );

@@ -30,7 +30,7 @@ public class HomeController {
 
             Label gameLabel = new Label(userGame.getName());
             gameLabel.setOnMouseClicked((e) -> {
-                Store.router.push("/fxml/game.fxml", game);
+                Store.router.push("/fxml/game.fxml", userGame);
             });
             ongoingGamesGrid.add(gameLabel, 0, i);
             if ((game.getMoves().size() % 2 == 0) == userGame.getIsWhite()) {
