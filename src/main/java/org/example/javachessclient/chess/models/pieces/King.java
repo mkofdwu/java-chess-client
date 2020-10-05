@@ -3,6 +3,7 @@ package org.example.javachessclient.chess.models.pieces;
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.exceptions.BadSquare;
+import org.example.javachessclient.chess.exceptions.InvalidBoardException;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
@@ -92,27 +93,40 @@ public class King extends Piece {
     }
 
     @Override
-    public void makeSpecialMove(Move move) {
+    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
         if (move.getType() == MoveType.castling) {
             int rank = square.getRank();
             if (square.getFile() == 6) {
                 // kingside
                 Piece rook = chess.pieceAt(7, rank);
                 chess.moveTo(rook, new Square(5, rank));
+                return new Square(7, rank);
             } else if (square.getFile() == 2) {
                 // queenside
                 Piece rook = chess.pieceAt(0, rank);
                 chess.moveTo(rook, new Square(3, rank));
+                return new Square(0, rank);
             } else {
                 throw new InvalidMoveException();
             }
         }
+        return null;
     }
 
     @Override
     public void undoSpecialMove(Move move) {
         if (move.getType() == MoveType.castling) {
-            // TODO
+            int kingFile = move.getToSquare().getFile(); // king has already been put back to original square
+            int kingRank = move.getToSquare().getRank();
+            if (kingFile == 2) {
+                // queenside
+                chess.moveTo(chess.pieceAt(3, kingRank), new Square(0, kingRank));
+            } else if (kingFile == 6) {
+                // kingside
+                chess.moveTo(chess.pieceAt(5, kingRank), new Square(7, kingRank));
+            } else {
+                throw new InvalidBoardException("Cannot undo castling: king is not at queenside or kingside");
+            }
         }
     }
 }

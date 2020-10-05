@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.models.OngoingGame;
@@ -18,8 +19,8 @@ import org.example.javachessclient.models.UserGame;
 import org.example.javachessclient.models.UserProfile;
 import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.services.UserService;
-import org.example.javachessclient.socketgame.models.SocketMessage;
-import org.example.javachessclient.socketgame.models.SocketMove;
+import org.example.javachessclient.models.SocketMessage;
+import org.example.javachessclient.models.SocketMove;
 
 import java.text.ParseException;
 
@@ -127,7 +128,18 @@ public class GameController implements Controller {
     public void onSocketMove(SocketMove socketMove) {
         // check if move is made in THIS game
         if (socketMove.getGameId().equals(gameId)) {
-            chess.playSocketMove(socketMove);
+            // play a move received from the other player
+            int fromFile = socketMove.getFromFile();
+            int fromRank = socketMove.getFromRank();
+            int toFile = socketMove.getToFile();
+            int toRank = socketMove.getToRank();
+            chess.playMove(new Move(
+                    chess.pieceAt(socketMove.getFromFile(), socketMove.getFromRank()),
+                    new Square(fromFile, fromRank),
+                    new Square(toFile, toRank),
+                    Enum.valueOf(MoveType.class, socketMove.getMoveType()),
+                    chess.pieceAt(toFile, toRank)
+            ));
         }
     }
 

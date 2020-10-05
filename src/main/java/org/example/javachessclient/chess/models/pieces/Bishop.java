@@ -31,8 +31,9 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public void makeSpecialMove(Move move) {
+    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
         // a bishop has no special moves
+        return null;
     }
 
     @Override

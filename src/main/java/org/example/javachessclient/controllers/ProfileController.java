@@ -91,7 +91,7 @@ public class ProfileController {
 
     @FXML
     void onRequestLogout() {
-        Store.modal.showQuestion(
+        Store.modal.showOptions(
                 "Are you sure?",
                 "Log out out of your account?",
                 new String[]{"Yes", "No"},
@@ -106,7 +106,7 @@ public class ProfileController {
 
     @FXML
     void onRequestDeleteAccount() {
-        Store.modal.showQuestion(
+        Store.modal.showOptions(
                 "Are you sure?",
                 "Deleting your account is irreversible!",
                 new String[]{"Yes", "No"},

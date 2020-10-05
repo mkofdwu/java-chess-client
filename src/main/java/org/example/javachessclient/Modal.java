@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -32,48 +33,46 @@ public class Modal {
         bgPane.setVisible(false);
     }
 
-    public void showMessage(String title, String message) {
+    public void showOptions(String title, String message, String[] options, ModalCallback cb) {
         VBox modal = new VBox();
+        modal.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
         modal.setPrefWidth(400);
         modal.setPadding(new Insets(20, 24, 20, 24));
         modal.setStyle("-fx-background-color: white; -fx-background-radius: 5px;");
 
-        VBox content = new VBox();
-        content.setAlignment(Pos.TOP_LEFT);
+        // content.setAlignment(Pos.TOP_LEFT);
         Label titleLabel = new Label(title);
-        titleLabel.setFont(new Font("Domaine Display Test", 20));
-        titleLabel.setStyle("-fx-font-weight: bold;");
+        titleLabel.setStyle("-fx-font-family: \"Domaine Display Test\"; -fx-font-size: 20px; -fx-font-weight: bold;");
         VBox.setMargin(titleLabel, new Insets(0, 0, 10, 0));
         Label messageLabel = new Label(message);
         messageLabel.setWrapText(true);
-        messageLabel.setFont(new Font("Domaine Display Test", 14));
-        content.getChildren().addAll(titleLabel, messageLabel);
-        VBox.setMargin(content, new Insets(0, 0, 40, 0));
+        messageLabel.setStyle("-fx-font-family: \"Domaine Display Test\";");
+        VBox.setMargin(messageLabel, new Insets(0, 0, 40, 0));
 
-        VBox optionsBox = new VBox();
+        HBox optionsBox = new HBox();
+        optionsBox.setSpacing(20);
         optionsBox.setAlignment(Pos.BOTTOM_RIGHT);
-        Button closeBtn = new Button("Close");
-        closeBtn.setStyle("-fx-background-color: -fx-accent, white;" +
-                "-fx-background-insets: 0 -1 -2 -1, 0 -1 0 -1;" +
-                "-fx-background-radius: 0;" +
-                "-fx-text-fill: -fx-accent;" +
-                "-fx-font-size: 14px;" +
-                "-fx-font-family: \"Domaine Text Test\";" +
-                "-fx-padding: 0;" +
-                "-fx-cursor: hand;");
-        closeBtn.setOnAction((e) -> hide());
-        optionsBox.getChildren().add(closeBtn);
+        for (String option : options) {
+            Button optionBtn = new Button(option);
+            optionBtn.setStyle("-fx-background-color: -fx-accent, white;" +
+                    "-fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;" +
+                    "-fx-background-radius: 0;" +
+                    "-fx-text-fill: -fx-accent;" +
+                    "-fx-padding: 0;" +
+                    "-fx-cursor: hand;");
+            optionBtn.setOnMouseClicked((e) -> {
+                hide();
+                cb.callback(option);
+            });
+            optionsBox.getChildren().add(optionBtn);
+        }
 
-        modal.getChildren().addAll(
-                content,
-                optionsBox
-        );
-
+        modal.getChildren().addAll(titleLabel, messageLabel, optionsBox);
         show(modal);
     }
 
-    public void showQuestion(String title, String message, String[] options, ModalCallback cb) {
-        // TODO
-
+    public void showMessage(String title, String message) {
+        showOptions(title, message, new String[]{"Close"}, (option) -> {
+        });
     }
 }

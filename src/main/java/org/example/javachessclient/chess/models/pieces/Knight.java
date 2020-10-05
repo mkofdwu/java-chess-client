@@ -58,8 +58,9 @@ public class Knight extends Piece {
     }
 
     @Override
-    public void makeSpecialMove(Move move) {
+    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
         // a knight has no special moves
+        return null;
     }
 
     @Override

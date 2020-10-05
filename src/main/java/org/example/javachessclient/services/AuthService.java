@@ -1,12 +1,9 @@
 package org.example.javachessclient.services;
 
 import org.example.javachessclient.Store;
-import org.example.javachessclient.apis.AuthApi;
 import org.example.javachessclient.models.LoginDetails;
 import org.example.javachessclient.models.RegisterDetails;
 import org.example.javachessclient.models.TokenAuthResponse;
-import org.example.javachessclient.models.User;
-import org.example.javachessclient.socketgame.SocketGameService;
 import retrofit2.Response;
 
 import java.io.*;

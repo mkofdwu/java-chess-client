@@ -25,9 +25,10 @@ public class Pawn extends Piece {
         int fromFile = square.getFile();
         int fromRank = square.getRank();
         int dir = isWhite ? -1 : 1;
+        boolean isAtStartingRank = fromRank == (isWhite ? 6 : 1);
 
         // check for normal moves
-        for (int ranks = 1; ranks < 3; ++ranks) {
+        for (int ranks = 1; ranks <= (isAtStartingRank ? 2 : 1); ++ranks) {
             try {
                 Square newSquare = new Square(fromFile, fromRank + dir * ranks);
                 Piece piece = chess.pieceAt(newSquare);
@@ -80,21 +81,22 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public void makeSpecialMove(Move move) {
+    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
         if (move.getType() == MoveType.enPassant) {
             // make the second move, removing the pawn behind where the current pawn is now
-            Piece pieceRemoved = chess.removeAt(move.getToSquare().getFile(), move.getToSquare().getRank() + (isWhite ? 1 : -1));
+            chess.removeAt(move.getCapturedPiece().getSquare());
+            Piece pieceRemoved = move.getCapturedPiece();
             // just checking
             if (!(pieceRemoved instanceof Pawn) || pieceRemoved.getIsWhite() == isWhite) {
                 throw new InvalidMoveException();
             }
+            return pieceRemoved.getSquare();
         }
+        return null;
     }
 
     @Override
     public void undoSpecialMove(Move move) {
-        if (move.getType() == MoveType.enPassant) {
-            // TODO
-        }
+        // no additional steps required for en passant
     }
 }

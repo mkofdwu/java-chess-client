@@ -1,4 +1,4 @@
-package org.example.javachessclient.socketgame.models;
+package org.example.javachessclient.models;
 
 public class SocketMove {
     private String gameId;

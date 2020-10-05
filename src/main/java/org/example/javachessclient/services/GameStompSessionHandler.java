@@ -1,4 +1,4 @@
-package org.example.javachessclient.socketgame;
+package org.example.javachessclient.services;
 
 import javafx.application.Platform;
 import org.example.javachessclient.Store;
@@ -7,8 +7,8 @@ import org.example.javachessclient.models.UserGame;
 import org.example.javachessclient.models.UserProfile;
 import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.services.UserService;
-import org.example.javachessclient.socketgame.models.SocketMessage;
-import org.example.javachessclient.socketgame.models.SocketMove;
+import org.example.javachessclient.models.SocketMessage;
+import org.example.javachessclient.models.SocketMove;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -63,7 +63,7 @@ public class GameStompSessionHandler implements StompSessionHandler {
         } else if (destination.startsWith("/topic/requests")) {
             String otherUserId = (String) payload;
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
-            Platform.runLater(() -> Store.modal.showQuestion(
+            Platform.runLater(() -> Store.modal.showOptions(
                     "Game request",
                     otherProfile.getUsername() + " wants to play chess with you.",
                     new String[]{"Ok fine", "No", "Decide later"},
@@ -80,7 +80,7 @@ public class GameStompSessionHandler implements StompSessionHandler {
             OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
             String otherUserId = userGame.getIsWhite() ? game.getBlack() : game.getWhite();
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
-            Platform.runLater(() -> Store.modal.showQuestion(
+            Platform.runLater(() -> Store.modal.showOptions(
                     "Request accepted",
                     otherProfile.getUsername() + " agreed to play chess with you. Start the game now?",
                     new String[]{"Sure", "Later"},

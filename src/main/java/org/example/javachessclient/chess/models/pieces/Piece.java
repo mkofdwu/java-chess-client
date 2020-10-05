@@ -40,7 +40,7 @@ public abstract class Piece {
 
     public abstract boolean isAttackingSquare(Square otherSquare);
 
-    public abstract void makeSpecialMove(Move move); // modifies the board according to the special move
+    public abstract Square makeSpecialMoveAndGetAffectedSquare(Move move); // modifies the board according to the special move
 
     public abstract void undoSpecialMove(Move move);
 

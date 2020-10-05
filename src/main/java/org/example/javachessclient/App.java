@@ -17,10 +17,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.text.ParseException;
+import java.util.Stack;
 
 public class App extends Application {
     @Override
     public void start(Stage stage) {
+        startTestChess(stage);
 //        StackPane root = new StackPane();
 //        root.getChildren().add(new Pane());
 //
@@ -47,13 +49,23 @@ public class App extends Application {
 //
 //        boolean authenticated = AuthService.attemptAuthenticateFromFile();
 //        Store.router.push(authenticated ? "/fxml/layout.fxml" : "/fxml/landing.fxml");
+//
+//        Scene scene = new Scene(root);
+//        stage.setTitle("JavaChess");
+//        stage.setResizable(false);
+//        stage.setScene(scene);
+//        stage.show();
+    }
 
-        Chess chess = new Chess();
+    private void startTestChess(Stage stage) {
+        StackPane root = new StackPane();
         try {
+            Chess chess = new Chess();
             chess.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             chess.setCanPlayWhite(true);
             chess.setCanPlayBlack(true);
-            Pane root = new Pane(chess.getCanvas());
+            root.getChildren().add(chess.getCanvas());
+            Store.modal = new Modal(root);
 
             Scene scene = new Scene(root);
             stage.setTitle("JavaChess");

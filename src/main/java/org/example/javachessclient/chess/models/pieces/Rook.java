@@ -31,8 +31,9 @@ public class Rook extends Piece {
     }
 
     @Override
-    public void makeSpecialMove(Move move) {
+    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
         // A rook has no special moves
+        return null;
     }
 
     @Override

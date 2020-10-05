@@ -1,4 +1,4 @@
-package org.example.javachessclient.socketgame;
+package org.example.javachessclient.services;
 
 import org.example.javachessclient.Store;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
