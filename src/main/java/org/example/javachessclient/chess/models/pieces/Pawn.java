@@ -2,6 +2,7 @@ package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.exceptions.BadSquare;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
@@ -27,18 +28,26 @@ public class Pawn extends Piece {
 
         // check for normal moves
         for (int ranks = 1; ranks < 3; ++ranks) {
-            Square newSquare = new Square(fromFile, fromRank + dir * ranks);
-            Piece piece = chess.pieceAt(newSquare);
-            if (piece == null) available.add(new Move(this, square, newSquare, MoveType.normal));
-            else break;
+            try {
+                Square newSquare = new Square(fromFile, fromRank + dir * ranks);
+                Piece piece = chess.pieceAt(newSquare);
+                if (piece == null) available.add(new Move(this, square, newSquare, MoveType.normal, null));
+                else break;
+            } catch (BadSquare exception) {
+                // probably almost reached the end to promote
+            }
         }
 
         // check for capture
         for (int fileDir : new int[]{-1, 1}) {
-            Square newSquare = new Square(fromFile + fileDir, fromRank + dir);
-            Piece piece = chess.pieceAt(newSquare);
-            if (piece != null && piece.getIsWhite() != isWhite) {
-                available.add(new Move(this, square, newSquare, MoveType.capture));
+            try {
+                Square newSquare = new Square(fromFile + fileDir, fromRank + dir);
+                Piece piece = chess.pieceAt(newSquare);
+                if (piece != null && piece.getIsWhite() != isWhite) {
+                    available.add(new Move(this, square, newSquare, MoveType.capture, piece));
+                }
+            } catch (BadSquare exception) {
+                // probably pawns are on the sides
             }
         }
 
@@ -58,7 +67,7 @@ public class Pawn extends Piece {
             int rank = square.getRank();
             int rankDir = isWhite ? -1 : 1;
             if (rank + rankDir == enPassantRank && Math.abs(file - enPassantFile) == 1) {
-                available.add(new Move(this, square, enPassantSquare, MoveType.enPassant));
+                available.add(new Move(this, square, enPassantSquare, MoveType.enPassant, chess.pieceAt(enPassantFile, enPassantRank - rankDir)));
             }
         }
         return available;

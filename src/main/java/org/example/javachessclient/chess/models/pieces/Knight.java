@@ -2,6 +2,7 @@ package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.exceptions.BadSquare;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 
@@ -30,14 +31,16 @@ public class Knight extends Piece {
                     int absRanksMoved = 3 - absFilesMoved;
                     int filesMoved = absFilesMoved * fileDir;
                     int ranksMoved = absRanksMoved * rankDir;
-                    Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
-                    if (newSquare.isValid()) {
+                    try {
+                        Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
                         Piece piece = chess.pieceAt(newSquare);
                         if (piece == null) {
-                            available.add(new Move(this, square, newSquare, MoveType.normal));
+                            available.add(new Move(this, square, newSquare, MoveType.normal, null));
                         } else if (piece.getIsWhite() != isWhite) {
-                            available.add(new Move(this, square, newSquare, MoveType.capture));
+                            available.add(new Move(this, square, newSquare, MoveType.capture, piece));
                         }
+                    } catch (BadSquare exception) {
+                        // do nothing
                     }
                 }
             }

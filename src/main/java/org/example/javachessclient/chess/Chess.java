@@ -274,6 +274,7 @@ public class Chess {
     }
 
     public void moveTo(Piece piece, Square square) {
+        System.out.println("moving " + piece + " to " + square);
         board.get(piece.getSquare().getRank()).set(piece.getSquare().getFile(), null);
         board.get(square.getRank()).set(square.getFile(), piece);
         piece.setSquare(square);
@@ -308,14 +309,14 @@ public class Chess {
     private void addMovesInDir(Piece piece, ArrayList<Move> available, int fromFile, int fromRank, int fileDir, int rankDir) {
         // automatically refactored
         Square fromSquare = new Square(fromFile, fromRank);
-        for (int file = fromFile + fileDir, rank = fromRank + rankDir; 0 <= file && file <= 7 && 0 <= rank && rank <= 7; file += fileDir, rank += rankDir) {
+        for (int file = fromFile + fileDir, rank = fromRank + rankDir; Square.isValid(file, rank); file += fileDir, rank += rankDir) {
             Piece landingPiece = board.get(rank).get(file);
             if (landingPiece == null) {
-                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal, null));
             } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
                 return;
             } else {
-                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.capture));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.capture, landingPiece));
                 return;
             }
         }
@@ -386,7 +387,8 @@ public class Chess {
                 pieceAt(socketMove.getFromFile(), socketMove.getFromRank()),
                 new Square(fromFile, fromRank),
                 new Square(toFile, toRank),
-                Enum.valueOf(MoveType.class, socketMove.getMoveType())
+                Enum.valueOf(MoveType.class, socketMove.getMoveType()),
+                pieceAt(toFile, toRank)
         ));
     }
 
@@ -410,6 +412,14 @@ public class Chess {
             // Store.modal.show(new PromotionOptionsModal().buildModal());
         }
 
+        recordedMoves.add(move);
+
+        // update game flags based on move
+        updateCastlingAvailability();
+        updateEnPassantSquare();
+        updateThreefoldRepetition();
+        updateFiftyMoveRule();
+
         // check for end of game
         if (checkForCheckmate()) {
             Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
@@ -431,14 +441,6 @@ public class Chess {
             Store.modal.showMessage("Fifty Move", "It's a draw");
             return;
         }
-
-        recordedMoves.add(move);
-
-        // update game flags based on move
-        updateCastlingAvailability();
-        updateEnPassantSquare();
-        updateThreefoldRepetition();
-        updateFiftyMoveRule();
 
         // the last step of completing the move
         whiteToMove = !whiteToMove;
@@ -483,6 +485,11 @@ public class Chess {
 
         moveTo(piece, fromSquare);
 
+        if (type == MoveType.capture) {
+            Piece capturedPiece = move.getCapturedPiece();
+            board.get(capturedPiece.getSquare().getRank()).set(capturedPiece.getSquare().getFile(), capturedPiece);
+        }
+
         if (type != MoveType.normal && type != MoveType.capture) {
             move.getPiece().undoSpecialMove(move);
         }
@@ -502,8 +509,7 @@ public class Chess {
     }
 
     private boolean checkForFiftyMoveRule() {
-        // TODO
-        return false;
+        return halfmoveClock >= 50;
     }
 
     private void updateCastlingAvailability() {
@@ -529,7 +535,19 @@ public class Chess {
     }
 
     private void updateEnPassantSquare() {
-        // TODO
+        Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
+        Piece piece = lastMove.getPiece();
+        int toFile = lastMove.getToSquare().getFile();
+        int toRank = lastMove.getToSquare().getRank();
+        boolean movedTwoSquares = Math.abs(toRank - lastMove.getFromSquare().getRank()) == 2;
+        if (piece instanceof Pawn && movedTwoSquares) {
+            Piece piece1 = pieceAt(toFile - 1, toRank);
+            Piece piece2 = pieceAt(toFile + 1, toRank);
+            if ((piece1 instanceof Pawn && piece1.getIsWhite() != piece.getIsWhite())
+                    || (piece2 instanceof Pawn && piece2.getIsWhite() != piece.getIsWhite())) {
+                enPassantSquare = new Square(toFile, toRank + (piece.getIsWhite() ? 1 : -1));
+            }
+        }
     }
 
     private void updateThreefoldRepetition() {
@@ -537,7 +555,12 @@ public class Chess {
     }
 
     private void updateFiftyMoveRule() {
-        // TODO
+        Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
+        if (lastMove.getPiece() instanceof Pawn || lastMove.getType() == MoveType.capture) {
+            halfmoveClock = 0;
+        } else {
+            ++halfmoveClock;
+        }
     }
 
     // getters and setters
@@ -564,14 +587,6 @@ public class Chess {
 
     public Square getEnPassantSquare() {
         return enPassantSquare;
-    }
-
-    public int getHalfmoveClock() {
-        return halfmoveClock;
-    }
-
-    public int getFullmoveNumber() {
-        return fullmoveNumber;
     }
 
     public void setCanPlayWhite(boolean canPlayWhite) {

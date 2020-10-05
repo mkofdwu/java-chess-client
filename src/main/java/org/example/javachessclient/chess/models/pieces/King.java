@@ -2,6 +2,7 @@ package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
+import org.example.javachessclient.chess.exceptions.BadSquare;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
@@ -27,10 +28,14 @@ public class King extends Piece {
 
         for (int filesMoved : new int[]{-1, 0, 1}) {
             for (int ranksMoved : new int[]{-1, 0, 1}) {
-                Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
-                Piece piece = chess.pieceAt(newSquare);
-                if (piece == null || piece.getIsWhite() != isWhite) {
-                    available.add(new Move(this, square, newSquare, piece == null ? MoveType.normal : MoveType.capture));
+                try {
+                    Square newSquare = new Square(fromFile + filesMoved, fromRank + ranksMoved);
+                    Piece piece = chess.pieceAt(newSquare);
+                    if (piece == null || piece.getIsWhite() != isWhite) {
+                        available.add(new Move(this, square, newSquare, piece == null ? MoveType.normal : MoveType.capture, piece));
+                    }
+                } catch (BadSquare exception) {
+                    // king is probably on the edge
                 }
             }
         }
@@ -46,19 +51,20 @@ public class King extends Piece {
         if (chess.squareIsAttacked(square, !isWhite)) return available; // cannot castle when in check
         if (isWhite) {
             if (chess.getWhiteCanCastleKingside() && checkIfCanCastle(true)) {
-                available.add(new Move(this, square, new Square(6, 7), MoveType.castling));
+                available.add(new Move(this, square, new Square(6, 7), MoveType.castling, null));
             }
-            if (chess.getBlackCanCastleQueenside() && checkIfCanCastle(false)) {
-                available.add(new Move(this, square, new Square(2, 7), MoveType.castling));
+            if (chess.getWhiteCanCastleQueenside() && checkIfCanCastle(false)) {
+                available.add(new Move(this, square, new Square(2, 7), MoveType.castling, null));
             }
         } else {
             if (chess.getBlackCanCastleKingside() && checkIfCanCastle(true)) {
-                available.add(new Move(this, square, new Square(6, 0), MoveType.castling));
+                available.add(new Move(this, square, new Square(6, 0), MoveType.castling, null));
             }
             if (chess.getBlackCanCastleQueenside() && checkIfCanCastle(false)) {
-                available.add(new Move(this, square, new Square(2, 0), MoveType.castling));
+                available.add(new Move(this, square, new Square(2, 0), MoveType.castling, null));
             }
         }
+        System.out.println("available castling moves: " + available);
         return available;
     }
 
@@ -67,8 +73,8 @@ public class King extends Piece {
 
         int rank = square.getRank(); // should be 0 or 7 depending on white or black
         int fileDir = isKingside ? 1 : -1;
-        int fileLimit = isKingside ? 2 : 6;
-        for (int file = 4; file <= fileLimit; file += fileDir) {
+        int fileLimit = isKingside ? 6 : 2;
+        for (int file = 4 + fileDir; file != fileLimit; file += fileDir) {
             Square checkSquare = new Square(file, rank);
             Piece piece = chess.pieceAt(checkSquare);
             if (piece == null) {

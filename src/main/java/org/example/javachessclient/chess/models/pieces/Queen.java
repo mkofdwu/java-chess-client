@@ -27,9 +27,8 @@ public class Queen extends Piece {
     @Override
     public boolean isAttackingSquare(Square otherSquare) {
         boolean alongDiagonal = Math.abs(square.getFile() - otherSquare.getFile()) == Math.abs(square.getRank() - otherSquare.getRank());
-        if (!alongDiagonal) return false;
         boolean alongLine = square.getFile() == otherSquare.getFile() || square.getRank() == otherSquare.getRank();
-        if (!alongLine) return false;
+        if (!alongDiagonal && !alongLine) return false;
         return chess.squaresClearUntil(square.getFile(), square.getRank(), otherSquare.getFile(), otherSquare.getRank());
     }
 

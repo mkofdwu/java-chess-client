@@ -7,6 +7,9 @@ public class Square {
     private final int rank;
 
     public Square(int file, int rank) {
+        if (file < 0 || 7 < file || rank < 0 || 7 < rank) {
+            throw new BadSquare("bad square at file " + file + " and rank " + rank);
+        }
         this.file = file;
         this.rank = rank;
     }
@@ -16,7 +19,7 @@ public class Square {
         rank = 8 - Character.digit(square.charAt(1), 10);
     }
 
-    public boolean isValid() {
+    public static boolean isValid(int file, int rank) {
         return 0 <= file && file <= 7 && 0 <= rank && rank <= 7;
     }
 

@@ -9,12 +9,14 @@ public class Move {
     private final Square fromSquare;
     private final Square toSquare;
     private final MoveType type;
+    private final Piece capturedPiece;
 
-    public Move(Piece piece, Square fromSquare, Square toSquare, MoveType type) {
+    public Move(Piece piece, Square fromSquare, Square toSquare, MoveType type, Piece capturedPiece) {
         this.piece = piece;
         this.fromSquare = fromSquare;
         this.toSquare = toSquare;
         this.type = type;
+        this.capturedPiece = capturedPiece;
     }
 
     public Piece getPiece() {
@@ -31,5 +33,9 @@ public class Move {
 
     public MoveType getType() {
         return type;
+    }
+
+    public Piece getCapturedPiece() {
+        return capturedPiece;
     }
 }
