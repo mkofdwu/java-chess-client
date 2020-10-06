@@ -23,19 +23,43 @@
 /*}*/
 
 * {
+    -fx-red: #c13e3e;
+    -fx-accent: #336a89;
+    -fx-text-fill: -fx-text;
+}
+
+.light-theme * {
     -fx-bg: #fafafa;
     -fx-lesser: #c4c4c4;
     -fx-less: #515151;
     -fx-text: #000000;
+    -fx-absolute: #ffffff; /* opposite of text color */
+}
+
+.dark-theme * {
+    -fx-bg: #1a1a1a;
+    -fx-lesser: #c4c4c4;
+    -fx-less: #bebebe;
+    -fx-text: #ffffff;
+    -fx-absolute: #000000;
+}
+
+.grey-accent * {
+    -fx-accent: #515151;
+}
+
+.blue-accent * {
     -fx-accent: #336a89;
-    -fx-red: #c13e3e;
+}
+
+.green-accent * {
+    -fx-accent: #50846e;
 }
 
 .label {
     -fx-font-family: "Domaine Text Test";
     -fx-font-weight: normal;
     -fx-font-size: 14px;
-    -fx-text-fill: -fx-text;
 }
 
 .button {
@@ -63,18 +87,14 @@
     -fx-border-color: -fx-text;
 }
 
-.text-area {
+.text-area, .text-area:focused {
     -fx-font-family: "Domaine Text Test";
     -fx-font-size: 14px;
     -fx-background-insets: 0;
-    -fx-background-color: none;
+    -fx-background-color: -fx-bg;
 }
 
-.text-area .content {
+.text-area .content, .text-area:focused .content {
     -fx-padding: 0;
-    -fx-background-color: none;
-}
-
-.text-area:focused .content {
-    -fx-background-color: none;
+    -fx-background-color: -fx-bg;
 }

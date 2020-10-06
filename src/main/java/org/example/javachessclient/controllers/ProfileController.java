@@ -36,6 +36,21 @@ public class ProfileController {
     @FXML
     private Button changeProfilePicButton;
 
+    @FXML
+    private Button lightThemeButton;
+
+    @FXML
+    private Button darkThemeButton;
+
+    @FXML
+    private Button greyAccentButton;
+
+    @FXML
+    private Button blueAccentButton;
+
+    @FXML
+    private Button greenAccentButton;
+
     public void initialize() {
         profilePicStack.setClip(new Circle(90, 90, 90));
 
@@ -47,6 +62,26 @@ public class ProfileController {
         } else {
             profilePicView.setPreserveRatio(false);  // FIXME: cover fit image
             profilePicView.setImage(new Image(Store.user.getProfilePic()));
+        }
+
+        String[] themes = new String[]{"light-theme", "dark-theme"};
+        Button[] themeBtns = new Button[]{lightThemeButton, darkThemeButton};
+        for (int i = 0; i < 2; ++i) {
+            int finalI = i;
+            themeBtns[i].setOnMouseClicked((e) -> {
+                Store.root.getStyleClass().removeIf((className) -> className.endsWith("-theme"));
+                Store.root.getStyleClass().add(themes[finalI]);
+            });
+        }
+
+        String[] accents = new String[]{"grey-accent", "blue-accent", "green-accent"};
+        Button[] accentBtns = new Button[]{greyAccentButton, blueAccentButton, greenAccentButton};
+        for (int i = 0; i < 3; ++i) {
+            int finalI = i;
+            accentBtns[i].setOnMouseClicked((e) -> {
+                Store.root.getStyleClass().removeIf((className) -> className.endsWith("-accent"));
+                Store.root.getStyleClass().add(accents[finalI]);
+            });
         }
     }
 

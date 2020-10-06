@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import org.example.javachessclient.models.ModalCallback;
 
 public class Modal {
@@ -38,7 +37,7 @@ public class Modal {
         modal.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
         modal.setPrefWidth(400);
         modal.setPadding(new Insets(20, 24, 20, 24));
-        modal.setStyle("-fx-background-color: white; -fx-background-radius: 5px;");
+        modal.setStyle("-fx-background-color: -fx-absolute; -fx-background-radius: 5px;");
 
         // content.setAlignment(Pos.TOP_LEFT);
         Label titleLabel = new Label(title);
@@ -54,7 +53,7 @@ public class Modal {
         optionsBox.setAlignment(Pos.BOTTOM_RIGHT);
         for (String option : options) {
             Button optionBtn = new Button(option);
-            optionBtn.setStyle("-fx-background-color: -fx-accent, white;" +
+            optionBtn.setStyle("-fx-background-color: -fx-accent, -fx-absolute;" +
                     "-fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;" +
                     "-fx-background-radius: 0;" +
                     "-fx-text-fill: -fx-accent;" +

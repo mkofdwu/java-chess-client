@@ -4,6 +4,7 @@ import org.example.javachessclient.Store;
 import org.example.javachessclient.models.LoginDetails;
 import org.example.javachessclient.models.RegisterDetails;
 import org.example.javachessclient.models.TokenAuthResponse;
+import org.example.javachessclient.models.User;
 import retrofit2.Response;
 
 import java.io.*;
@@ -34,7 +35,7 @@ public class AuthService {
 //            return false;
 //        }
         // for TESTING purposes with 2 ppl
-        return false;
+         return false;
     }
 
     public static boolean authenticate(String username, String password, boolean register) {
@@ -61,7 +62,6 @@ public class AuthService {
 //            BufferedWriter bw = new BufferedWriter(new FileWriter(jwtFilePath));
 //            bw.write(authResponse.getToken());
 //            bw.close();
-
 
             return true;
         } catch (IOException exception) {

@@ -22,10 +22,13 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         StackPane root = new StackPane();
+        root.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+        root.getStyleClass().addAll("light-theme", "blue-accent");
         root.getChildren().add(new Pane());
 
         Store.router = new Router(root, 0);
         Store.modal = new Modal(root);
+        Store.root = root;
 
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.addInterceptor(chain -> {

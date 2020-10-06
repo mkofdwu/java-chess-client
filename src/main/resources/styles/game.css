@@ -1,6 +1,13 @@
+* {
+    -fx-opponent: black;
+    -fx-opponent-text: white;
+    -fx-user: white;
+    -fx-user-text: black;
+}
+
 .option-button {
-    -fx-background-color: white;
-    -fx-text-fill: -fx-text;
+    -fx-background-color: -fx-user;
+    -fx-text-fill: -fx-user-text;
 }
 
 .tab {
@@ -9,22 +16,22 @@
 }
 
 .tab.selected {
-    -fx-background-color: black;
+    -fx-background-color: -fx-opponent;
 }
 
 .message-input {
-    -fx-background-color: -fx-lesser, black;
+    -fx-background-color: -fx-lesser, -fx-opponent;
     -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
 }
 
 .record-text-area, .record-text-area:focused {
-    -fx-text-fill: white;
-    -fx-background-color: black;
+    -fx-text-fill: -fx-opponent-text;
+    -fx-background-color: -fx-opponent;
     -fx-background-radius: 0;
 }
 
 .record-text-area .content, .record-text-area:focused .content {
     -fx-padding: 20px;
-    -fx-background-color: black;
+    -fx-background-color: -fx-opponent;
     -fx-background-radius: 0;
 }

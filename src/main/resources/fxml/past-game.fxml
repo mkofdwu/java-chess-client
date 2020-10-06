@@ -9,49 +9,60 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" spacing="40.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.PastGameController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+      prefWidth="1000.0" spacing="40.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.PastGameController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="40.0">
             <children>
-                <fx:include source="../components/back-button.fxml" />
-            <VBox>
-               <children>
-                      <Label fx:id="gameNameLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper - Benedict Yap" />
-                  <HBox spacing="10.0">
-                     <children>
-                        <Label style="-fx-text-fill: -fx-accent;" text="Rename" />
-                        <Label style="-fx-text-fill: -fx-accent;" text="Download pgn" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
+                <fx:include source="../components/back-button.fxml"/>
+                <VBox>
+                    <children>
+                        <Label fx:id="gameNameLabel"
+                               style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;"
+                               text="Jane Cooper - Benedict Yap"/>
+                        <HBox spacing="10.0">
+                            <children>
+                                <Label style="-fx-text-fill: -fx-accent;" text="Rename"/>
+                                <Label style="-fx-text-fill: -fx-accent;" text="Download pgn"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
             </children>
         </HBox>
-        <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-effect: dropshadow(gaussian, #00000040, 50, 0, 0, 20);" VBox.vgrow="ALWAYS">
+        <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-effect: dropshadow(gaussian, #00000040, 50, 0, 0, 20);"
+              VBox.vgrow="ALWAYS">
             <children>
-            <Rectangle fill="#ffffff00" height="531.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="531.0" />
+                <Rectangle fill="#ffffff00" height="531.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0"
+                           width="531.0"/>
                 <VBox HBox.hgrow="ALWAYS">
                     <children>
-                          <VBox fx:id="chatPane" style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
-                     <padding>
-                        <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
-                     </padding></VBox>
+                        <VBox fx:id="chatPane" style="-fx-background-color: -fx-absolute;" VBox.vgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="20.0" left="24.0" right="24.0" top="20.0"/>
+                            </padding>
+                        </VBox>
                         <HBox>
                             <children>
-                                <Pane prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS">
+                                <Pane prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: -fx-absolute;"
+                                      HBox.hgrow="ALWAYS">
                                     <children>
-                                        <ImageView layoutX="89.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView layoutX="89.0" layoutY="12.0" pickOnBounds="true"
+                                                   preserveRatio="true">
                                             <image>
-                                                <Image url="@../icons/previous.png" />
+                                                <Image url="@../icons/previous.png"/>
                                             </image>
                                         </ImageView>
                                     </children>
                                 </Pane>
-                                <Pane prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: -fx-less;" HBox.hgrow="ALWAYS">
+                                <Pane prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: -fx-less;"
+                                      HBox.hgrow="ALWAYS">
                                     <children>
-                                        <ImageView layoutX="89.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView layoutX="89.0" layoutY="13.0" pickOnBounds="true"
+                                                   preserveRatio="true">
                                             <image>
-                                                <Image url="@../icons/next-white.png" />
+                                                <Image url="@../icons/next-white.png"/>
                                             </image>
                                         </ImageView>
                                     </children>
@@ -64,6 +75,6 @@
         </HBox>
     </children>
     <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
     </padding>
 </VBox>

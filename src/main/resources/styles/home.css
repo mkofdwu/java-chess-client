@@ -11,9 +11,10 @@
 }
 
 .game-option-container {
-    -fx-background-color: white;
-    -fx-border-radius: 5px;
+    -fx-background-color: -fx-absolute;
+    -fx-background-radius: 5px;
     -fx-border-color: -fx-text;
+    -fx-border-radius: 5px;
     -fx-pref-width: 140px;
     -fx-pref-height: 140px;
     -fx-padding: 10px;

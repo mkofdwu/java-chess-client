@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -69,6 +70,12 @@ public class GameController implements Controller {
     @FXML
     private Pane optionsTab;
 
+    @FXML
+    private HBox whiteCapturedPiecesBox;
+
+    @FXML
+    private HBox blackCapturedPiecesBox;
+
     private int selectedIndex = 0;
 
     public void initialize() {
@@ -109,6 +116,11 @@ public class GameController implements Controller {
             chess.setCanPlayWhite(isWhite);
             chess.setCanPlayBlack(!isWhite);
             if (!isWhite) chess.rotateBoard();
+            // fixme: load saved moves
+//            chess.loadMoves(game.getMoves());
+//            for (Move move : chess.getRecordedMoves()) {
+//                addMove(move);
+//            }
         } catch (ParseException exception) {
             Store.modal.showMessage("Error", "Error parsing fen string: " + game.getFenPosition());
         }
@@ -126,6 +138,7 @@ public class GameController implements Controller {
                 move.getType().name(),
                 chess.toFEN()
         );
+        addMove(move);
         Store.stompSession.send("/app/move/" + otherUserId, socketMove);
     }
 
@@ -137,13 +150,15 @@ public class GameController implements Controller {
             int fromRank = socketMove.getFromRank();
             int toFile = socketMove.getToFile();
             int toRank = socketMove.getToRank();
-            chess.playMove(new Move(
+            Move move = new Move(
                     chess.pieceAt(socketMove.getFromFile(), socketMove.getFromRank()),
                     new Square(fromFile, fromRank),
                     new Square(toFile, toRank),
                     Enum.valueOf(MoveType.class, socketMove.getMoveType()),
                     chess.pieceAt(toFile, toRank)
-            ));
+            );
+            chess.playMove(move);
+            addMove(move);
         }
     }
 
@@ -219,6 +234,26 @@ public class GameController implements Controller {
     @FXML
     void onRotateBoard() {
         chess.rotateBoard();
+    }
+
+    private void addMove(Move move) {
+        // update recording
+        if (move.getPiece().getIsWhite()) {
+            recordTextArea.appendText(chess.getRecordedMoves().size() + ". " + move + " ");
+        } else {
+            recordTextArea.appendText(move + "\n");
+        }
+        // update captured pieces
+        if (move.getCapturedPiece() != null) {
+            if (whiteCapturedPiecesBox.getChildren().get(0) instanceof Label) {
+                // remove placeholder label
+                whiteCapturedPiecesBox.getChildren().remove(0);
+            }
+            ImageView pieceImage = new ImageView(getClass().getResource(move.getCapturedPiece().getIconFilePath()).toExternalForm());
+            pieceImage.setFitWidth(30);
+            pieceImage.setFitHeight(30);
+            whiteCapturedPiecesBox.getChildren().add(pieceImage);
+        }
     }
 
     private void addMessage(String text, boolean fromMe) {

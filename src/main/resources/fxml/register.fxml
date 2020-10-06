@@ -10,56 +10,64 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.RegisterController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+      prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.javachessclient.controllers.RegisterController">
     <children>
         <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: -fx-bg;" HBox.hgrow="ALWAYS">
             <children>
-                <fx:include source="../components/back-button.fxml" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-size: 48; -fx-font-weight: bold;" text="Register">
+                <fx:include source="../components/back-button.fxml"/>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0"
+                      style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-size: 48; -fx-font-weight: bold;"
+                      text="Register">
                     <VBox.margin>
-                        <Insets bottom="10.0" top="80.0" />
-                    </VBox.margin></Text>
+                        <Insets bottom="10.0" top="80.0"/>
+                    </VBox.margin>
+                </Text>
                 <HBox spacing="4.0">
                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14;" text="Already have an account?" />
-                        <Text onMouseClicked="#onGoToLogin" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-fill: -fx-accent;" text="Login" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14;"
+                              text="Already have an account?"/>
+                        <Text onMouseClicked="#onGoToLogin" strokeType="OUTSIDE" strokeWidth="0.0"
+                              style="-fx-font-size: 14; -fx-fill: -fx-accent;" text="Login"/>
                     </children>
                     <VBox.margin>
-                        <Insets bottom="50.0" />
+                        <Insets bottom="50.0"/>
                     </VBox.margin>
                 </HBox>
                 <TextField fx:id="usernameInput" promptText="Username">
                     <VBox.margin>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="20.0"/>
                     </VBox.margin>
                 </TextField>
-            <PasswordField fx:id="passwordInput" promptText="Password">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin>
-            </PasswordField>
-            <PasswordField fx:id="confirmPasswordInput" promptText="Confirm password">
-               <VBox.margin>
-                  <Insets bottom="50.0" />
-               </VBox.margin>
-            </PasswordField>
+                <PasswordField fx:id="passwordInput" promptText="Password">
+                    <VBox.margin>
+                        <Insets bottom="20.0"/>
+                    </VBox.margin>
+                </PasswordField>
+                <PasswordField fx:id="confirmPasswordInput" promptText="Confirm password">
+                    <VBox.margin>
+                        <Insets bottom="50.0"/>
+                    </VBox.margin>
+                </PasswordField>
                 <HBox alignment="CENTER_RIGHT" spacing="30.0">
                     <children>
-                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onRegister" text="Register" />
+                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onRegister"
+                                text="Register"/>
                     </children>
                 </HBox>
             </children>
             <opaqueInsets>
-                <Insets />
+                <Insets/>
             </opaqueInsets>
             <padding>
-                <Insets left="140.0" right="140.0" top="120.0" />
+                <Insets left="140.0" right="140.0" top="120.0"/>
             </padding>
         </VBox>
-      <Rectangle fill="WHITE" height="700.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="240.0" />
+        <Rectangle fill="WHITE" height="700.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="240.0"/>
     </children>
     <stylesheets>
-        <URL value="@../styles/main.css" />
-        <URL value="@../styles/login-register.css" />
+        <URL value="@../styles/main.css"/>
+        <URL value="@../styles/login-register.css"/>
     </stylesheets>
 </HBox>

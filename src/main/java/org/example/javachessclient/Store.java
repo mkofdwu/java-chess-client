@@ -1,5 +1,6 @@
 package org.example.javachessclient;
 
+import javafx.scene.Parent;
 import org.example.javachessclient.apis.AuthApi;
 import org.example.javachessclient.apis.FileApi;
 import org.example.javachessclient.apis.GameApi;
@@ -14,6 +15,8 @@ public class Store {
     public static User user;
     public static Router router;
     public static Modal modal;
+    // used for changing styles
+    public static Parent root;
 
     public static Retrofit retrofit;
     // this is a temporary solution. In the future, replace these with instances of AuthService, UserService, other Services, etc

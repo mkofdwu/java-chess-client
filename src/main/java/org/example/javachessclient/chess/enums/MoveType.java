@@ -5,6 +5,5 @@ public enum MoveType {
     capture,
     // special moves
     castling,
-    enPassant,
-    promotion
+    enPassant
 }

@@ -407,6 +407,7 @@ public class Chess {
                 } else {
                     return;
                 }
+                move.setPromotedPiece(newPiece);
                 board.get(toSquare.getRank()).set(toSquare.getFile(), newPiece);
                 chessCanvas.redrawSquare(toSquare);
             }));
@@ -420,13 +421,17 @@ public class Chess {
         updateThreefoldRepetition();
         updateFiftyMoveRule();
 
-        // check for end of game
-        if (checkForCheckmate()) {
-            Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
-            return;
+        if (kingInCheck(!whiteToMove)) {
+            move.setChecksOpponentKing(true); // the opponent king was checked
         }
-        if (checkForStalemate()) {
-            Store.modal.showMessage("Stalemate", "It's a draw.");
+
+        // check for end of game
+        if (otherPlayerCannotMove()) {
+            if (move.getChecksOpponentKing()) {
+                Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
+            } else {
+                Store.modal.showMessage("Stalemate", "It's a draw.");
+            }
             return;
         }
         if (checkForThreefoldRepetition()) {
@@ -485,14 +490,6 @@ public class Chess {
         }
     }
 
-    private boolean checkForCheckmate() {
-        return otherPlayerCannotMove() && kingInCheck(!whiteToMove);
-    }
-
-    private boolean checkForStalemate() {
-        return otherPlayerCannotMove() && !kingInCheck(!whiteToMove); // currently this method call is redundant since checkForCheckmate is called before this
-    }
-
     private boolean checkForThreefoldRepetition() {
         // TODO
         return false;
@@ -548,21 +545,21 @@ public class Chess {
 
     private void updateFiftyMoveRule() {
         Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
-        if (lastMove.getPiece() instanceof Pawn || lastMove.getType() == MoveType.capture) {
+        if (lastMove.getPiece() instanceof Pawn || lastMove.getCapturedPiece() != null) {
             halfmoveClock = 0;
         } else {
             ++halfmoveClock;
         }
     }
 
-    private void endGame() {
-
-    }
-
     // getters and setters
 
     public Canvas getCanvas() {
         return chessCanvas.getCanvas();
+    }
+
+    public ArrayList<Move> getRecordedMoves() {
+        return recordedMoves;
     }
 
     public boolean getWhiteCanCastleKingside() {
