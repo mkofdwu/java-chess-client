@@ -35,7 +35,7 @@ public class AuthService {
 //            return false;
 //        }
         // for TESTING purposes with 2 ppl
-         return false;
+        return false;
     }
 
     public static boolean authenticate(String username, String password, boolean register) {

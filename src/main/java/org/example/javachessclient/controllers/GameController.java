@@ -1,6 +1,7 @@
 package org.example.javachessclient.controllers;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -71,10 +72,10 @@ public class GameController implements Controller {
     private Pane optionsTab;
 
     @FXML
-    private HBox whiteCapturedPiecesBox;
+    private HBox userCapturedPiecesBox;
 
     @FXML
-    private HBox blackCapturedPiecesBox;
+    private HBox opponentCapturedPiecesBox;
 
     private int selectedIndex = 0;
 
@@ -104,6 +105,11 @@ public class GameController implements Controller {
     public void loadData(Object data) {
         UserGame userGame = (UserGame) data;
         OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
+        if (game == null) {
+            Store.modal.showMessage("Error", "This game does not exist");
+            Store.router.pop();
+            return;
+        }
         gameId = game.get_id();
         boolean isWhite = userGame.getIsWhite();
         otherUserId = isWhite ? game.getBlack() : game.getWhite();
@@ -116,6 +122,7 @@ public class GameController implements Controller {
             chess.setCanPlayWhite(isWhite);
             chess.setCanPlayBlack(!isWhite);
             if (!isWhite) chess.rotateBoard();
+            box.getStyleClass().add(isWhite ? "white-player" : "black-player");
             // fixme: load saved moves
 //            chess.loadMoves(game.getMoves());
 //            for (Move move : chess.getRecordedMoves()) {
@@ -136,6 +143,7 @@ public class GameController implements Controller {
                 toSquare.getFile(),
                 toSquare.getRank(),
                 move.getType().name(),
+                0, // todo
                 chess.toFEN()
         );
         addMove(move);
@@ -185,7 +193,7 @@ public class GameController implements Controller {
                         }
                 );
             } else if (messageText.equals(acceptDrawMessageText)) {
-                Label prevMessage = (Label) messagesBox.getChildren().get(messagesBox.getChildren().size() - 2);
+                Label prevMessage = (Label) ((HBox) messagesBox.getChildren().get(messagesBox.getChildren().size() - 2)).getChildren().get(0);
                 if (prevMessage.getTextAlignment() == TextAlignment.RIGHT && prevMessage.getText().equals(offerDrawMessageText)) {
                     // the above checks for message sent by me requesting for a draw
                     Store.modal.showMessage("It's a draw", "Your opponent accepted your draw offer");
@@ -199,6 +207,7 @@ public class GameController implements Controller {
     @FXML
     void onSendMessage() {
         sendMessage(messageInput.getText());
+        messageInput.setText("");
     }
 
     @FXML
@@ -245,22 +254,26 @@ public class GameController implements Controller {
         }
         // update captured pieces
         if (move.getCapturedPiece() != null) {
-            if (whiteCapturedPiecesBox.getChildren().get(0) instanceof Label) {
-                // remove placeholder label
-                whiteCapturedPiecesBox.getChildren().remove(0);
-            }
             ImageView pieceImage = new ImageView(getClass().getResource(move.getCapturedPiece().getIconFilePath()).toExternalForm());
-            pieceImage.setFitWidth(30);
-            pieceImage.setFitHeight(30);
-            whiteCapturedPiecesBox.getChildren().add(pieceImage);
+            pieceImage.setFitWidth(24);
+            pieceImage.setFitHeight(24);
+            HBox capturedPiecesBox = move.getCapturedPiece().getIsWhite() ? opponentCapturedPiecesBox : userCapturedPiecesBox;
+            if (capturedPiecesBox.getChildren().get(0) instanceof Label) {
+                // remove placeholder label
+                capturedPiecesBox.getChildren().remove(0);
+            }
+            capturedPiecesBox.getChildren().add(pieceImage);
         }
     }
 
     private void addMessage(String text, boolean fromMe) {
+        HBox messageBox = new HBox();
+        messageBox.setAlignment(fromMe ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
         Label messageLabel = new Label(text);
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(fromMe ? TextAlignment.RIGHT : TextAlignment.LEFT);
-        messagesBox.getChildren().add(messageLabel);
+        messageBox.getChildren().add(messageLabel);
+        messagesBox.getChildren().add(messageBox);
     }
 
     private void sendMessage(String text) {

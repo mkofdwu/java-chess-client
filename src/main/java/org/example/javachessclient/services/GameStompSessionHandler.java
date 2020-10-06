@@ -92,10 +92,10 @@ public class GameStompSessionHandler implements StompSessionHandler {
             ));
         } else if (destination.startsWith("/topic/moves")) {
             if (Store.gameController != null)
-                Store.gameController.onSocketMove((SocketMove) payload);
+                Platform.runLater(() -> Store.gameController.onSocketMove((SocketMove) payload));
         } else if (destination.startsWith("/topic/messages")) {
             if (Store.gameController != null)
-                Store.gameController.onSocketMessage((SocketMessage) payload);
+                Platform.runLater(() -> Store.gameController.onSocketMessage((SocketMessage) payload));
         } else {
             throw new RuntimeException("Invalid destination: " + destination);
         }

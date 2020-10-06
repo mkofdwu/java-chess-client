@@ -9,6 +9,13 @@ public class UserProfile {
     public UserProfile() {
     }
 
+    public UserProfile(String id, String username, String profilePic, String bio) {
+        this.id = id;
+        this.username = username;
+        this.profilePic = profilePic;
+        this.bio = bio;
+    }
+
     public String getId() {
         return id;
     }

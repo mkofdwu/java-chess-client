@@ -96,4 +96,20 @@ public class User {
     public void setSettings(UserSettings settings) {
         this.settings = settings;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "_id='" + _id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", profilePic='" + profilePic + '\'' +
+                ", bio='" + bio + '\'' +
+                ", pastGames=" + pastGames +
+                ", ongoingGames=" + ongoingGames +
+                ", requestsSent=" + requestsSent +
+                ", requestsReceived=" + requestsReceived +
+                ", settings=" + settings +
+                '}';
+    }
 }

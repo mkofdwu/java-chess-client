@@ -22,7 +22,12 @@ public class ChangePasswordController {
         String confirmNewPassword = confirmNewPasswordInput.getText();
 
         if (newPassword.equals(confirmNewPassword)) {
-            UserService.updateUserPassword(oldPassword, newPassword);
+            if (UserService.updateUserPassword(oldPassword, newPassword)) {
+                Store.router.pop();
+                Store.modal.showMessage("Password updated", "Your password has been successfully changed");
+            } else {
+                System.out.println("fail");
+            }
         } else {
             Store.modal.showMessage("Cannot change password", "The new passwords entered don't match.");
         }

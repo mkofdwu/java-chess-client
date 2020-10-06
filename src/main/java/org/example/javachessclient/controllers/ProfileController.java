@@ -11,7 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import org.example.javachessclient.Store;
-import org.example.javachessclient.models.UpdateProfileDetails;
 import org.example.javachessclient.services.AuthService;
 import org.example.javachessclient.services.UserService;
 
@@ -64,6 +63,24 @@ public class ProfileController {
             profilePicView.setImage(new Image(Store.user.getProfilePic()));
         }
 
+        usernameInput.focusedProperty().addListener((a, b, focused) -> {
+            if (!focused) {
+                if (!usernameInput.getText().isEmpty()) {
+                    Store.user.setUsername(usernameInput.getText());
+                    UserService.updateUser();
+                }
+            }
+        });
+
+        bioInput.focusedProperty().addListener((a, b, focused) -> {
+            if (!focused) {
+                if (!bioInput.getText().isEmpty()) {
+                    Store.user.setBio(bioInput.getText());
+                    UserService.updateUser();
+                }
+            }
+        });
+
         String[] themes = new String[]{"light-theme", "dark-theme"};
         Button[] themeBtns = new Button[]{lightThemeButton, darkThemeButton};
         for (int i = 0; i < 2; ++i) {
@@ -71,6 +88,9 @@ public class ProfileController {
             themeBtns[i].setOnMouseClicked((e) -> {
                 Store.root.getStyleClass().removeIf((className) -> className.endsWith("-theme"));
                 Store.root.getStyleClass().add(themes[finalI]);
+
+                Store.user.getSettings().setTheme(finalI);
+                UserService.updateUser();
             });
         }
 
@@ -81,22 +101,11 @@ public class ProfileController {
             accentBtns[i].setOnMouseClicked((e) -> {
                 Store.root.getStyleClass().removeIf((className) -> className.endsWith("-accent"));
                 Store.root.getStyleClass().add(accents[finalI]);
+
+                Store.user.getSettings().setAccent(finalI);
+                UserService.updateUser();
             });
         }
-    }
-
-    @FXML
-    void onChangeUsername() {
-        UpdateProfileDetails details = new UpdateProfileDetails();
-        details.setUsername(usernameInput.getText());
-        UserService.updateUser(details);
-    }
-
-    @FXML
-    void onChangeBio() {
-        UpdateProfileDetails details = new UpdateProfileDetails();
-        details.setBio(bioInput.getText());
-        UserService.updateUser(details);
     }
 
     @FXML

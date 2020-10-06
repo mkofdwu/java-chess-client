@@ -1,42 +1,50 @@
 package org.example.javachessclient.services;
 
 import org.example.javachessclient.Store;
-import org.example.javachessclient.models.UpdateProfileDetails;
+import org.example.javachessclient.models.UpdatePasswordDetails;
 import org.example.javachessclient.models.UserGameUpdateDetails;
 import org.example.javachessclient.models.UserProfile;
 
 import java.io.IOException;
 
 public class UserService {
-    public static void updateUser(UpdateProfileDetails details) {
+    private static final UserProfile deletedUserProfile = new UserProfile("", "[Deleted user]", "", "");
+
+    public static void updateUser() {
         try {
-            Store.userApi.updateUser(details).execute();
+            Store.userApi.updateUser(Store.user).execute();
         } catch (IOException exception) {
             System.out.println("Failed to update user: IOException: " + exception.getMessage());
         }
     }
 
-    public static void deleteUser() {
+    public static boolean deleteUser() {
         try {
             Store.userApi.deleteUser().execute();
+            return true;
         } catch (IOException exception) {
             System.out.println("Failed to delete user: IOException: " + exception.getMessage());
+            return false;
         }
     }
 
-    public static void updateUserPassword(String oldPassword, String newPassword) {
+    public static boolean updateUserPassword(String oldPassword, String newPassword) {
         try {
-            Store.userApi.updateUserPassword(oldPassword, newPassword).execute();
+            Store.userApi.updateUserPassword(new UpdatePasswordDetails(oldPassword, newPassword)).execute();
+            return true;
         } catch (IOException exception) {
             System.out.println("Failed to update user password: IOException: " + exception.getMessage());
+            return false;
         }
     }
 
-    public static void updateUserGame(String gameId, UserGameUpdateDetails details) {
+    public static boolean updateUserGame(String gameId, UserGameUpdateDetails details) {
         try {
             Store.userApi.updateUserGame(gameId, details).execute();
+            return true;
         } catch (IOException exception) {
             System.out.println("Failed to update user game: IOException: " + exception.getMessage());
+            return false;
         }
     }
 
@@ -45,7 +53,7 @@ public class UserService {
             return Store.userApi.getUserProfile(userId).execute().body();
         } catch (IOException exception) {
             System.out.println("Failed to get user profile: IOException: " + exception.getMessage());
-            return null;
+            return deletedUserProfile;
         }
     }
 

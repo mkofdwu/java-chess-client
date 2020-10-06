@@ -40,8 +40,8 @@
                 </StackPane>
                 <VBox spacing="10.0">
                     <children>
-                        <TextField fx:id="usernameInput" onKeyTyped="#onChangeUsername" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper" GridPane.columnIndex="1" />
-                        <TextArea fx:id="bioInput" onKeyTyped="#onChangeBio" prefRowCount="3" promptText="Add bio..." text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="usernameInput" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper" GridPane.columnIndex="1" />
+                        <TextArea fx:id="bioInput" prefRowCount="3" promptText="Add bio..." text="Leo varius sagittis tristique felis vitae. Tortor augue vestibulum in in egestas mi, justo, non. Ullamcorper etiam commodo lectus pretium eu." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <GridPane.margin>
                                 <Insets bottom="10.0" top="10.0" />
                             </GridPane.margin>
@@ -116,12 +116,12 @@
                                 <Insets bottom="14.0" />
                             </VBox.margin>
                         </Label>
-                        <Label onMouseClicked="#onRequestLogout" style="-fx-text-fill: -fx-red; -fx-font-size: 16;" text="Logout">
+                        <Label onMouseClicked="#onRequestLogout" style="-fx-text-fill: -fx-red; -fx-font-size: 16; -fx-cursor: hand;" text="Logout">
                             <VBox.margin>
                                 <Insets bottom="6.0" />
                             </VBox.margin>
                         </Label>
-                        <Label onMouseClicked="#onRequestDeleteAccount" style="-fx-text-fill: -fx-red; -fx-font-size: 16;" text="Delete account" />
+                        <Label onMouseClicked="#onRequestDeleteAccount" style="-fx-text-fill: -fx-red; -fx-font-size: 16; -fx-cursor: hand;" text="Delete account" />
                     </children>
                 </VBox>
             </children>

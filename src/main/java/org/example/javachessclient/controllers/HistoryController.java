@@ -20,6 +20,9 @@ public class HistoryController {
 
     public void initialize() {
         List<UserGame> pastGames = Store.user.getPastGames();
+        if (!pastGames.isEmpty()) {
+            pastGamesGrid.getChildren().remove(0); // remove placeholder label, the first child
+        }
         for (int i = 0; i < pastGames.size(); ++i) {
             UserGame userGame = pastGames.get(i);
             PastGame game = (PastGame) GameService.getGame(userGame.getGameId());

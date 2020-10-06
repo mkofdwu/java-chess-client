@@ -1,4 +1,4 @@
-package org.example.javachessclient.chess;
+package org.example.javachessclient.chess.views;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -8,9 +8,9 @@ import org.example.javachessclient.Store;
 import org.example.javachessclient.models.ModalCallback;
 
 public class PromotionOptionsModal {
-    public VBox buildModal(ModalCallback cb) {
+    public static VBox buildModal(ModalCallback cb) {
         VBox modal = new VBox();
-        modal.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+        modal.getStylesheets().add(PromotionOptionsModal.class.getResource("/styles/main.css").toExternalForm());
         modal.setPrefWidth(400);
         modal.setPadding(new Insets(20, 24, 20, 24));
         modal.setStyle("-fx-background-color: white; -fx-background-radius: 5px;");

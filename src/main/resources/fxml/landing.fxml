@@ -13,12 +13,12 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: -fx-bg;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.LandingController">
    <children>
-      <Rectangle fill="WHITE" height="700.0" layoutX="600.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="400.0" />
+      <Rectangle fill="WHITE" height="700.0" layoutX="600.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" style="-fx-fill: -fx-absolute;" width="400.0" />
       <HBox layoutX="70.0" layoutY="650.0" spacing="20.0">
          <children>
             <Label styleClass="small-link" text="Version 0.1.0" />
-            <Label styleClass="small-link" text="About" />
-            <Label styleClass="small-link" text="Licenses" />
+            <Label onMouseClicked="#onShowAbout" styleClass="small-link" text="About" />
+            <Label onMouseClicked="#onShowLicenses" styleClass="small-link" text="Licenses" />
          </children>
       </HBox>
       <VBox layoutX="418.0" layoutY="242.0" prefWidth="300.0">

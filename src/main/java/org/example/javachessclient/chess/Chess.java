@@ -7,6 +7,7 @@ import org.example.javachessclient.chess.exceptions.InvalidBoardException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
+import org.example.javachessclient.chess.views.PromotionOptionsModal;
 import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
@@ -394,7 +395,7 @@ public class Chess {
 
         // check for pawn promotion (show modal)
         if ((piece instanceof Pawn) && toSquare.getRank() == (piece.getIsWhite() ? 0 : 7)) {
-            Store.modal.show(new PromotionOptionsModal().buildModal((pieceName) -> {
+            Store.modal.show(PromotionOptionsModal.buildModal((pieceName) -> {
                 Piece newPiece;
                 if (pieceName.equals("Queen")) {
                     newPiece = new Queen(this, toSquare, piece.getIsWhite());
@@ -432,15 +433,14 @@ public class Chess {
             } else {
                 Store.modal.showMessage("Stalemate", "It's a draw.");
             }
-            return;
-        }
-        if (checkForThreefoldRepetition()) {
+        } else if (checkForThreefoldRepetition()) {
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
-            return;
-        }
-        if (checkForFiftyMoveRule()) {
+            canPlayWhite = false;
+            canPlayBlack = false;
+        } else if (checkForFiftyMoveRule()) {
             Store.modal.showMessage("Fifty Move", "It's a draw");
-            return;
+            canPlayWhite = false;
+            canPlayBlack = false;
         }
 
         // the last step of completing the move

@@ -10,89 +10,92 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="700.0" prefWidth="760.0" style="-fx-background: -fx-bg; -fx-border-color: -fx-bg;" vbarPolicy="NEVER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.HomeController">
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="700.0" prefWidth="760.0"
+            style="-fx-background: -fx-bg; -fx-border-color: -fx-bg;" vbarPolicy="NEVER"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.javachessclient.controllers.HomeController">
     <content>
         <VBox>
             <children>
-                <Label styleClass="group-header" text="New game" />
+                <Label styleClass="group-header" text="New game"/>
                 <Separator prefWidth="200.0">
                     <VBox.margin>
-                        <Insets bottom="30.0" left="-50.0" right="-50.0" />
+                        <Insets bottom="30.0" left="-50.0" right="-50.0"/>
                     </VBox.margin>
                 </Separator>
                 <HBox>
                     <children>
-                        <VBox onMouseClicked="#onPlayRandom" prefHeight="140.0" prefWidth="140.0" styleClass="game-option-container">
+                        <VBox onMouseClicked="#onPlayRandom" prefHeight="140.0" prefWidth="140.0"
+                              styleClass="game-option-container">
                             <children>
                                 <ImageView pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../icons/help.png" />
+                                        <Image url="@../icons/help.png"/>
                                     </image>
                                 </ImageView>
-                                <Label style="-fx-font-size: 16px;" text="Random opponent" textAlignment="CENTER" wrapText="true" />
+                                <Label style="-fx-font-size: 16px;" text="Random opponent" textAlignment="CENTER"
+                                       wrapText="true"/>
                             </children>
                             <HBox.margin>
-                                <Insets right="30.0" />
+                                <Insets right="30.0"/>
                             </HBox.margin>
                         </VBox>
-                        <VBox onMouseClicked="#onPlaySomeone" prefHeight="140.0" prefWidth="140.0" styleClass="game-option-container">
+                        <VBox onMouseClicked="#onPlaySomeone" prefHeight="140.0" prefWidth="140.0"
+                              styleClass="game-option-container">
                             <children>
                                 <ImageView pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../icons/people.png" />
+                                        <Image url="@../icons/people.png"/>
                                     </image>
                                 </ImageView>
-                                <Label style="-fx-font-size: 16px;" text="Play with someone" textAlignment="CENTER" wrapText="true" />
+                                <Label style="-fx-font-size: 16px;" text="Play with someone" textAlignment="CENTER"
+                                       wrapText="true"/>
                             </children>
                         </VBox>
                     </children>
                 </HBox>
-                <Label styleClass="group-header" text="Ongoing games" />
+                <Label styleClass="group-header" text="Ongoing games"/>
                 <Separator prefWidth="200.0">
                     <VBox.margin>
-                        <Insets bottom="30.0" left="-50.0" right="-50.0" />
+                        <Insets bottom="30.0" left="-50.0" right="-50.0"/>
                     </VBox.margin>
                 </Separator>
                 <GridPane fx:id="ongoingGamesGrid">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES"/>
                     </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
-                    </rowConstraints>
                     <children>
+                        <Label fx:id="noOngoingGamesLabel" style="-fx-text-fill: -fx-less;" text="Nothing to show"/>
                     </children>
                 </GridPane>
-                <Label layoutX="60.0" layoutY="285.0" styleClass="group-header" text="Game requests" />
+                <Label layoutX="60.0" layoutY="285.0" styleClass="group-header" text="Game requests"/>
                 <Separator layoutX="10.0" layoutY="388.0" prefWidth="200.0">
                     <VBox.margin>
-                        <Insets bottom="30.0" left="-50.0" right="-50.0" />
+                        <Insets bottom="30.0" left="-50.0" right="-50.0"/>
                     </VBox.margin>
                 </Separator>
                 <GridPane fx:id="gameRequestsGrid">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="24.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="24.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="24.0"/>
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="24.0"/>
                     </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="24.0" valignment="CENTER" vgrow="SOMETIMES" />
-                    </rowConstraints>
                     <children>
+                        <Label fx:id="noGameRequestsLabel" style="-fx-text-fill: -fx-less;"
+                               text="You haven't received any game requests yet"/>
                     </children>
                 </GridPane>
             </children>
             <padding>
-                <Insets left="50.0" right="50.0" top="20.0" />
+                <Insets left="50.0" right="50.0" top="20.0"/>
             </padding>
         </VBox>
     </content>
     <stylesheets>
-        <URL value="@../styles/main.css" />
-        <URL value="@../styles/home.css" />
+        <URL value="@../styles/main.css"/>
+        <URL value="@../styles/home.css"/>
     </stylesheets>
 </ScrollPane>

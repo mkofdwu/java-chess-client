@@ -1,8 +1,15 @@
-* {
+.white-player * {
     -fx-opponent: black;
     -fx-opponent-text: white;
     -fx-user: white;
     -fx-user-text: black;
+}
+
+.black-player * {
+    -fx-opponent: white;
+    -fx-opponent-text: black;
+    -fx-user: black;
+    -fx-user-text: white;
 }
 
 .option-button {
@@ -19,9 +26,14 @@
     -fx-background-color: -fx-opponent;
 }
 
+.messages-box * {
+    -fx-text-fill: -fx-opponent-text;
+}
+
 .message-input {
     -fx-background-color: -fx-lesser, -fx-opponent;
     -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
+    -fx-text-fill: -fx-opponent-text;
 }
 
 .record-text-area, .record-text-area:focused {

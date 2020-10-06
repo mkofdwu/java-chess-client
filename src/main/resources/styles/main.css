@@ -1,6 +1,6 @@
-/*@font-face {*/
-/*    src: url("../fonts/DomaineTextTest/Light.otf");*/
-/*}*/
+@font-face {
+    src: url("../fonts/DomaineTextTest/Light.otf");
+}
 
 @font-face {
     src: url("../fonts/DomaineTextTest/Medium.otf");
@@ -11,16 +11,16 @@
 }
 
 @font-face {
+    src: url("../fonts/DomaineDisplayTest/Semibold.otf");
+}
+
+@font-face {
     src: url("../fonts/DomaineDisplayTest/Medium.otf");
 }
 
 @font-face {
     src: url("../fonts/DomaineDisplayTest/Regular.otf");
 }
-
-/*@font-face {*/
-/*    src: url("../fonts/DomaineDisplayTest/Semibold.otf");*/
-/*}*/
 
 * {
     -fx-red: #c13e3e;
@@ -92,9 +92,11 @@
     -fx-font-size: 14px;
     -fx-background-insets: 0;
     -fx-background-color: -fx-bg;
+    -fx-background-radius: 0;
 }
 
 .text-area .content, .text-area:focused .content {
     -fx-padding: 0;
     -fx-background-color: -fx-bg;
+    -fx-background-radius: 0;
 }

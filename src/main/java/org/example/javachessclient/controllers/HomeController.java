@@ -17,13 +17,21 @@ import java.util.List;
 
 public class HomeController {
     @FXML
+    private Label noOngoingGamesLabel;
+
+    @FXML
     private GridPane ongoingGamesGrid;
+
+    @FXML
+    private Label noGameRequestsLabel;
 
     @FXML
     private GridPane gameRequestsGrid;
 
     public void initialize() {
         List<UserGame> userGames = Store.user.getOngoingGames();
+        if (!userGames.isEmpty())
+            ongoingGamesGrid.getChildren().remove(noOngoingGamesLabel);
         for (int i = 0; i < userGames.size(); ++i) {
             UserGame userGame = userGames.get(i);
             OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
@@ -39,6 +47,8 @@ public class HomeController {
         }
 
         List<String> gameRequests = Store.user.getRequestsReceived();
+        if (!gameRequests.isEmpty())
+            gameRequestsGrid.getChildren().remove(noGameRequestsLabel);
         for (int i = 0; i < gameRequests.size(); ++i) {
             String otherUserId = gameRequests.get(i);
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
