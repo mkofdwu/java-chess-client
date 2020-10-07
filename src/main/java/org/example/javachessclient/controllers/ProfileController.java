@@ -6,12 +6,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.services.AuthService;
+import org.example.javachessclient.services.ThemeService;
 import org.example.javachessclient.services.UserService;
 
 import java.io.File;
@@ -59,8 +62,14 @@ public class ProfileController {
             addProfilePicBox.setVisible(true);
             profilePicView.setVisible(false);
         } else {
-            profilePicView.setPreserveRatio(false);  // FIXME: cover fit image
-            profilePicView.setImage(new Image(Store.user.getProfilePic()));
+            // why doesn't java have a better way of setting image fit to cover?
+            Image profilePicImage = new Image(Store.user.getProfilePic());
+            PixelReader reader = profilePicImage.getPixelReader();
+            int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
+            int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
+            int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
+            WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
+            profilePicView.setImage(croppedProfilePic);
         }
 
         usernameInput.focusedProperty().addListener((a, b, focused) -> {
@@ -81,27 +90,22 @@ public class ProfileController {
             }
         });
 
-        String[] themes = new String[]{"light-theme", "dark-theme"};
         Button[] themeBtns = new Button[]{lightThemeButton, darkThemeButton};
         for (int i = 0; i < 2; ++i) {
             int finalI = i;
+            ;
             themeBtns[i].setOnMouseClicked((e) -> {
-                Store.root.getStyleClass().removeIf((className) -> className.endsWith("-theme"));
-                Store.root.getStyleClass().add(themes[finalI]);
-
+                ThemeService.setTheme(finalI);
                 Store.user.getSettings().setTheme(finalI);
                 UserService.updateUser();
             });
         }
 
-        String[] accents = new String[]{"grey-accent", "blue-accent", "green-accent"};
         Button[] accentBtns = new Button[]{greyAccentButton, blueAccentButton, greenAccentButton};
         for (int i = 0; i < 3; ++i) {
             int finalI = i;
             accentBtns[i].setOnMouseClicked((e) -> {
-                Store.root.getStyleClass().removeIf((className) -> className.endsWith("-accent"));
-                Store.root.getStyleClass().add(accents[finalI]);
-
+                ThemeService.setAccent(finalI);
                 Store.user.getSettings().setAccent(finalI);
                 UserService.updateUser();
             });

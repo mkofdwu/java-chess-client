@@ -18,7 +18,6 @@
          <children>
             <Label styleClass="small-link" text="Version 0.1.0" />
             <Label onMouseClicked="#onShowAbout" styleClass="small-link" text="About" />
-            <Label onMouseClicked="#onShowLicenses" styleClass="small-link" text="Licenses" />
          </children>
       </HBox>
       <VBox layoutX="418.0" layoutY="242.0" prefWidth="300.0">

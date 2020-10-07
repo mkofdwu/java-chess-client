@@ -13,6 +13,7 @@ import org.example.javachessclient.apis.GameApi;
 import org.example.javachessclient.apis.UserApi;
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.services.AuthService;
+import org.example.javachessclient.services.ThemeService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
