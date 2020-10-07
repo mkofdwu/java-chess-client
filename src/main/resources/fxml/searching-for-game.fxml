@@ -9,7 +9,7 @@
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: -fx-bg;" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.javachessclient.controllers.SearchingForGameController">
    <children>
-      <ImageView pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="searchImage" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../icons/search-large.png" />
          </image>
