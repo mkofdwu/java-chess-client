@@ -12,6 +12,7 @@ import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,7 @@ public class Chess {
     private boolean canPlayWhite = false;
     private boolean canPlayBlack = false;
     private UserMoveCallback onUserMove;
+    private int result; // 0 - draw, 1 - white wins, 2 - black wins
 
     public Chess() {
         chessCanvas = new ChessCanvas(this);
@@ -429,18 +431,22 @@ public class Chess {
         // check for end of game
         if (otherPlayerCannotMove()) {
             if (move.getChecksOpponentKing()) {
+                result = whiteToMove ? 1 : 2;
                 Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
             } else {
+                result = 0;
                 Store.modal.showMessage("Stalemate", "It's a draw.");
             }
         } else if (checkForThreefoldRepetition()) {
+            canPlayWhite = false;
+            canPlayBlack = false;
+            result = 0;
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
-            canPlayWhite = false;
-            canPlayBlack = false;
         } else if (checkForFiftyMoveRule()) {
-            Store.modal.showMessage("Fifty Move", "It's a draw");
             canPlayWhite = false;
             canPlayBlack = false;
+            result = 0;
+            Store.modal.showMessage("Fifty Move", "It's a draw");
         }
 
         // the last step of completing the move
@@ -592,5 +598,9 @@ public class Chess {
 
     public void setOnUserMove(UserMoveCallback onUserMove) {
         this.onUserMove = onUserMove;
+    }
+
+    public int getResult() {
+        return result;
     }
 }

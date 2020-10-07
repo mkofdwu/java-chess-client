@@ -25,6 +25,7 @@ import org.example.javachessclient.models.SocketMessage;
 import org.example.javachessclient.models.SocketMove;
 
 import java.text.ParseException;
+import java.util.List;
 
 public class GameController implements Controller {
     private static final String resignMessageText = "I resign";
@@ -124,8 +125,19 @@ public class GameController implements Controller {
             if (!isWhite) chess.rotateBoard();
             box.getStyleClass().add(isWhite ? "white-player" : "black-player");
             // fixme: load saved moves
-//            chess.loadMoves(game.getMoves());
-//            for (Move move : chess.getRecordedMoves()) {
+//            for (List<Integer> moveIntList : game.getMoves()) {
+//                int fromFile = moveIntList[0];
+//                int fromRank = moveIntList[0];
+//                int toFile = moveIntList.getToFile();
+//                int toRank = moveIntList.getToRank();
+//                Move move = new Move(
+//                        chess.pieceAt(fromFile, fromRank),
+//                        new Square(fromFile, fromRank),
+//                        new Square(toFile, toRank),
+//                        ,
+//                        chess.pieceAt(toFile, toRank)
+//                );
+//                chess.playMove(move);
 //                addMove(move);
 //            }
         } catch (ParseException exception) {
@@ -143,7 +155,7 @@ public class GameController implements Controller {
                 toSquare.getFile(),
                 toSquare.getRank(),
                 move.getType().name(),
-                0, // todo
+                chess.getResult(),
                 chess.toFEN()
         );
         addMove(move);
@@ -159,7 +171,7 @@ public class GameController implements Controller {
             int toFile = socketMove.getToFile();
             int toRank = socketMove.getToRank();
             Move move = new Move(
-                    chess.pieceAt(socketMove.getFromFile(), socketMove.getFromRank()),
+                    chess.pieceAt(fromFile, fromRank),
                     new Square(fromFile, fromRank),
                     new Square(toFile, toRank),
                     Enum.valueOf(MoveType.class, socketMove.getMoveType()),

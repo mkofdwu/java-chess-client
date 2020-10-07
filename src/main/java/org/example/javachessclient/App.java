@@ -1,8 +1,6 @@
 package org.example.javachessclient;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -41,7 +39,11 @@ public class App extends Application {
             return chain.proceed(chain.request());
         });
         Store.retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:8081/api/")
+                .baseUrl(
+                        System.getProperty("production").equals("true")
+                                ? "https://java-chess-server.herokuapp.com/api/"
+                                : "http://localhost:8081/api/"
+                )
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client.build())
                 .build();

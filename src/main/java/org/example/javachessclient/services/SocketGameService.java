@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class SocketGameService {
-    public static final String socketServerUrl = "ws://localhost:8081/api/ws/game";
+    public static final String socketServerUrl =
+            System.getProperty("production").equals("true")
+                    ? "https://java-chess-server.herokuapp.com/api/ws/game"
+                    : "ws://localhost:8081/api/ws/game";
 
     public static StompSession createStompSession() {
         try {
