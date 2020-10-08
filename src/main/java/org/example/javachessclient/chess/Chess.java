@@ -8,9 +8,11 @@ import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
 import org.example.javachessclient.chess.views.PromotionOptionsModal;
+import org.example.javachessclient.models.OngoingGame;
 import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -178,8 +180,9 @@ public class Chess {
     }
 
     public String toPgn() {
-        // TODO
         // convert the current game to a string with the pgn notation
+//        StringBuilder pgn = new StringBuilder();
+//        pgn.append("[Event \"Unknown\"]\n[Site \"Unknown\"]\n[Date \"" + new SimpleDateFormat("yyyy.MM.dd").format());
         return "";
     }
 

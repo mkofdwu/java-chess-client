@@ -14,6 +14,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.services.AuthService;
+import org.example.javachessclient.services.FileService;
 import org.example.javachessclient.services.ThemeService;
 import org.example.javachessclient.services.UserService;
 
@@ -62,14 +63,7 @@ public class ProfileController {
             addProfilePicBox.setVisible(true);
             profilePicView.setVisible(false);
         } else {
-            // why doesn't java have a better way of setting image fit to cover?
-            Image profilePicImage = new Image(Store.user.getProfilePic());
-            PixelReader reader = profilePicImage.getPixelReader();
-            int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
-            int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
-            int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
-            WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
-            profilePicView.setImage(croppedProfilePic);
+            refreshProfilePic();
         }
 
         usernameInput.focusedProperty().addListener((a, b, focused) -> {
@@ -129,7 +123,10 @@ public class ProfileController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image files", "*.png", "*.jpg", "*.gif"));
         File profilePicFile = fileChooser.showOpenDialog(usernameInput.getScene().getWindow());
-        // TODO: send multipart request
+        String profilePic = FileService.uploadImage(profilePicFile).getUrl();
+        Store.user.setProfilePic(profilePic);
+        UserService.updateUser();
+        refreshProfilePic();
     }
 
     @FXML
@@ -166,6 +163,19 @@ public class ProfileController {
                     }
                 }
         );
+    }
+
+    private void refreshProfilePic() {
+        // why doesn't java have a better way of setting image fit to cover?
+        Image profilePicImage = new Image(Store.user.getProfilePic());
+        if (!profilePicImage.isError()) {
+            PixelReader reader = profilePicImage.getPixelReader();
+            int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
+            int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
+            int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
+            WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
+            profilePicView.setImage(croppedProfilePic);
+        }
     }
 }
 

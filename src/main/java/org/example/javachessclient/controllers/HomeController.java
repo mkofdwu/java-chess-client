@@ -56,9 +56,10 @@ public class HomeController {
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
 
             Label usernameLabel = new Label(otherProfile.getUsername());
-            usernameLabel.setStyle("-fx-cursor: hand;");
-            ImageView acceptButton = new ImageView("/icons/accept.png");
-            ImageView rejectButton = new ImageView("/icons/reject.png");
+            ImageView acceptButton = new ImageView(getClass().getResource("/icons/accept.png").toExternalForm());
+            acceptButton.setStyle("-fx-cursor: hand;");
+            ImageView rejectButton = new ImageView(getClass().getResource("/icons/reject.png").toExternalForm());
+            rejectButton.setStyle("-fx-cursor: hand;");
             acceptButton.setOnMouseClicked((e) -> {
                 GameService.respondToGameRequest(otherUserId, true);
                 gameRequestsGrid.getChildren().removeAll(usernameLabel, acceptButton, rejectButton);
