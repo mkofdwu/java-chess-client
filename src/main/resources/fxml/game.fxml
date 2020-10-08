@@ -32,7 +32,7 @@
                             <children>
                                 <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label fx:id="blackUsernameLabel" style="-fx-text-fill: -fx-opponent-text; -fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;" text="Benedict Yap" />
+                                        <Label fx:id="opponentUsernameLabel" style="-fx-text-fill: -fx-opponent-text; -fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20;" text="Benedict Yap" />
                                         <HBox fx:id="opponentCapturedPiecesBox">
                                             <children>
                                                 <Label style="-fx-text-fill: -fx-opponent-text;" text="No captured pieces" />
@@ -115,7 +115,7 @@
                             <children>
                                 <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label fx:id="whiteUsernameLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: -fx-user-text" text="Jane Cooper" />
+                                        <Label fx:id="userUsernameLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: -fx-user-text" text="Jane Cooper" />
                                         <HBox fx:id="userCapturedPiecesBox">
                                             <children>
                                                 <Label style="-fx-text-fill: -fx-user-text" text="No captured pieces" />

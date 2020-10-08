@@ -93,19 +93,19 @@ public class King extends Piece {
     }
 
     @Override
-    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
+    public Square[] makeSpecialMoveAndGetAffectedSquares(Move move) {
         if (move.getType() == MoveType.castling) {
             int rank = square.getRank();
             if (square.getFile() == 6) {
                 // kingside
                 Piece rook = chess.pieceAt(7, rank);
                 chess.moveTo(rook, new Square(5, rank));
-                return new Square(7, rank);
+                return new Square[] {new Square(5, rank), new Square(7, rank)};
             } else if (square.getFile() == 2) {
                 // queenside
                 Piece rook = chess.pieceAt(0, rank);
                 chess.moveTo(rook, new Square(3, rank));
-                return new Square(0, rank);
+                return new Square[] {new Square(3, rank), new Square(0, rank)};
             } else {
                 throw new InvalidMoveException();
             }

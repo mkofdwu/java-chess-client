@@ -33,7 +33,7 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
+    public Square[] makeSpecialMoveAndGetAffectedSquares(Move move) {
         // a queen has no special moves
         return null;
     }

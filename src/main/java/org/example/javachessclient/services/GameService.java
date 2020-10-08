@@ -1,13 +1,16 @@
 package org.example.javachessclient.services;
 
+import com.google.gson.Gson;
 import org.example.javachessclient.Store;
 
 import java.io.IOException;
 
 public class GameService {
-    public static Object getGame(String gameId) {
+    public static <T> T getGame(String gameId, Class<T> classOfT) {
         try {
-            return Store.gameApi.getGame(gameId).execute().body();
+            Object linkedTreeMap = Store.gameApi.getGame(gameId).execute().body();
+            Gson gson = new Gson();
+            return gson.fromJson(gson.toJsonTree(linkedTreeMap), classOfT);
         } catch (IOException exception) {
             System.out.println("Failed to fetch game with id " + gameId + ": " + exception.getMessage());
             return null;

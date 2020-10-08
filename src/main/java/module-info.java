@@ -8,6 +8,7 @@ module org.example.javachessclient {
     requires spring.websocket;
     requires spring.messaging;
     requires spring.core;
+    requires gson;
 
     opens org.example.javachessclient to javafx.fxml;
     exports org.example.javachessclient;

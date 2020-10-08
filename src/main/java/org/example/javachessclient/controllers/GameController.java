@@ -16,16 +16,12 @@ import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
-import org.example.javachessclient.models.OngoingGame;
-import org.example.javachessclient.models.UserGame;
-import org.example.javachessclient.models.UserProfile;
+import org.example.javachessclient.chess.models.pieces.Piece;
+import org.example.javachessclient.models.*;
 import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.services.UserService;
-import org.example.javachessclient.models.SocketMessage;
-import org.example.javachessclient.models.SocketMove;
 
 import java.text.ParseException;
-import java.util.List;
 
 public class GameController implements Controller {
     private static final String resignMessageText = "I resign";
@@ -35,15 +31,16 @@ public class GameController implements Controller {
     private Chess chess;
     private String otherUserId;
     private String gameId;
+    private boolean isWhite;
 
     @FXML
     private Label gameNameLabel;
 
     @FXML
-    private Label whiteUsernameLabel;
+    private Label userUsernameLabel;
 
     @FXML
-    private Label blackUsernameLabel;
+    private Label opponentUsernameLabel;
 
     @FXML
     private HBox box;
@@ -105,41 +102,44 @@ public class GameController implements Controller {
     @Override
     public void loadData(Object data) {
         UserGame userGame = (UserGame) data;
-        OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
+        OngoingGame game = GameService.getGame(userGame.getGameId(), OngoingGame.class);
         if (game == null) {
             Store.modal.showMessage("Error", "This game does not exist");
             Store.router.pop();
             return;
         }
         gameId = game.get_id();
-        boolean isWhite = userGame.getIsWhite();
+        isWhite = userGame.getIsWhite();
         otherUserId = isWhite ? game.getBlack() : game.getWhite();
         UserProfile otherProfile = UserService.getUserProfile(otherUserId);
         try {
             gameNameLabel.setText(userGame.getName());
-            whiteUsernameLabel.setText(isWhite ? Store.user.getUsername() : otherProfile.getUsername());
-            blackUsernameLabel.setText(isWhite ? otherProfile.getUsername() : Store.user.getUsername());
-            chess.loadFEN(game.getFenPosition());
+            userUsernameLabel.setText(Store.user.getUsername());
+            opponentUsernameLabel.setText(otherProfile.getUsername());
+            chess.loadFEN(Chess.startingFen);
             chess.setCanPlayWhite(isWhite);
             chess.setCanPlayBlack(!isWhite);
             if (!isWhite) chess.rotateBoard();
             box.getStyleClass().add(isWhite ? "white-player" : "black-player");
-            // fixme: load saved moves
-//            for (List<Integer> moveIntList : game.getMoves()) {
-//                int fromFile = moveIntList[0];
-//                int fromRank = moveIntList[0];
-//                int toFile = moveIntList.getToFile();
-//                int toRank = moveIntList.getToRank();
-//                Move move = new Move(
-//                        chess.pieceAt(fromFile, fromRank),
-//                        new Square(fromFile, fromRank),
-//                        new Square(toFile, toRank),
-//                        ,
-//                        chess.pieceAt(toFile, toRank)
-//                );
-//                chess.playMove(move);
-//                addMove(move);
-//            }
+            // load recorded moves
+            // fixme: refractor & clean
+            for (RecordedMove recordedMove : game.getMoves()) {
+                int fromFile = recordedMove.getFromFile();
+                int fromRank = recordedMove.getFromRank();
+                int toFile = recordedMove.getToFile();
+                int toRank = recordedMove.getToRank();
+                MoveType type = Enum.valueOf(MoveType.class, recordedMove.getMoveType());
+                Piece piece = chess.pieceAt(fromFile, fromRank);
+                Move move = new Move(
+                        piece,
+                        new Square(fromFile, fromRank),
+                        new Square(toFile, toRank),
+                        type,
+                        type == MoveType.enPassant ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1)) : chess.pieceAt(toFile, toRank)
+                );
+                chess.playMove(move);
+                addMove(move);
+            }
         } catch (ParseException exception) {
             Store.modal.showMessage("Error", "Error parsing fen string: " + game.getFenPosition());
         }
@@ -170,12 +170,14 @@ public class GameController implements Controller {
             int fromRank = socketMove.getFromRank();
             int toFile = socketMove.getToFile();
             int toRank = socketMove.getToRank();
+            MoveType type = Enum.valueOf(MoveType.class, socketMove.getMoveType());
+            Piece piece = chess.pieceAt(fromFile, fromRank);
             Move move = new Move(
-                    chess.pieceAt(fromFile, fromRank),
+                    piece,
                     new Square(fromFile, fromRank),
                     new Square(toFile, toRank),
-                    Enum.valueOf(MoveType.class, socketMove.getMoveType()),
-                    chess.pieceAt(toFile, toRank)
+                    type,
+                    type == MoveType.enPassant ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1)) : chess.pieceAt(toFile, toRank)
             );
             chess.playMove(move);
             addMove(move);
@@ -189,6 +191,7 @@ public class GameController implements Controller {
             String messageText = message.getText();
             if (messageText.equals(resignMessageText)) {
                 Store.modal.showMessage("Congratulations!", "Your opponent has resigned and you win the game.");
+                chess.setResult(isWhite ? 2 : 3);
                 chess.setCanPlayWhite(false);
                 chess.setCanPlayBlack(false);
             } else if (messageText.equals(offerDrawMessageText)) {
@@ -199,6 +202,7 @@ public class GameController implements Controller {
                         (option) -> {
                             if (option.equals("Yes")) {
                                 sendMessage("Sure");
+                                chess.setResult(1);
                                 chess.setCanPlayWhite(false);
                                 chess.setCanPlayBlack(false);
                             }
@@ -209,6 +213,7 @@ public class GameController implements Controller {
                 if (prevMessage.getTextAlignment() == TextAlignment.RIGHT && prevMessage.getText().equals(offerDrawMessageText)) {
                     // the above checks for message sent by me requesting for a draw
                     Store.modal.showMessage("It's a draw", "Your opponent accepted your draw offer");
+                    chess.setResult(1);
                     chess.setCanPlayWhite(false);
                     chess.setCanPlayBlack(false);
                 }
@@ -224,32 +229,36 @@ public class GameController implements Controller {
 
     @FXML
     void onRequestOfferDraw() {
-        Store.modal.showOptions(
-                "Offer draw?",
-                "Are you sure you want to offer a draw?",
-                new String[]{"Yes", "No"},
-                (option) -> {
-                    if (option.equals("Yes")) {
-                        sendMessage(offerDrawMessageText);
+        if (chess.getResult() == 0) {
+            Store.modal.showOptions(
+                    "Offer draw?",
+                    "Are you sure you want to offer a draw?",
+                    new String[]{"Yes", "No"},
+                    (option) -> {
+                        if (option.equals("Yes")) {
+                            sendMessage(offerDrawMessageText);
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 
     @FXML
     void onRequestResign() {
-        Store.modal.showOptions(
-                "Concede match?",
-                "Are you sure you want to resign and concede the match?",
-                new String[]{"Yes", "No"},
-                (option) -> {
-                    if (option.equals("Yes")) {
-                        sendMessage(resignMessageText);
-                        chess.setCanPlayWhite(false);
-                        chess.setCanPlayBlack(false);
+        if (chess.getResult() == 0) {
+            Store.modal.showOptions(
+                    "Concede match?",
+                    "Are you sure you want to resign and concede the match?",
+                    new String[]{"Yes", "No"},
+                    (option) -> {
+                        if (option.equals("Yes")) {
+                            sendMessage(resignMessageText);
+                            chess.setCanPlayWhite(false);
+                            chess.setCanPlayBlack(false);
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 
     @FXML

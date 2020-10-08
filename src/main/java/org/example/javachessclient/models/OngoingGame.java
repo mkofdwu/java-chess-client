@@ -7,7 +7,7 @@ public class OngoingGame {
     private String _id;
     private String white;
     private String black;
-    private List<List<Integer>> moves; // in the format [ (file1, rank1, file2, rank2) ]
+    private List<RecordedMove> moves;
     private String fenPosition; // includes game flags
     private Date timestamp;
 
@@ -38,11 +38,11 @@ public class OngoingGame {
         this.black = black;
     }
 
-    public List<List<Integer>> getMoves() {
+    public List<RecordedMove> getMoves() {
         return moves;
     }
 
-    public void setMoves(List<List<Integer>> moves) {
+    public void setMoves(List<RecordedMove> moves) {
         this.moves = moves;
     }
 

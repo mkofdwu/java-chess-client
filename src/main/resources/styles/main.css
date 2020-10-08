@@ -72,6 +72,11 @@
     -fx-cursor: hand;
 }
 
+.button:pressed {
+    -fx-background-color: -fx-absolute;
+    -fx-text-fill: -fx-accent;
+}
+
 .text-field {
     -fx-font-family: "Domaine Text Test";
     -fx-font-size: 16px;
@@ -99,4 +104,16 @@
     -fx-padding: 0;
     -fx-background-color: -fx-bg;
     -fx-background-radius: 0;
+}
+
+.link {
+    -fx-cursor: hand;
+}
+
+.link:hover {
+    -fx-underline: true;
+}
+
+.link:pressed {
+    -fx-underline: false;
 }

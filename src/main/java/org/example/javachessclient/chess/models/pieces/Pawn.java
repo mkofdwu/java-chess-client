@@ -81,16 +81,15 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public Square makeSpecialMoveAndGetAffectedSquare(Move move) {
+    public Square[] makeSpecialMoveAndGetAffectedSquares(Move move) {
         if (move.getType() == MoveType.enPassant) {
             // make the second move, removing the pawn behind where the current pawn is now
-            chess.removeAt(move.getCapturedPiece().getSquare());
-            Piece pieceRemoved = move.getCapturedPiece();
-            // just checking
-            if (!(pieceRemoved instanceof Pawn) || pieceRemoved.getIsWhite() == isWhite) {
-                throw new InvalidMoveException();
-            }
-            return pieceRemoved.getSquare();
+            // some modifications had to be made for sockets to work (cannot use .getCapturedPiece())
+            int toFile = move.getToSquare().getFile();
+            int toRank = move.getToSquare().getRank();
+            Square square = new Square(toFile, toRank - (isWhite ? -1 : 1));
+            chess.removeAt(square);
+            return new Square[]{square};
         }
         return null;
     }

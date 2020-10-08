@@ -23,7 +23,7 @@
                 <HBox spacing="4.0">
                     <children>
                         <Label style="-fx-font-size: 14;" text="Don't have an account?" />
-                        <Label onMouseClicked="#onGoToRegister" style="-fx-font-size: 14; -fx-text-fill: -fx-accent;" text="Register" />
+                        <Label onMouseClicked="#onGoToRegister" style="-fx-font-size: 14; -fx-text-fill: -fx-accent;" styleClass="link" text="Register" />
                     </children>
                     <VBox.margin>
                         <Insets bottom="50.0" />

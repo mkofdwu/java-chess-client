@@ -1,8 +1,11 @@
 package org.example.javachessclient.controllers;
 
+import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
@@ -16,15 +19,13 @@ public class SearchingForGameController {
     private ImageView searchImage;
 
     public void initialize() {
-//        Path path = new Path();
-//        path.getElements().add(new MoveTo(500, 350));
-//        path.getElements().add(new Rotate())
-//        path.getElements().add(new QuadCurveTo(0, 0, 0, 0));
-//        PathTransition transition = new PathTransition();
-//        transition.setDuration(Duration.millis(6000));
-//        transition.setPath(path);
-//        transition.setNode(searchImage);
-//        transition.play();
+        PathTransition transition = new PathTransition();
+        transition.setPath(new Circle(20, 0, 20));
+        transition.setDuration(Duration.millis(3000));
+        transition.setInterpolator(Interpolator.LINEAR);
+        transition.setCycleCount(Timeline.INDEFINITE);
+        transition.setNode(searchImage);
+        transition.play();
     }
 
     @FXML

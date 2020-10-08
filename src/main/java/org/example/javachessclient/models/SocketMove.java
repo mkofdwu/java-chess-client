@@ -7,20 +7,20 @@ public class SocketMove {
     private int toFile;
     private int toRank;
     private String moveType;
-    private int endOfGame; // 0 - nothing, 1 - win, 2 - draw
+    private int result; // 0 - nothing, 1 - draw, 2 - white wins, 3 - black wins
     private String updatedFenPosition; // temporary solution but may pose security concerns
 
     public SocketMove() {
     }
 
-    public SocketMove(String gameId, int fromFile, int fromRank, int toFile, int toRank, String moveType, int endOfGame, String updatedFenPosition) {
+    public SocketMove(String gameId, int fromFile, int fromRank, int toFile, int toRank, String moveType, int result, String updatedFenPosition) {
         this.gameId = gameId;
         this.fromFile = fromFile;
         this.fromRank = fromRank;
         this.toFile = toFile;
         this.toRank = toRank;
         this.moveType = moveType;
-        this.endOfGame = endOfGame;
+        this.result = result;
         this.updatedFenPosition = updatedFenPosition;
     }
 
@@ -72,12 +72,12 @@ public class SocketMove {
         this.moveType = moveType;
     }
 
-    public int getEndOfGame() {
-        return endOfGame;
+    public int getResult() {
+        return result;
     }
 
-    public void setEndOfGame(int endOfGame) {
-        this.endOfGame = endOfGame;
+    public void setResult(int result) {
+        this.result = result;
     }
 
     public String getUpdatedFenPosition() {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -16,8 +17,12 @@
       <Rectangle fill="WHITE" height="700.0" layoutX="600.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" style="-fx-fill: -fx-absolute;" width="400.0" />
       <HBox layoutX="70.0" layoutY="650.0" spacing="20.0">
          <children>
-            <Label styleClass="small-link" text="Version 0.1.0" />
-            <Label onMouseClicked="#onShowAbout" styleClass="small-link" text="About" />
+            <Label styleClass="small" text="Version 0.1.0" />
+            <Label onMouseClicked="#onShowAbout" text="About">
+               <styleClass>
+                  <String fx:value="small" />
+                  <String fx:value="link" />
+               </styleClass></Label>
          </children>
       </HBox>
       <VBox layoutX="418.0" layoutY="242.0" prefWidth="300.0">
@@ -36,7 +41,7 @@
          </children>
       </VBox>
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="168.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true" />
-      <HBox alignment="CENTER_LEFT" layoutX="860.0" layoutY="642.0" onMouseClicked="#onStart" spacing="10.0" style="-fx-cursor: hand;">
+      <HBox alignment="CENTER_LEFT" layoutX="860.0" layoutY="642.0" onMouseClicked="#onStart" spacing="10.0" styleClass="start-btn">
          <children>
             <Label style="-fx-font-size: 18px;" text="Start" />
             <ImageView pickOnBounds="true" preserveRatio="true">

@@ -1,7 +1,6 @@
 package org.example.javachessclient.chess.models.pieces;
 
 import org.example.javachessclient.chess.Chess;
-import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 
@@ -40,7 +39,7 @@ public abstract class Piece {
 
     public abstract boolean isAttackingSquare(Square otherSquare);
 
-    public abstract Square makeSpecialMoveAndGetAffectedSquare(Move move); // modifies the board according to the special move
+    public abstract Square[] makeSpecialMoveAndGetAffectedSquares(Move move); // modifies the board according to the special move
 
     public abstract void undoSpecialMove(Move move);
 

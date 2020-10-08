@@ -12,11 +12,11 @@ import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Chess {
+    public static final String startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final Pattern fenRegexPattern = Pattern.compile("(?<piecePlacement>[pnbrqkPNBRQK1-8/]+) (?<activeColor>w|b) (?<cannotCastle>-)?(?<wck>K)?(?<wcq>Q)?(?<bck>k)?(?<bcq>q)? (?<enPassantSquare>-|[a-h][1-8]) (?<halfmoveClock>\\d+) (?<fullmoveNumber>\\d+)");
 
     private final ChessCanvas chessCanvas;
@@ -38,7 +38,7 @@ public class Chess {
     private boolean canPlayWhite = false;
     private boolean canPlayBlack = false;
     private UserMoveCallback onUserMove;
-    private int result; // 0 - draw, 1 - white wins, 2 - black wins
+    private int result; // 0 - nothing, 1 - draw, 2 - white wins, 3 - black wins
 
     public Chess() {
         chessCanvas = new ChessCanvas(this);
@@ -271,8 +271,12 @@ public class Chess {
         return pieceAt(square.getFile(), square.getRank());
     }
 
+    public void removeAt(int file, int rank) {
+        board.get(rank).set(file, null);
+    }
+
     public void removeAt(Square square) {
-        board.get(square.getRank()).set(square.getFile(), null);
+        removeAt(square.getFile(), square.getRank());
     }
 
     public void moveTo(Piece piece, Square square) {
@@ -390,9 +394,8 @@ public class Chess {
         moveTo(piece, toSquare);
 
         if (type != MoveType.normal && type != MoveType.capture) {
-            Square squareToRedraw = piece.makeSpecialMoveAndGetAffectedSquare(move);
-            if (squareToRedraw != null)
-                chessCanvas.redrawSquare(squareToRedraw);
+            Square[] squaresToRedraw = piece.makeSpecialMoveAndGetAffectedSquares(move);
+            for (Square square : squaresToRedraw) chessCanvas.redrawSquare(square);
         }
 
         // check for pawn promotion (show modal)
@@ -431,21 +434,21 @@ public class Chess {
         // check for end of game
         if (otherPlayerCannotMove()) {
             if (move.getChecksOpponentKing()) {
-                result = whiteToMove ? 1 : 2;
+                result = whiteToMove ? 2 : 3;
                 Store.modal.showMessage("Checkmate", (whiteToMove ? "White" : "Black") + " has won the match.");
             } else {
-                result = 0;
+                result = 1;
                 Store.modal.showMessage("Stalemate", "It's a draw.");
             }
         } else if (checkForThreefoldRepetition()) {
             canPlayWhite = false;
             canPlayBlack = false;
-            result = 0;
+            result = 1;
             Store.modal.showMessage("Threefold Repetition", "It's a draw.");
         } else if (checkForFiftyMoveRule()) {
             canPlayWhite = false;
             canPlayBlack = false;
-            result = 0;
+            result = 1;
             Store.modal.showMessage("Fifty Move", "It's a draw");
         }
 
@@ -457,6 +460,23 @@ public class Chess {
         chessCanvas.redrawSquare(toSquare);
     }
 
+//    public void undoMove() {
+//        Move move = recordedMoves.remove(recordedMoves.size() - 1);
+//        Piece piece = move.getPiece();
+//        Square fromSquare = move.getFromSquare();
+//        Square toSquare = move.getToSquare();
+//        MoveType type = move.getType();
+//
+//        moveTo(piece, fromSquare);
+//        if (type != MoveType.normal && type != MoveType.capture) {
+//            move.getPiece().undoSpecialMove(move);
+//        }
+//        whiteToMove = !whiteToMove;
+//        // FUTURE: undo promotion, change game flags
+//        chessCanvas.redrawSquare(fromSquare);
+//        chessCanvas.redrawSquare(toSquare);
+//    }
+
     private void testMove(Move move) {
         Piece piece = move.getPiece();
         Square toSquare = move.getToSquare();
@@ -465,7 +485,7 @@ public class Chess {
         moveTo(piece, toSquare);
 
         if (type != MoveType.normal && type != MoveType.capture) {
-            piece.makeSpecialMoveAndGetAffectedSquare(move);
+            piece.makeSpecialMoveAndGetAffectedSquares(move);
         }
     }
 
@@ -602,5 +622,9 @@ public class Chess {
 
     public int getResult() {
         return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
     }
 }

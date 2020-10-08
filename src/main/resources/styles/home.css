@@ -22,3 +22,12 @@
     -fx-alignment: center;
     -fx-cursor: hand;
 }
+
+.game-option-container:pressed {
+    -fx-background-color: -fx-accent;
+    -fx-border-color: -fx-accent;
+}
+
+.game-option-container:pressed * {
+    -fx-text-fill: -fx-absolute;
+}

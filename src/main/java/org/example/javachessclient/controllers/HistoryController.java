@@ -25,11 +25,10 @@ public class HistoryController {
         }
         for (int i = 0; i < pastGames.size(); ++i) {
             UserGame userGame = pastGames.get(i);
-            PastGame game = (PastGame) GameService.getGame(userGame.getGameId());
+            PastGame game = GameService.getGame(userGame.getGameId(), PastGame.class);
             Label gameLabel = new Label(userGame.getName());
-            gameLabel.setOnMouseClicked((e) -> {
-                Store.router.push("/fxml/game.fxml", userGame);
-            });
+            gameLabel.setStyle("-fx-cursor: hand;");
+            gameLabel.setOnMouseClicked((e) -> Store.router.push("/fxml/past-game.fxml", userGame));
             pastGamesGrid.addRow(
                     i,
                     gameLabel,

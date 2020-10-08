@@ -2,13 +2,9 @@ package org.example.javachessclient.services;
 
 import javafx.application.Platform;
 import org.example.javachessclient.Store;
-import org.example.javachessclient.models.OngoingGame;
-import org.example.javachessclient.models.UserGame;
-import org.example.javachessclient.models.UserProfile;
+import org.example.javachessclient.models.*;
 import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.services.UserService;
-import org.example.javachessclient.models.SocketMessage;
-import org.example.javachessclient.models.SocketMove;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -41,7 +37,7 @@ public class GameStompSessionHandler implements StompSessionHandler {
     public Type getPayloadType(StompHeaders stompHeaders) {
         String destination = Objects.requireNonNull(stompHeaders.getDestination()); // autosuggested
         if (destination.startsWith("/topic/requests")) {
-            return String.class;
+            return GameRequest.class;
         }
         if (destination.startsWith("/topic/new-games") || destination.startsWith("/topic/accepted-requests")) {
             return UserGame.class;
@@ -61,7 +57,7 @@ public class GameStompSessionHandler implements StompSessionHandler {
         if (destination.startsWith("/topic/new-games")) {
             Platform.runLater(() -> Store.router.push("/fxml/game.fxml", payload));
         } else if (destination.startsWith("/topic/requests")) {
-            String otherUserId = (String) payload;
+            String otherUserId = ((GameRequest) payload).getOtherUserId();
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
             Platform.runLater(() -> Store.modal.showOptions(
                     "Game request",
@@ -77,7 +73,7 @@ public class GameStompSessionHandler implements StompSessionHandler {
             ));
         } else if (destination.startsWith("/topic/accepted-requests")) {
             UserGame userGame = (UserGame) payload;
-            OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
+            OngoingGame game = GameService.getGame(userGame.getGameId(), OngoingGame.class);
             String otherUserId = userGame.getIsWhite() ? game.getBlack() : game.getWhite();
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
             Platform.runLater(() -> Store.modal.showOptions(

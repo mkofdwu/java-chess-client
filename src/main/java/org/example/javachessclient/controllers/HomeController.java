@@ -34,14 +34,16 @@ public class HomeController {
             ongoingGamesGrid.getChildren().remove(noOngoingGamesLabel);
         for (int i = 0; i < userGames.size(); ++i) {
             UserGame userGame = userGames.get(i);
-            OngoingGame game = (OngoingGame) GameService.getGame(userGame.getGameId());
 
             Label gameLabel = new Label(userGame.getName());
+            gameLabel.setStyle("-fx-cursor: hand;");
             gameLabel.setOnMouseClicked((e) -> {
                 Store.router.push("/fxml/game.fxml", userGame);
             });
             ongoingGamesGrid.add(gameLabel, 0, i);
-            if ((game.getMoves().size() % 2 == 0) == userGame.getIsWhite()) {
+
+            OngoingGame game = GameService.getGame(userGame.getGameId(), OngoingGame.class);
+            if (game != null && (game.getMoves().size() % 2 == 0) == userGame.getIsWhite()) {
                 ongoingGamesGrid.add(new Label("Your turn"), 1, i);
             }
         }
@@ -54,6 +56,7 @@ public class HomeController {
             UserProfile otherProfile = UserService.getUserProfile(otherUserId);
 
             Label usernameLabel = new Label(otherProfile.getUsername());
+            usernameLabel.setStyle("-fx-cursor: hand;");
             ImageView acceptButton = new ImageView("/icons/accept.png");
             ImageView rejectButton = new ImageView("/icons/reject.png");
             acceptButton.setOnMouseClicked((e) -> {
