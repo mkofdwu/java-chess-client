@@ -29,7 +29,7 @@ public class AboutModal {
     private final Label byLabel;
     private final Label bodyLabel;
 
-    private ResourceBundle rb = ResourceBundle.getBundle("/internationalization/AboutModal", new Locale("en", "US"));
+    private ResourceBundle rb = ResourceBundle.getBundle("internationalization.AboutModal", new Locale("en", "US"));
 
     public AboutModal() {
         modal = new VBox();
@@ -75,7 +75,7 @@ public class AboutModal {
 
     private void selectLang(String lang) {
         String[] langAndCountry = lang.split("-");
-        rb = ResourceBundle.getBundle("/internationalization/AboutModal", new Locale(langAndCountry[0], langAndCountry[1]));
+        rb = ResourceBundle.getBundle("internationalization.AboutModal", new Locale(langAndCountry[0], langAndCountry[1]));
         reload();
     }
 

@@ -25,6 +25,7 @@ public class AuthService {
             Store.token = token;
             Response<User> response = Store.authApi.getUser().execute();
             if (response.body() == null) {
+                Store.token = null;
                 return false;
             }
             Store.user = response.body();
@@ -44,6 +45,7 @@ public class AuthService {
                             : Store.authApi.login(new LoginDetails(username, password))
             ).execute();
             if (response.body() == null) {
+                System.out.println("Failed to authenticate: " + response.errorBody().string());
                 return false;
             }
 
@@ -69,6 +71,7 @@ public class AuthService {
 
     public static boolean logout() {
         // delete jwt file
+        Store.token = null;
         return new File(jwtFilePath).delete();
     }
 }

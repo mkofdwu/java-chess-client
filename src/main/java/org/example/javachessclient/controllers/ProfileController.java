@@ -126,8 +126,8 @@ public class ProfileController {
         if (profilePicFile != null) {
             String profilePic = FileService.uploadImage(profilePicFile).getUrl();
             Store.user.setProfilePic(profilePic);
-            UserService.updateUser();
             refreshProfilePic();
+            UserService.updateUser();
         }
     }
 
@@ -159,8 +159,8 @@ public class ProfileController {
                 new String[]{"Yes", "No"},
                 (option) -> {
                     if (option.equals("Yes")) {
-                        AuthService.logout();
                         UserService.deleteUser();
+                        AuthService.logout();
                         Store.router.clearAndPush("/fxml/landing.fxml");
                     }
                 }
@@ -170,14 +170,11 @@ public class ProfileController {
     private void refreshProfilePic() {
         // why doesn't java have a better way of setting image fit to cover?
         Image profilePicImage = new Image(Store.user.getProfilePic());
-        if (!profilePicImage.isError()) {
-            PixelReader reader = profilePicImage.getPixelReader();
-            int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
-            int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
-            int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
-            WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
-            profilePicView.setImage(croppedProfilePic);
-        }
+        PixelReader reader = profilePicImage.getPixelReader();
+        int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
+        int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
+        int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
+        WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
+        profilePicView.setImage(croppedProfilePic);
     }
 }
-
