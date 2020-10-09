@@ -1,6 +1,7 @@
 package org.example.javachessclient.chess;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.paint.Color;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.exceptions.InvalidBoardException;
@@ -42,6 +43,11 @@ public class Chess {
 
     public Chess() {
         chessCanvas = new ChessCanvas(this);
+        if (Store.user.getSettings().getTheme() == 1) {
+            // dark theme
+            chessCanvas.setWhiteColor(Color.valueOf("#4b4b4b"));
+            chessCanvas.setBlackColor(Color.valueOf("#323232"));
+        }
         moves = new ArrayList<>();
     }
 
@@ -175,13 +181,6 @@ public class Chess {
         fen.append(" " + (enPassantSquare == null ? '-' : enPassantSquare.toString()) + ' ' + halfmoveClock + ' ' + fullmoveNumber);
 
         return fen.toString();
-    }
-
-    public String toPgn() {
-        // convert the current game to a string with the pgn notation
-//        StringBuilder pgn = new StringBuilder();
-//        pgn.append("[Event \"Unknown\"]\n[Site \"Unknown\"]\n[Date \"" + new SimpleDateFormat("yyyy.MM.dd").format());
-        return "";
     }
 
     public void rotateBoard() {

@@ -14,8 +14,8 @@ public class ChessCanvas {
     public static final double boardSize = 531;
     public static final double squareSize = boardSize / 8;
     public static final double pieceIconSize = 41; // each piece image is 41x41 px
-    public static final Color whiteColor = Color.valueOf("#dddddd");
-    public static final Color blackColor = Color.valueOf("#c4c4c4");
+    private Color whiteColor = Color.valueOf("#dddddd");
+    private Color blackColor = Color.valueOf("#c4c4c4");
 
     private boolean isRotate;
 
@@ -30,6 +30,14 @@ public class ChessCanvas {
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    public void setWhiteColor(Color whiteColor) {
+        this.whiteColor = whiteColor;
+    }
+
+    public void setBlackColor(Color blackColor) {
+        this.blackColor = blackColor;
     }
 
     private int applyRotation(int fileOrRank) {

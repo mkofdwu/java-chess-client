@@ -1,3 +1,4 @@
 .record-text-area .content, .record-text-area:focused .content {
+    -fx-background-color: -fx-absolute;
     -fx-padding: 20px;
 }

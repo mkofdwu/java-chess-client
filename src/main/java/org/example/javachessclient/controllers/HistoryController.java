@@ -41,12 +41,18 @@ public class HistoryController {
     // utils
 
     private String formatGameResult(int result) {
+        if (result == 0) {
+            return "*";
+        }
         if (result == 1) {
-            return "White wins";
+            return "1/2 - 1/2";
         }
-        if (result == -1) {
-            return "Black wins";
+        if (result == 2) {
+            return "1 - 0";
         }
-        return "Draw";
+        if (result == 3) {
+            return "0 - 1";
+        }
+        return "?";
     }
 }
