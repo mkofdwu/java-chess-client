@@ -18,26 +18,24 @@ public class AuthService {
 
     public static boolean attemptAuthenticateFromFile() {
         // attempt to authenticate using the jwt stored in `jwtFilePath`
-//        try {
-//            BufferedReader br = new BufferedReader(new FileReader(jwtFilePath));
-//            String token = br.readLine();
-//            br.close();
-//            Store.token = token;
-//            Response<User> response = Store.authApi.getUser().execute();
-//            if (response.body() == null) {
-//                return false;
-//            }
-//            Store.user = response.body();
-//            Store.stompSession = SocketGameService.createStompSession();
-//            ThemeService.setTheme(Store.user.getSettings().getTheme());
-//            ThemeService.setAccent(Store.user.getSettings().getAccent());
-//            return true;
-//        } catch (IOException exception) {
-//            System.out.println("Failed to authenticate from jwt file: " + exception.getMessage());
-//            return false;
-//        }
-        // for TESTING purposes with 2 ppl
-        return false;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(jwtFilePath));
+            String token = br.readLine();
+            br.close();
+            Store.token = token;
+            Response<User> response = Store.authApi.getUser().execute();
+            if (response.body() == null) {
+                return false;
+            }
+            Store.user = response.body();
+            Store.stompSession = SocketGameService.createStompSession();
+            ThemeService.setTheme(Store.user.getSettings().getTheme());
+            ThemeService.setAccent(Store.user.getSettings().getAccent());
+            return true;
+        } catch (IOException exception) {
+            System.out.println("Failed to authenticate from jwt file: " + exception.getMessage());
+            return false;
+        }
     }
 
     public static boolean authenticate(String username, String password, boolean register) {
@@ -58,14 +56,13 @@ public class AuthService {
             ThemeService.setTheme(Store.user.getSettings().getTheme());
             ThemeService.setAccent(Store.user.getSettings().getAccent());
             // save token to file
-            // TESTING: not saving to file
-//            File parent = new File(jwtFilePath).getParentFile();
-//            if (!parent.exists() && !parent.mkdirs()) {
-//                throw new IOException("Failed to create jwt file at " + jwtFilePath);
-//            }
-//            BufferedWriter bw = new BufferedWriter(new FileWriter(jwtFilePath));
-//            bw.write(authResponse.getToken());
-//            bw.close();
+            File parent = new File(jwtFilePath).getParentFile();
+            if (!parent.exists() && !parent.mkdirs()) {
+                throw new IOException("Failed to create jwt file at " + jwtFilePath);
+            }
+            BufferedWriter bw = new BufferedWriter(new FileWriter(jwtFilePath));
+            bw.write(authResponse.getToken());
+            bw.close();
 
             return true;
         } catch (IOException exception) {
