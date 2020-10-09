@@ -61,6 +61,7 @@ public class Move {
             formattedMove = toSquare.getFile() == 2 ? "O-O-O" : "O-O";
         } else {
             formattedMove = getPieceAbbr(piece)
+                    + specifyFileOrRank()
                     + (capturedPiece == null ? "" : "x")
                     + toSquare
                     + (promotedPiece == null ? "" : "=" + getPieceAbbr(promotedPiece));
@@ -88,5 +89,18 @@ public class Move {
             return "K";
         }
         return "?";
+    }
+
+    private String specifyFileOrRank() {
+        if (piece instanceof Pawn && capturedPiece != null) {
+            return Character.toString("abcdefgh".charAt(piece.getSquare().getFile()));
+        }
+//        if (piece instanceof Knight) {
+//            // fixme: check
+//        }
+//        if (piece instanceof Rook) {
+//
+//        }
+        return "";
     }
 }

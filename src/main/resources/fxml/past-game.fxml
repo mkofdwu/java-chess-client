@@ -21,8 +21,8 @@
                         <Label fx:id="gameNameLabel" style="-fx-font-family: &quot;Domaine Display Test&quot;; -fx-font-weight: bold; -fx-font-size: 36;" text="Jane Cooper - Benedict Yap" />
                         <HBox spacing="10.0">
                             <children>
-                                <Label onMouseClicked="#onRequestRename" style="-fx-text-fill: -fx-accent;" text="Rename" />
-                                <Label onMouseClicked="#onRequestSavePgn" style="-fx-text-fill: -fx-accent;" text="Save pgn" />
+                                <Label onMouseClicked="#onRequestRename" style="-fx-text-fill: -fx-accent;" styleClass="link" text="Rename" />
+                                <Label onMouseClicked="#onRequestSavePgn" style="-fx-text-fill: -fx-accent;" styleClass="link" text="Save pgn" />
                             </children>
                         </HBox>
                     </children>

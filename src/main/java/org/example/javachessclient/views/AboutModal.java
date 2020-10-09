@@ -60,13 +60,7 @@ public class AboutModal {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button closeBtn = new Button("Close");
-        closeBtn.setStyle("-fx-background-color: -fx-accent, -fx-absolute;" +
-                "-fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;" +
-                "-fx-background-radius: 0;" +
-                "-fx-font-size: 16px;" +
-                "-fx-text-fill: -fx-accent;" +
-                "-fx-padding: 0;" +
-                "-fx-cursor: hand;");
+        closeBtn.getStyleClass().add("underline-btn");
         closeBtn.setOnMouseClicked((e) -> Store.modal.hide());
 
         optionsBox.getChildren().addAll(availableLangsBox, spacer, closeBtn);

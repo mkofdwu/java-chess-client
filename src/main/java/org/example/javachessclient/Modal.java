@@ -53,12 +53,7 @@ public class Modal {
         optionsBox.setAlignment(Pos.BOTTOM_RIGHT);
         for (String option : options) {
             Button optionBtn = new Button(option);
-            optionBtn.setStyle("-fx-background-color: -fx-accent, -fx-absolute;" +
-                    "-fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;" +
-                    "-fx-background-radius: 0;" +
-                    "-fx-text-fill: -fx-accent;" +
-                    "-fx-padding: 0;" +
-                    "-fx-cursor: hand;");
+            optionBtn.getStyleClass().add("underline-btn");
             optionBtn.setOnMouseClicked((e) -> {
                 hide();
                 cb.callback(option);

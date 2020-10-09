@@ -8,11 +8,9 @@ import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
 import org.example.javachessclient.chess.views.PromotionOptionsModal;
-import org.example.javachessclient.models.OngoingGame;
 import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +21,7 @@ public class Chess {
 
     private final ChessCanvas chessCanvas;
     private ArrayList<ArrayList<Piece>> board;
-    private ArrayList<Move> recordedMoves;
+    private ArrayList<Move> moves;
     private boolean whiteToMove;
     private boolean whiteCanCastleKingside;
     private boolean whiteCanCastleQueenside;
@@ -44,7 +42,7 @@ public class Chess {
 
     public Chess() {
         chessCanvas = new ChessCanvas(this);
-        recordedMoves = new ArrayList<>();
+        moves = new ArrayList<>();
     }
 
     public void loadFEN(String fen) throws ParseException {
@@ -422,7 +420,7 @@ public class Chess {
             }));
         }
 
-        recordedMoves.add(move);
+        moves.add(move);
 
         // update game flags based on move
         updateCastlingAvailability();
@@ -529,7 +527,7 @@ public class Chess {
     }
 
     private void updateCastlingAvailability() {
-        Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
+        Move lastMove = moves.get(moves.size() - 1);
         if (lastMove.getPiece() instanceof King) {
             if (whiteToMove) {
                 whiteCanCastleKingside = false;
@@ -551,7 +549,7 @@ public class Chess {
     }
 
     private void updateEnPassantSquare() {
-        Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
+        Move lastMove = moves.get(moves.size() - 1);
         Piece piece = lastMove.getPiece();
         int toFile = lastMove.getToSquare().getFile();
         int toRank = lastMove.getToSquare().getRank();
@@ -573,7 +571,7 @@ public class Chess {
     }
 
     private void updateFiftyMoveRule() {
-        Move lastMove = recordedMoves.get(recordedMoves.size() - 1);
+        Move lastMove = moves.get(moves.size() - 1);
         if (lastMove.getPiece() instanceof Pawn || lastMove.getCapturedPiece() != null) {
             halfmoveClock = 0;
         } else {
@@ -587,8 +585,8 @@ public class Chess {
         return chessCanvas.getCanvas();
     }
 
-    public ArrayList<Move> getRecordedMoves() {
-        return recordedMoves;
+    public ArrayList<Move> getMoves() {
+        return moves;
     }
 
     public boolean getWhiteCanCastleKingside() {

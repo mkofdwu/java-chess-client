@@ -269,7 +269,7 @@ public class GameController implements Controller {
     private void addMove(Move move) {
         // update recording
         if (move.getPiece().getIsWhite()) {
-            recordTextArea.appendText(chess.getRecordedMoves().size() + ". " + move + " ");
+            recordTextArea.appendText(chess.getMoves().size() + ". " + move + " ");
         } else {
             recordTextArea.appendText(move + "\n");
         }
@@ -278,7 +278,9 @@ public class GameController implements Controller {
             ImageView pieceImage = new ImageView(getClass().getResource(move.getCapturedPiece().getIconFilePath()).toExternalForm());
             pieceImage.setFitWidth(24);
             pieceImage.setFitHeight(24);
-            HBox capturedPiecesBox = move.getCapturedPiece().getIsWhite() ? opponentCapturedPiecesBox : userCapturedPiecesBox;
+            HBox capturedPiecesBox = (move.getCapturedPiece().getIsWhite() == isWhite)
+                    ? opponentCapturedPiecesBox
+                    : userCapturedPiecesBox;
             if (capturedPiecesBox.getChildren().get(0) instanceof Label) {
                 // remove placeholder label
                 capturedPiecesBox.getChildren().remove(0);

@@ -117,3 +117,12 @@
 .link:pressed {
     -fx-underline: false;
 }
+
+.underline-btn {
+    -fx-background-color: -fx-accent, -fx-absolute;
+    -fx-background-insets: 0 -1 -1 -1, 0 -1 0 -1;
+    -fx-background-radius: 0;
+    -fx-text-fill: -fx-accent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
