@@ -1,5 +1,6 @@
 package org.example.javachessclient.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -19,23 +20,30 @@ public class HistoryController {
     private GridPane pastGamesGrid;
 
     public void initialize() {
-        List<UserGame> pastGames = Store.user.getPastGames();
-        if (!pastGames.isEmpty()) {
-            pastGamesGrid.getChildren().remove(0); // remove placeholder label, the first child
-        }
-        for (int i = 0; i < pastGames.size(); ++i) {
-            UserGame userGame = pastGames.get(i);
-            PastGame game = GameService.getGame(userGame.getGameId(), PastGame.class);
-            Label gameLabel = new Label(userGame.getName());
-            gameLabel.setStyle("-fx-cursor: hand;");
-            gameLabel.setOnMouseClicked((e) -> Store.router.push("/fxml/past-game.fxml", userGame));
-            pastGamesGrid.addRow(
-                    i,
-                    gameLabel,
-                    new Label(formatGameResult(game.getResult())),
-                    new Label(gameDateFormat.format(game.getTimestamp()))
-            );
-        }
+        // fixme: hardcoded multithreading to improve ux, implement asyncData() in Controller interface in the future
+        new Thread(() -> {
+            List<UserGame> pastGames = Store.user.getPastGames();
+            if (!pastGames.isEmpty()) {
+                Platform.runLater(() -> pastGamesGrid.getChildren().remove(0)); // remove placeholder label, the first child
+            }
+            for (int i = 0; i < pastGames.size(); ++i) {
+                UserGame userGame = pastGames.get(i);
+                PastGame game = GameService.getGame(userGame.getGameId(), PastGame.class);
+                int finalI = i;
+
+                Platform.runLater(() -> {
+                    Label gameLabel = new Label(userGame.getName());
+                    gameLabel.setStyle("-fx-cursor: hand;");
+                    gameLabel.setOnMouseClicked((e) -> Store.router.push("/fxml/past-game.fxml", userGame));
+                    pastGamesGrid.addRow(
+                            finalI,
+                            gameLabel,
+                            new Label(formatGameResult(game.getResult())),
+                            new Label(gameDateFormat.format(game.getTimestamp()))
+                    );
+                });
+            }
+        }).start();
     }
 
     // utils

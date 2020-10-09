@@ -6,9 +6,11 @@ import org.example.javachessclient.models.UserGameUpdateDetails;
 import org.example.javachessclient.models.UserProfile;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class UserService {
     private static final UserProfile deletedUserProfile = new UserProfile("", "[Deleted user]", "", "");
+    private static final HashMap<String, UserProfile> profilesCache = new HashMap<>(); // optimization (only used when getUserProfile is called)
 
     public static void updateUser() {
         try {
@@ -50,7 +52,12 @@ public class UserService {
 
     public static UserProfile getUserProfile(String userId) {
         try {
-            return Store.userApi.getUserProfile(userId).execute().body();
+            if (profilesCache.containsKey(userId)) {
+                return profilesCache.get(userId);
+            }
+            UserProfile profile = Store.userApi.getUserProfile(userId).execute().body();
+            profilesCache.put(userId, profile);
+            return profile;
         } catch (IOException exception) {
             System.out.println("Failed to get user profile: IOException: " + exception.getMessage());
             return deletedUserProfile;

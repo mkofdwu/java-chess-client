@@ -101,44 +101,45 @@ public class PastGameController implements Controller {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Portable Game Notation", "*.pgn"));
         File file = fileChooser.showSaveDialog(box.getScene().getWindow());
 
-        StringBuilder pgn = new StringBuilder();
-        pgn.append("[Event \"Unknown\"]\n");
-        pgn.append("[Site \"Unknown\"]\n");
-        pgn.append("[Date \"" + new SimpleDateFormat("yyyy.MM.dd").format(game.getTimestamp()) + "\"]\n");
-        pgn.append("[Round \"1\"]\n");
-        UserProfile otherUserProfile = UserService.getUserProfile(userGame.getIsWhite() ? game.getBlack() : game.getWhite());
-        pgn.append("[White \"" + (userGame.getIsWhite() ? Store.user.getUsername() : otherUserProfile.getUsername()) + "\"]\n");
-        pgn.append("[Black \"" + (userGame.getIsWhite() ? otherUserProfile : Store.user.getUsername()) + "\"]\n");
-        String result = "*";
-        if (game.getResult() == 1) {
-            result = "1/2-1/2";
-        } else if (game.getResult() == 2) {
-            result = "1-0";
-        } else if (game.getResult() == 3) {
-            result = "0-1";
-        }
-        pgn.append("[Result \"" + result + "\"]\n\n");
-        for (int i = 0; i < chess.getMoves().size(); ++i) {
-            Move move = chess.getMoves().get(i);
-            if (move.getPiece().getIsWhite()) {
-                pgn.append(i / 2 + 1 + ". " + move + " ");
-            } else {
-                pgn.append(move.toString() + " ");
+        if (file != null) {
+            StringBuilder pgn = new StringBuilder();
+            pgn.append("[Event \"Unknown\"]\n");
+            pgn.append("[Site \"Unknown\"]\n");
+            pgn.append("[Date \"" + new SimpleDateFormat("yyyy.MM.dd").format(game.getTimestamp()) + "\"]\n");
+            pgn.append("[Round \"1\"]\n");
+            UserProfile otherUserProfile = UserService.getUserProfile(userGame.getIsWhite() ? game.getBlack() : game.getWhite());
+            pgn.append("[White \"" + (userGame.getIsWhite() ? Store.user.getUsername() : otherUserProfile.getUsername()) + "\"]\n");
+            pgn.append("[Black \"" + (userGame.getIsWhite() ? otherUserProfile : Store.user.getUsername()) + "\"]\n");
+            String result = "*";
+            if (game.getResult() == 1) {
+                result = "1/2-1/2";
+            } else if (game.getResult() == 2) {
+                result = "1-0";
+            } else if (game.getResult() == 3) {
+                result = "0-1";
+            }
+            pgn.append("[Result \"" + result + "\"]\n\n");
+            for (int i = 0; i < chess.getMoves().size(); ++i) {
+                Move move = chess.getMoves().get(i);
+                if (move.getPiece().getIsWhite()) {
+                    pgn.append(i / 2 + 1 + ". " + move + " ");
+                } else {
+                    pgn.append(move.toString() + " ");
+                }
+            }
+            if (!result.equals("*")) {
+                pgn.append(result);
+            }
+
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+                bw.write(pgn.toString());
+                bw.close();
+            } catch (IOException exception) {
+                System.out.println("Failed to save pgn");
+                exception.printStackTrace();
             }
         }
-        if (!result.equals("*")) {
-            pgn.append(result);
-        }
-
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            bw.write(pgn.toString());
-            bw.close();
-        } catch (IOException exception) {
-            System.out.println("Failed to save pgn");
-            exception.printStackTrace();
-        }
-
     }
 
     @FXML

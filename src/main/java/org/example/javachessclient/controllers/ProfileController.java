@@ -123,10 +123,12 @@ public class ProfileController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image files", "*.png", "*.jpg", "*.gif"));
         File profilePicFile = fileChooser.showOpenDialog(usernameInput.getScene().getWindow());
-        String profilePic = FileService.uploadImage(profilePicFile).getUrl();
-        Store.user.setProfilePic(profilePic);
-        UserService.updateUser();
-        refreshProfilePic();
+        if (profilePicFile != null) {
+            String profilePic = FileService.uploadImage(profilePicFile).getUrl();
+            Store.user.setProfilePic(profilePic);
+            UserService.updateUser();
+            refreshProfilePic();
+        }
     }
 
     @FXML

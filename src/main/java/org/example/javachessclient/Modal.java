@@ -24,7 +24,7 @@ public class Modal {
     public void show(VBox modal) {
         modal.layoutXProperty().bind(bgPane.widthProperty().subtract(modal.widthProperty()).divide(2));
         modal.layoutYProperty().bind(bgPane.heightProperty().subtract(modal.heightProperty()).divide(2));
-        bgPane.getChildren().add(modal);
+        bgPane.getChildren().setAll(modal);
         bgPane.setVisible(true);
     }
 

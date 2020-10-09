@@ -29,8 +29,6 @@ public class AuthService {
             }
             Store.user = response.body();
             Store.stompSession = SocketGameService.createStompSession();
-            ThemeService.setTheme(Store.user.getSettings().getTheme());
-            ThemeService.setAccent(Store.user.getSettings().getAccent());
             return true;
         } catch (IOException exception) {
             System.out.println("Failed to authenticate from jwt file: " + exception.getMessage());
@@ -53,8 +51,6 @@ public class AuthService {
             Store.token = authResponse.getToken();
             Store.user = authResponse.getUser();
             Store.stompSession = SocketGameService.createStompSession();
-            ThemeService.setTheme(Store.user.getSettings().getTheme());
-            ThemeService.setAccent(Store.user.getSettings().getAccent());
             // save token to file
             File parent = new File(jwtFilePath).getParentFile();
             if (!parent.exists() && !parent.mkdirs()) {

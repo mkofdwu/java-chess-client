@@ -1,10 +1,13 @@
 package org.example.javachessclient.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.services.AuthService;
+import org.example.javachessclient.services.ThemeService;
+import org.example.javachessclient.views.LoadingModal;
 
 public class RegisterController {
     @FXML
@@ -22,12 +25,20 @@ public class RegisterController {
     @FXML
     public void onRegister() {
         if (passwordInput.getText().equals(confirmPasswordInput.getText())) {
-            boolean success = AuthService.authenticate(usernameInput.getText(), passwordInput.getText(), true);
-            if (success) {
-                Store.router.push("/fxml/layout.fxml");
-            } else {
-                Store.modal.showMessage("Failed to register", "Please check your username and password again.");
-            }
+            Store.modal.show(LoadingModal.buildModal());
+            new Thread(() -> {
+                boolean success = AuthService.authenticate(usernameInput.getText(), passwordInput.getText(), true);
+                Platform.runLater(() -> {
+                    Store.modal.hide();
+                    if (success) {
+                        ThemeService.setTheme(Store.user.getSettings().getTheme());
+                        ThemeService.setAccent(Store.user.getSettings().getAccent());
+                        Store.router.push("/fxml/layout.fxml");
+                    } else {
+                        Store.modal.showMessage("Failed to register", "Please check your username and password again.");
+                    }
+                });
+            }).start();
         } else {
             Store.modal.showMessage("Failed to register", "The passwords entered don't match.");
         }

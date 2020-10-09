@@ -1,7 +1,7 @@
 package org.example.javachessclient;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -14,6 +14,7 @@ import org.example.javachessclient.apis.GameApi;
 import org.example.javachessclient.apis.UserApi;
 import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.services.AuthService;
+import org.example.javachessclient.services.ThemeService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -25,7 +26,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         root.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
         root.getStyleClass().addAll("light-theme", "blue-accent");
-        root.getChildren().add(new Pane());
+        root.getChildren().add(new Pane()); // the first, bottommost child will be controlled by Router
 
         Store.router = new Router(root, 0);
         Store.modal = new Modal(root);
@@ -53,8 +54,19 @@ public class App extends Application {
         Store.gameApi = Store.retrofit.create(GameApi.class);
         Store.fileApi = Store.retrofit.create(FileApi.class);
 
-        boolean authenticated = AuthService.attemptAuthenticateFromFile();
-        Store.router.push(authenticated ? "/fxml/layout.fxml" : "/fxml/landing.fxml");
+        Store.router.push("/fxml/splash.fxml");
+
+        new Thread(() -> {
+            // here all the heavy startup tasks are run (currently only authentication)
+            boolean authenticated = AuthService.attemptAuthenticateFromFile();
+            Platform.runLater(() -> {
+                if (authenticated) {
+                    ThemeService.setTheme(Store.user.getSettings().getTheme());
+                    ThemeService.setAccent(Store.user.getSettings().getAccent());
+                }
+                Store.router.push(authenticated ? "/fxml/layout.fxml" : "/fxml/landing.fxml");
+            });
+        }).start();
 
         Scene scene = new Scene(root);
         stage.setTitle("JavaChess");
