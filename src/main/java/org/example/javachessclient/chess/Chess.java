@@ -399,7 +399,8 @@ public class Chess {
         }
 
         // check for pawn promotion (show modal)
-        if ((piece instanceof Pawn) && toSquare.getRank() == (piece.getIsWhite() ? 0 : 7)) {
+        if ((piece instanceof Pawn) && toSquare.getRank() == (piece.getIsWhite() ? 0 : 7)
+                && (piece.getIsWhite() ? canPlayWhite : canPlayBlack)) {
             Store.modal.show(PromotionOptionsModal.buildModal((pieceName) -> {
                 Piece newPiece;
                 if (pieceName.equals("Queen")) {
