@@ -19,6 +19,10 @@ import org.example.javachessclient.services.ThemeService;
 import org.example.javachessclient.services.UserService;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class ProfileController {
     @FXML
@@ -87,7 +91,6 @@ public class ProfileController {
         Button[] themeBtns = new Button[]{lightThemeButton, darkThemeButton};
         for (int i = 0; i < 2; ++i) {
             int finalI = i;
-            ;
             themeBtns[i].setOnMouseClicked((e) -> {
                 ThemeService.setTheme(finalI);
                 Store.user.getSettings().setTheme(finalI);
@@ -168,13 +171,20 @@ public class ProfileController {
     }
 
     private void refreshProfilePic() {
-        // why doesn't java have a better way of setting image fit to cover?
-        Image profilePicImage = new Image(Store.user.getProfilePic());
-        PixelReader reader = profilePicImage.getPixelReader();
-        int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
-        int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
-        int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
-        WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
-        profilePicView.setImage(croppedProfilePic);
+        try {
+            // a connection apparently must be manually opened, loading image problem solved by
+            // https://stackoverflow.com/questions/55075985/javafx-image-url-not-loading
+            URLConnection connection = new URL(Store.user.getProfilePic()).openConnection();
+            Image profilePicImage = new Image(connection.getInputStream());
+            // why doesn't java have a better way of setting image fit to cover?
+            PixelReader reader = profilePicImage.getPixelReader();
+            int imageSize = (int) Math.min(profilePicImage.getWidth(), profilePicImage.getHeight());
+            int x = (int) (profilePicImage.getWidth() - imageSize) / 2;
+            int y = (int) (profilePicImage.getHeight() - imageSize) / 2;
+            WritableImage croppedProfilePic = new WritableImage(reader, x, y, imageSize, imageSize);
+            profilePicView.setImage(croppedProfilePic);
+        } catch (IOException exception) {
+            System.out.println("Failed to load profile pic: " + exception.getMessage());
+        }
     }
 }
