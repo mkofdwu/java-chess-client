@@ -79,7 +79,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         try {
             Chess chess = new Chess();
-            chess.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            chess.loadFEN(Chess.startingFen);
             chess.setCanPlayWhite(true);
             chess.setCanPlayBlack(true);
             root.getChildren().add(chess.getCanvas());

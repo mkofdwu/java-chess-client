@@ -13,14 +13,12 @@ import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Chess {
     public static final String startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static final Pattern fenRegexPattern = Pattern.compile("(?<piecePlacement>[pnbrqkPNBRQK1-8/]+) (?<activeColor>w|b) (?<cannotCastle>-)?(?<wck>K)?(?<wcq>Q)?(?<bck>k)?(?<bcq>q)? (?<enPassantSquare>-|[a-h][1-8]) (?<halfmoveClock>\\d+) (?<fullmoveNumber>\\d+)");
 
-    private final ChessCanvas chessCanvas;
+    private final BoardPainter boardPainter;
+    private final NotationParser notationParser;
     private ArrayList<ArrayList<Piece>> board;
     private ArrayList<Move> moves;
     private boolean whiteToMove;
@@ -42,149 +40,23 @@ public class Chess {
     private int result; // 0 - nothing, 1 - draw, 2 - white wins, 3 - black wins
 
     public Chess() {
-        chessCanvas = new ChessCanvas(this);
+        boardPainter = new BoardPainter(this);
+        notationParser = new NotationParser(this);
         if (Store.user.getSettings().getTheme() == 1) {
             // dark theme
-            chessCanvas.setWhiteColor(Color.valueOf("#4b4b4b"));
-            chessCanvas.setBlackColor(Color.valueOf("#323232"));
+            boardPainter.setWhiteColor(Color.valueOf("#4b4b4b"));
+            boardPainter.setBlackColor(Color.valueOf("#323232"));
         }
         moves = new ArrayList<>();
     }
 
     public void loadFEN(String fen) throws ParseException {
-        Matcher matcher = fenRegexPattern.matcher(fen);
-        if (!matcher.find()) {
-            throw new ParseException("Invalid FEN string", 0);
-        }
-
-        // piece placement
-        board = new ArrayList<>();
-        for (String line : matcher.group("piecePlacement").split("/")) {
-            board.add(new ArrayList<>());
-            for (int i = 0; i < line.length(); ++i) {
-                char c = line.charAt(i);
-                if (Character.isDigit(c)) {
-                    for (int _i = 0; _i < Character.digit(c, 10); ++_i) {
-                        board.get(board.size() - 1).add(null);
-                    }
-                } else {
-                    int rank = board.size() - 1;
-                    int file = board.get(rank).size();
-                    Square square = new Square(file, rank);
-                    boolean isWhite = Character.isUpperCase(c);
-                    Piece piece;
-                    switch (Character.toLowerCase(c)) {
-                        case 'p':
-                            piece = new Pawn(this, square, isWhite);
-                            break;
-                        case 'n':
-                            piece = new Knight(this, square, isWhite);
-                            break;
-                        case 'b':
-                            piece = new Bishop(this, square, isWhite);
-                            break;
-                        case 'r':
-                            piece = new Rook(this, square, isWhite);
-                            break;
-                        case 'q':
-                            piece = new Queen(this, square, isWhite);
-                            break;
-                        case 'k':
-                            piece = new King(this, square, isWhite);
-                            break;
-                        default:
-                            throw new ParseException("Invalid piece type in FEN string: " + c, i);
-                    }
-                    board.get(board.size() - 1).add(piece);
-                }
-            }
-        }
-
-        // active color
-        whiteToMove = matcher.group("activeColor").equals("w");
-
-        // castling availability
-        if (matcher.group("cannotCastle") != null) {
-            whiteCanCastleKingside = false;
-            whiteCanCastleQueenside = false;
-            blackCanCastleKingside = false;
-            blackCanCastleQueenside = false;
-        } else {
-            whiteCanCastleKingside = matcher.group("wck") != null;
-            whiteCanCastleQueenside = matcher.group("wcq") != null;
-            blackCanCastleKingside = matcher.group("bck") != null;
-            blackCanCastleQueenside = matcher.group("bcq") != null;
-        }
-
-        // en passant square
-        String enPassantSquareString = matcher.group("enPassantSquare");
-        if (enPassantSquareString.equals("-")) {
-            enPassantSquare = null;
-        } else {
-            enPassantSquare = new Square(enPassantSquareString);
-        }
-
-        // halfmove clock
-        halfmoveClock = Integer.parseInt(matcher.group("halfmoveClock"));
-
-        // fullmove number
-        fullmoveNumber = Integer.parseInt(matcher.group("fullmoveNumber"));
-
-        chessCanvas.redrawBoard();
-    }
-
-    public String toFEN() {
-        // convert the current position to FEN
-        StringBuilder fen = new StringBuilder();
-        int emptySpaces = 0;
-        for (ArrayList<Piece> rankList : board) {
-            for (Piece piece : rankList) {
-                if (piece == null) emptySpaces++;
-                else {
-                    if (emptySpaces > 0) {
-                        fen.append(emptySpaces);
-                        emptySpaces = 0;
-                    }
-                    if (piece.getClass() == Pawn.class) {
-                        fen.append(piece.getIsWhite() ? 'P' : 'p');
-                    } else if (piece.getClass() == Knight.class) {
-                        fen.append(piece.getIsWhite() ? 'N' : 'n');
-                    } else if (piece.getClass() == Bishop.class) {
-                        fen.append(piece.getIsWhite() ? 'B' : 'b');
-                    } else if (piece.getClass() == Rook.class) {
-                        fen.append(piece.getIsWhite() ? 'R' : 'r');
-                    } else if (piece.getClass() == Queen.class) {
-                        fen.append(piece.getIsWhite() ? 'Q' : 'q');
-                    } else if (piece.getClass() == King.class) {
-                        fen.append(piece.getIsWhite() ? 'K' : 'k');
-                    }
-                }
-            }
-            if (emptySpaces > 0) {
-                fen.append(emptySpaces);
-                emptySpaces = 0;
-            }
-            fen.append('/');
-        }
-
-        fen.append(whiteToMove ? " w " : " b ");
-
-        if (!whiteCanCastleKingside && !whiteCanCastleQueenside && !blackCanCastleKingside && !blackCanCastleQueenside) {
-            fen.append('-');
-        } else {
-            if (whiteCanCastleKingside) fen.append('K');
-            if (whiteCanCastleQueenside) fen.append('Q');
-            if (blackCanCastleKingside) fen.append('k');
-            if (blackCanCastleQueenside) fen.append('q');
-        }
-
-        fen.append(" " + (enPassantSquare == null ? '-' : enPassantSquare.toString()) + ' ' + halfmoveClock + ' ' + fullmoveNumber);
-
-        return fen.toString();
+        notationParser.loadFEN(fen);
+        boardPainter.redrawBoard();
     }
 
     public void rotateBoard() {
-        chessCanvas.rotateBoard();
+        boardPainter.rotateBoard();
     }
 
     // player input
@@ -201,20 +73,20 @@ public class Chess {
 
     public void onFirstSquareSelected(Square square) {
         selectedSquare = square;
-        chessCanvas.highlightSquare(selectedSquare);
+        boardPainter.highlightSquare(selectedSquare);
         Piece piece = pieceAt(square);
         boolean canPlay = (whiteToMove && canPlayWhite) || (!whiteToMove && canPlayBlack);
         if (canPlay && piece != null && piece.getIsWhite() == whiteToMove) {
             availableMoves = piece.findAvailableMoves();
-            chessCanvas.markAvailableMoves(availableMoves);
+            boardPainter.markAvailableMoves(availableMoves);
         }
     }
 
     public void onSecondSquareSelected(Square square) {
         boolean canPlay = (whiteToMove && canPlayWhite) || (!whiteToMove && canPlayBlack);
         if (!canPlay) {
-            chessCanvas.redrawSquare(selectedSquare);
-            chessCanvas.highlightSquare(square);
+            boardPainter.redrawSquare(selectedSquare);
+            boardPainter.highlightSquare(square);
             selectedSquare = square;
             return;
         }
@@ -225,7 +97,7 @@ public class Chess {
             Piece piece = pieceAt(square);
             if (piece == null) availableMoves = new ArrayList<>();
             else {
-                chessCanvas.redrawSquare(selectedSquare);
+                boardPainter.redrawSquare(selectedSquare);
                 availableMoves = piece.findAvailableMoves();
                 Square temp = selectedSquare;
                 selectedSquare = square;
@@ -246,10 +118,10 @@ public class Chess {
                 onUserMove.callback(move);
         }
 
-        chessCanvas.redrawSquare(selectedSquare); // also clears the outline of the first selected square
+        boardPainter.redrawSquare(selectedSquare); // also clears the outline of the first selected square
         for (Move availableMove : availableMoves) {
             // clear highlighted available moves
-            chessCanvas.redrawSquare(availableMove.getToSquare());
+            boardPainter.redrawSquare(availableMove.getToSquare());
         }
         selectedSquare = null;
         availableMoves = null;
@@ -395,7 +267,7 @@ public class Chess {
 
         if (type != MoveType.normal && type != MoveType.capture) {
             Square[] squaresToRedraw = piece.makeSpecialMoveAndGetAffectedSquares(move);
-            for (Square square : squaresToRedraw) chessCanvas.redrawSquare(square);
+            for (Square square : squaresToRedraw) boardPainter.redrawSquare(square);
         }
 
         // check for pawn promotion (show modal)
@@ -416,7 +288,7 @@ public class Chess {
                 }
                 move.setPromotedPiece(newPiece);
                 board.get(toSquare.getRank()).set(toSquare.getFile(), newPiece);
-                chessCanvas.redrawSquare(toSquare);
+                boardPainter.redrawSquare(toSquare);
             }));
         }
 
@@ -457,8 +329,8 @@ public class Chess {
         whiteToMove = !whiteToMove;
 
         // redraw canvas after all computation is done
-        chessCanvas.redrawSquare(fromSquare); // this is only necessary when getting moves via websockets from the other opponent
-        chessCanvas.redrawSquare(toSquare);
+        boardPainter.redrawSquare(fromSquare); // this is only necessary when getting moves via websockets from the other opponent
+        boardPainter.redrawSquare(toSquare);
     }
 
 //    public void undoMove() {
@@ -581,32 +453,89 @@ public class Chess {
 
     // getters and setters
 
+    public NotationParser getNotationParser() {
+        return notationParser;
+    }
+
     public Canvas getCanvas() {
-        return chessCanvas.getCanvas();
+        return boardPainter.getCanvas();
+    }
+
+    public ArrayList<ArrayList<Piece>> getBoard() {
+        return board;
+    }
+
+    public void setBoard(ArrayList<ArrayList<Piece>> board) {
+        // only used by ChessNotationParser
+        this.board = board;
     }
 
     public ArrayList<Move> getMoves() {
         return moves;
     }
 
+    public boolean getWhiteToMove() {
+        return whiteToMove;
+    }
+
+    public void setWhiteToMove(boolean whiteToMove) {
+        this.whiteToMove = whiteToMove;
+    }
+
     public boolean getWhiteCanCastleKingside() {
         return whiteCanCastleKingside;
+    }
+
+    public void setWhiteCanCastleKingside(boolean whiteCanCastleKingside) {
+        this.whiteCanCastleKingside = whiteCanCastleKingside;
     }
 
     public boolean getWhiteCanCastleQueenside() {
         return whiteCanCastleQueenside;
     }
 
+    public void setWhiteCanCastleQueenside(boolean whiteCanCastleQueenside) {
+        this.whiteCanCastleQueenside = whiteCanCastleQueenside;
+    }
+
     public boolean getBlackCanCastleKingside() {
         return blackCanCastleKingside;
+    }
+
+    public void setBlackCanCastleKingside(boolean blackCanCastleKingside) {
+        this.blackCanCastleKingside = blackCanCastleKingside;
     }
 
     public boolean getBlackCanCastleQueenside() {
         return blackCanCastleQueenside;
     }
 
+    public void setBlackCanCastleQueenside(boolean blackCanCastleQueenside) {
+        this.blackCanCastleQueenside = blackCanCastleQueenside;
+    }
+
     public Square getEnPassantSquare() {
         return enPassantSquare;
+    }
+
+    public void setEnPassantSquare(Square enPassantSquare) {
+        this.enPassantSquare = enPassantSquare;
+    }
+
+    public int getHalfmoveClock() {
+        return halfmoveClock;
+    }
+
+    public void setHalfmoveClock(int halfmoveClock) {
+        this.halfmoveClock = halfmoveClock;
+    }
+
+    public int getFullmoveNumber() {
+        return fullmoveNumber;
+    }
+
+    public void setFullmoveNumber(int fullmoveNumber) {
+        this.fullmoveNumber = fullmoveNumber;
     }
 
     public void setCanPlayWhite(boolean canPlayWhite) {

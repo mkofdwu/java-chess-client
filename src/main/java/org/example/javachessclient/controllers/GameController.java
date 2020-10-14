@@ -156,7 +156,7 @@ public class GameController implements Controller {
                 toSquare.getRank(),
                 move.getType().name(),
                 chess.getResult(),
-                chess.toFEN()
+                chess.getNotationParser().toFEN()
         );
         addMove(move);
         Store.stompSession.send("/app/move/" + otherUserId, socketMove);

@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="700.0" prefWidth="760.0"
@@ -70,6 +71,9 @@
                     <children>
                         <Label fx:id="noOngoingGamesLabel" style="-fx-text-fill: -fx-less;" text="Nothing to show"/>
                     </children>
+                    <rowConstraints>
+                        <RowConstraints/>
+                    </rowConstraints>
                 </GridPane>
                 <Label layoutX="60.0" layoutY="285.0" styleClass="group-header" text="Game requests"/>
                 <Separator layoutX="10.0" layoutY="388.0" prefWidth="200.0">
@@ -87,6 +91,9 @@
                         <Label fx:id="noGameRequestsLabel" style="-fx-text-fill: -fx-less;"
                                text="You haven't received any game requests yet"/>
                     </children>
+                    <rowConstraints>
+                        <RowConstraints/>
+                    </rowConstraints>
                 </GridPane>
             </children>
             <padding>

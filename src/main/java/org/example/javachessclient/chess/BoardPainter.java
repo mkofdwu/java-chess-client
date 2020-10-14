@@ -10,7 +10,7 @@ import org.example.javachessclient.chess.models.pieces.Piece;
 
 import java.util.ArrayList;
 
-public class ChessCanvas {
+public class BoardPainter {
     public static final double boardSize = 531;
     public static final double squareSize = boardSize / 8;
     public static final double pieceIconSize = 41; // each piece image is 41x41 px
@@ -22,7 +22,7 @@ public class ChessCanvas {
     private final Chess chess;
     private final Canvas canvas;
 
-    public ChessCanvas(Chess chess) {
+    public BoardPainter(Chess chess) {
         this.chess = chess;
         canvas = new Canvas(boardSize, boardSize);
         setupBindings();
