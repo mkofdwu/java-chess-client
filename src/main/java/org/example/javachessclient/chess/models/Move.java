@@ -1,23 +1,24 @@
 package org.example.javachessclient.chess.models;
 
-import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.pieces.*;
+import org.example.javachessclient.chess.models.specialmoves.Castling;
+import org.example.javachessclient.chess.models.specialmoves.SpecialEffect;
 
 public class Move {
     private final Piece piece;
     private final Square fromSquare;
     private final Square toSquare;
-    private final MoveType type;
     private final Piece capturedPiece;
+    private final SpecialEffect specialEffect;
     // only set after move is made, used for recording purposes only
     private Piece promotedPiece;
     private boolean checksOpponentKing;
 
-    public Move(Piece piece, Square fromSquare, Square toSquare, MoveType type, Piece capturedPiece) {
+    public Move(Piece piece, Square fromSquare, Square toSquare, Piece capturedPiece, SpecialEffect specialEffect) {
         this.piece = piece;
         this.fromSquare = fromSquare;
         this.toSquare = toSquare;
-        this.type = type;
+        this.specialEffect = specialEffect;
         this.capturedPiece = capturedPiece;
     }
 
@@ -33,12 +34,12 @@ public class Move {
         return toSquare;
     }
 
-    public MoveType getType() {
-        return type;
-    }
-
     public Piece getCapturedPiece() {
         return capturedPiece;
+    }
+
+    public SpecialEffect getSpecialEffect() {
+        return specialEffect;
     }
 
     public void setPromotedPiece(Piece promotedPiece) {
@@ -57,7 +58,7 @@ public class Move {
     public String toString() {
         // format move in chess notation
         String formattedMove;
-        if (type == MoveType.castling) {
+        if (specialEffect instanceof Castling) {
             formattedMove = toSquare.getFile() == 2 ? "O-O-O" : "O-O";
         } else {
             formattedMove = getPieceAbbr(piece)

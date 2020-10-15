@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.Chess;
-import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.Piece;
@@ -23,7 +22,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

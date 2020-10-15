@@ -9,6 +9,7 @@ import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.Piece;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BoardPainter {
     public static final double boardSize = 531;
@@ -64,7 +65,7 @@ public class BoardPainter {
         context.strokeRect(applyRotation(square.getFile()) * squareSize + 2, applyRotation(square.getRank()) * squareSize + 2, squareSize - 4, squareSize - 4);
     }
 
-    public void markAvailableMoves(ArrayList<Move> availableMoves) {
+    public void markAvailableMoves(List<Move> availableMoves) {
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.setFill(Color.valueOf("#336a89"));
         for (Move move : availableMoves) {

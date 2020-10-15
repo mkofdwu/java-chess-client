@@ -31,15 +31,4 @@ public class Queen extends Piece {
         if (!alongDiagonal && !alongLine) return false;
         return chess.squaresClearUntil(square.getFile(), square.getRank(), otherSquare.getFile(), otherSquare.getRank());
     }
-
-    @Override
-    public Square[] makeSpecialMoveAndGetAffectedSquares(Move move) {
-        // a queen has no special moves
-        return null;
-    }
-
-    @Override
-    public void undoSpecialMove(Move move) {
-        // a queen has no special moves
-    }
 }

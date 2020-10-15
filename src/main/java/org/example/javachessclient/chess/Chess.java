@@ -3,24 +3,25 @@ package org.example.javachessclient.chess;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import org.example.javachessclient.Store;
-import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.exceptions.InvalidBoardException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
+import org.example.javachessclient.chess.models.specialmoves.SpecialEffect;
 import org.example.javachessclient.chess.views.PromotionOptionsModal;
 import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Chess {
     public static final String startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private final BoardPainter boardPainter;
     private final NotationParser notationParser;
-    private ArrayList<ArrayList<Piece>> board;
-    private ArrayList<Move> moves;
+    private List<List<Piece>> board;
+    private final List<Move> moves;
     private boolean whiteToMove;
     private boolean whiteCanCastleKingside;
     private boolean whiteCanCastleQueenside;
@@ -31,7 +32,7 @@ public class Chess {
     private int fullmoveNumber;
 
     private Square selectedSquare;
-    private ArrayList<Move> availableMoves; // of the selected piece
+    private List<Move> availableMoves; // of the selected piece
 
     // for interface with the actual app
     private boolean canPlayWhite = false;
@@ -190,11 +191,11 @@ public class Chess {
         for (int file = fromFile + fileDir, rank = fromRank + rankDir; Square.isValid(file, rank); file += fileDir, rank += rankDir) {
             Piece landingPiece = board.get(rank).get(file);
             if (landingPiece == null) {
-                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal, null));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), null, null));
             } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
                 return;
             } else {
-                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.capture, landingPiece));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), landingPiece, null));
                 return;
             }
         }
@@ -223,7 +224,7 @@ public class Chess {
     }
 
     private King findKing(boolean isWhite) {
-        for (ArrayList<Piece> rankList : board) {
+        for (List<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece instanceof King && piece.getIsWhite() == isWhite) {
                     return (King) piece;
@@ -234,7 +235,7 @@ public class Chess {
     }
 
     public boolean squareIsAttacked(Square square, boolean byWhite) {
-        for (ArrayList<Piece> rankList : board) {
+        for (List<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece != null && piece.getIsWhite() == byWhite && piece.isAttackingSquare(square)) {
                     return true;
@@ -245,7 +246,7 @@ public class Chess {
     }
 
     private boolean otherPlayerCannotMove() {
-        for (ArrayList<Piece> rankList : board) {
+        for (List<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece != null && piece.getIsWhite() == !whiteToMove) {
                     if (!piece.findAvailableMoves().isEmpty()) return false;
@@ -255,18 +256,20 @@ public class Chess {
         return true;
     }
 
+    // actual logic
+
     public void playMove(Move move) {
         // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
         Piece piece = move.getPiece();
         Square fromSquare = move.getFromSquare();
         Square toSquare = move.getToSquare();
-        MoveType type = move.getType();
+        SpecialEffect specialEffect = move.getSpecialEffect();
 
         moveTo(piece, toSquare);
 
-        if (type != MoveType.normal && type != MoveType.capture) {
-            Square[] squaresToRedraw = piece.makeSpecialMoveAndGetAffectedSquares(move);
+        if (specialEffect != null) {
+            List<Square> squaresToRedraw = specialEffect.perform();
             for (Square square : squaresToRedraw) boardPainter.redrawSquare(square);
         }
 
@@ -275,16 +278,21 @@ public class Chess {
                 && (piece.getIsWhite() ? canPlayWhite : canPlayBlack)) {
             Store.modal.show(PromotionOptionsModal.buildModal((pieceName) -> {
                 Piece newPiece;
-                if (pieceName.equals("Queen")) {
-                    newPiece = new Queen(this, toSquare, piece.getIsWhite());
-                } else if (pieceName.equals("Rook")) {
-                    newPiece = new Rook(this, toSquare, piece.getIsWhite());
-                } else if (pieceName.equals("Bishop")) {
-                    newPiece = new Bishop(this, toSquare, piece.getIsWhite());
-                } else if (pieceName.equals("Knight")) {
-                    newPiece = new Knight(this, toSquare, piece.getIsWhite());
-                } else {
-                    return;
+                switch (pieceName) {
+                    case "Queen":
+                        newPiece = new Queen(this, toSquare, piece.getIsWhite());
+                        break;
+                    case "Rook":
+                        newPiece = new Rook(this, toSquare, piece.getIsWhite());
+                        break;
+                    case "Bishop":
+                        newPiece = new Bishop(this, toSquare, piece.getIsWhite());
+                        break;
+                    case "Knight":
+                        newPiece = new Knight(this, toSquare, piece.getIsWhite());
+                        break;
+                    default:
+                        return;
                 }
                 move.setPromotedPiece(newPiece);
                 board.get(toSquare.getRank()).set(toSquare.getFile(), newPiece);
@@ -333,6 +341,7 @@ public class Chess {
         boardPainter.redrawSquare(toSquare);
     }
 
+    // TODO
 //    public void undoMove() {
 //        Move move = recordedMoves.remove(recordedMoves.size() - 1);
 //        Piece piece = move.getPiece();
@@ -351,21 +360,22 @@ public class Chess {
 //    }
 
     private void testMove(Move move) {
+        // called when checking for check on opponent king
         Piece piece = move.getPiece();
         Square toSquare = move.getToSquare();
-        MoveType type = move.getType();
+        SpecialEffect specialEffect = move.getSpecialEffect();
 
         moveTo(piece, toSquare);
 
-        if (type != MoveType.normal && type != MoveType.capture) {
-            piece.makeSpecialMoveAndGetAffectedSquares(move);
+        if (specialEffect != null) {
+            specialEffect.perform();
         }
     }
 
     private void undoTestMove(Move move) {
         Piece piece = move.getPiece();
         Square fromSquare = move.getFromSquare();
-        MoveType type = move.getType();
+        SpecialEffect specialEffect = move.getSpecialEffect();
 
         moveTo(piece, fromSquare);
 
@@ -374,18 +384,8 @@ public class Chess {
             board.get(capturedPiece.getSquare().getRank()).set(capturedPiece.getSquare().getFile(), capturedPiece);
         }
 
-        if (type != MoveType.normal && type != MoveType.capture) {
-            move.getPiece().undoSpecialMove(move);
-            if (type == MoveType.castling) {
-                if (move.getPiece().getIsWhite()) {
-                    // fixme: if the other side already cannot castle because of moving the rook this will reset it to be allowed
-                    whiteCanCastleKingside = true;
-                    whiteCanCastleQueenside = true;
-                } else {
-                    blackCanCastleKingside = true;
-                    blackCanCastleQueenside = true;
-                }
-            }
+        if (specialEffect != null) {
+            specialEffect.undo();
         }
     }
 
@@ -461,16 +461,16 @@ public class Chess {
         return boardPainter.getCanvas();
     }
 
-    public ArrayList<ArrayList<Piece>> getBoard() {
+    public List<List<Piece>> getBoard() {
         return board;
     }
 
-    public void setBoard(ArrayList<ArrayList<Piece>> board) {
+    public void setBoard(List<List<Piece>> board) {
         // only used by ChessNotationParser
         this.board = board;
     }
 
-    public ArrayList<Move> getMoves() {
+    public List<Move> getMoves() {
         return moves;
     }
 

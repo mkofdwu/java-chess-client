@@ -12,6 +12,7 @@ import org.example.javachessclient.services.UserService;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class NotationParser {
         }
 
         // piece placement
-        ArrayList<ArrayList<Piece>> board = new ArrayList<>();
+        List<List<Piece>> board = new ArrayList<>();
         for (String line : matcher.group("piecePlacement").split("/")) {
             board.add(new ArrayList<>());
             for (int i = 0; i < line.length(); ++i) {
@@ -107,7 +108,7 @@ public class NotationParser {
         // convert the current position to FEN
         StringBuilder fen = new StringBuilder();
         int emptySpaces = 0;
-        for (ArrayList<Piece> rankList : chess.getBoard()) {
+        for (List<Piece> rankList : chess.getBoard()) {
             for (Piece piece : rankList) {
                 if (piece == null) emptySpaces++;
                 else {
