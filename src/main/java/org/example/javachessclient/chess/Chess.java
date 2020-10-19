@@ -19,17 +19,11 @@ public class Chess {
     public static final String startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private final BoardPainter boardPainter;
+    private final FlagsHandler flagsHandler;
     private final NotationParser notationParser;
     private List<List<Piece>> board;
     private final List<Move> moves;
     private boolean whiteToMove;
-    private boolean whiteCanCastleKingside;
-    private boolean whiteCanCastleQueenside;
-    private boolean blackCanCastleKingside;
-    private boolean blackCanCastleQueenside;
-    private Square enPassantSquare;
-    private int halfmoveClock;
-    private int fullmoveNumber;
 
     private Square selectedSquare;
     private List<Move> availableMoves; // of the selected piece
@@ -42,6 +36,7 @@ public class Chess {
 
     public Chess() {
         boardPainter = new BoardPainter(this);
+        flagsHandler = new FlagsHandler(this);
         notationParser = new NotationParser(this);
         if (Store.user.getSettings().getTheme() == 1) {
             // dark theme
@@ -63,6 +58,7 @@ public class Chess {
     // player input
 
     public void onSquareClicked(Square square) {
+        // fixme: move these two methods to ChessCanvas?
         if (selectedSquare == null) {
             // select first piece
             onFirstSquareSelected(square);
@@ -302,11 +298,8 @@ public class Chess {
 
         moves.add(move);
 
-        // update game flags based on move
-        updateCastlingAvailability();
-        updateEnPassantSquare();
-        updateThreefoldRepetition();
-        updateFiftyMoveRule();
+        // update game flags based on last move
+        flagsHandler.updateFlags(move);
 
         if (kingInCheck(!whiteToMove)) {
             move.setChecksOpponentKing(true); // the opponent king was checked
@@ -395,63 +388,14 @@ public class Chess {
     }
 
     private boolean checkForFiftyMoveRule() {
-        return halfmoveClock >= 50;
-    }
-
-    private void updateCastlingAvailability() {
-        Move lastMove = moves.get(moves.size() - 1);
-        if (lastMove.getPiece() instanceof King) {
-            if (whiteToMove) {
-                whiteCanCastleKingside = false;
-                whiteCanCastleQueenside = false;
-            } else {
-                blackCanCastleKingside = false;
-                blackCanCastleQueenside = false;
-            }
-        } else if (lastMove.getPiece() instanceof Rook) {
-            int fromFile = lastMove.getFromSquare().getFile();
-            if (whiteToMove) {
-                if (fromFile == 0) whiteCanCastleQueenside = false;
-                else if (fromFile == 7) whiteCanCastleKingside = false;
-            } else {
-                if (fromFile == 0) blackCanCastleQueenside = false;
-                else if (fromFile == 7) blackCanCastleKingside = false;
-            }
-        }
-    }
-
-    private void updateEnPassantSquare() {
-        Move lastMove = moves.get(moves.size() - 1);
-        Piece piece = lastMove.getPiece();
-        int toFile = lastMove.getToSquare().getFile();
-        int toRank = lastMove.getToSquare().getRank();
-        boolean movedTwoSquares = Math.abs(toRank - lastMove.getFromSquare().getRank()) == 2;
-        if (piece instanceof Pawn && movedTwoSquares) {
-            Piece piece1 = pieceAt(toFile - 1, toRank);
-            Piece piece2 = pieceAt(toFile + 1, toRank);
-            if ((piece1 instanceof Pawn && piece1.getIsWhite() != piece.getIsWhite())
-                    || (piece2 instanceof Pawn && piece2.getIsWhite() != piece.getIsWhite())) {
-                enPassantSquare = new Square(toFile, toRank + (piece.getIsWhite() ? 1 : -1));
-                return;
-            }
-        }
-        enPassantSquare = null;
-    }
-
-    private void updateThreefoldRepetition() {
-        // TODO
-    }
-
-    private void updateFiftyMoveRule() {
-        Move lastMove = moves.get(moves.size() - 1);
-        if (lastMove.getPiece() instanceof Pawn || lastMove.getCapturedPiece() != null) {
-            halfmoveClock = 0;
-        } else {
-            ++halfmoveClock;
-        }
+        return flagsHandler.getHalfmoveClock() >= 50;
     }
 
     // getters and setters
+
+    public FlagsHandler getFlagsHandler() {
+        return flagsHandler;
+    }
 
     public NotationParser getNotationParser() {
         return notationParser;
@@ -480,62 +424,6 @@ public class Chess {
 
     public void setWhiteToMove(boolean whiteToMove) {
         this.whiteToMove = whiteToMove;
-    }
-
-    public boolean getWhiteCanCastleKingside() {
-        return whiteCanCastleKingside;
-    }
-
-    public void setWhiteCanCastleKingside(boolean whiteCanCastleKingside) {
-        this.whiteCanCastleKingside = whiteCanCastleKingside;
-    }
-
-    public boolean getWhiteCanCastleQueenside() {
-        return whiteCanCastleQueenside;
-    }
-
-    public void setWhiteCanCastleQueenside(boolean whiteCanCastleQueenside) {
-        this.whiteCanCastleQueenside = whiteCanCastleQueenside;
-    }
-
-    public boolean getBlackCanCastleKingside() {
-        return blackCanCastleKingside;
-    }
-
-    public void setBlackCanCastleKingside(boolean blackCanCastleKingside) {
-        this.blackCanCastleKingside = blackCanCastleKingside;
-    }
-
-    public boolean getBlackCanCastleQueenside() {
-        return blackCanCastleQueenside;
-    }
-
-    public void setBlackCanCastleQueenside(boolean blackCanCastleQueenside) {
-        this.blackCanCastleQueenside = blackCanCastleQueenside;
-    }
-
-    public Square getEnPassantSquare() {
-        return enPassantSquare;
-    }
-
-    public void setEnPassantSquare(Square enPassantSquare) {
-        this.enPassantSquare = enPassantSquare;
-    }
-
-    public int getHalfmoveClock() {
-        return halfmoveClock;
-    }
-
-    public void setHalfmoveClock(int halfmoveClock) {
-        this.halfmoveClock = halfmoveClock;
-    }
-
-    public int getFullmoveNumber() {
-        return fullmoveNumber;
-    }
-
-    public void setFullmoveNumber(int fullmoveNumber) {
-        this.fullmoveNumber = fullmoveNumber;
     }
 
     public void setCanPlayWhite(boolean canPlayWhite) {

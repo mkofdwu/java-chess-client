@@ -8,8 +8,7 @@ import org.example.javachessclient.chess.models.pieces.Pawn;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnPassant implements SpecialEffect {
-    private final Chess chess;
+public class EnPassant extends SpecialEffect {
     private final Square captureSquare;
 
     public static List<Move> findSpecialMoves(Pawn pawn) {
@@ -32,8 +31,12 @@ public class EnPassant implements SpecialEffect {
     }
 
     public EnPassant(Chess chess, Square captureSquare) {
-        this.chess = chess;
+        super(chess);
         this.captureSquare = captureSquare;
+    }
+
+    public static EnPassant fromString(Chess chess, String string) {
+        return new EnPassant(chess, new Square(string));
     }
 
     @Override

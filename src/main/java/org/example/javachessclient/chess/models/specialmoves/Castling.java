@@ -10,7 +10,7 @@ import org.example.javachessclient.chess.models.pieces.Piece;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Castling implements SpecialEffect {
+public class Castling extends SpecialEffect {
     private final King king;
     private final boolean isKingside;
 
@@ -57,8 +57,15 @@ public class Castling implements SpecialEffect {
     }
 
     public Castling(King king, boolean isKingside) {
+        super(king.getChess());
         this.king = king;
         this.isKingside = isKingside;
+    }
+
+    public static Castling fromString(Chess chess, String string) { // TODO: make this more
+        Square kingSquare = new Square(string.substring(0, 2));
+        boolean isKingside = string.charAt(2) == '1';
+        return new Castling((King) chess.pieceAt(kingSquare), isKingside);
     }
 
     @Override

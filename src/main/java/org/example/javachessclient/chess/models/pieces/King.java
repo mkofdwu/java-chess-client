@@ -11,7 +11,6 @@ import org.example.javachessclient.chess.models.specialmoves.Castling;
 import java.util.ArrayList;
 
 public class King extends Piece {
-
     public King(Chess chess, Square square, boolean isWhite) {
         super(chess, square, isWhite);
     }
