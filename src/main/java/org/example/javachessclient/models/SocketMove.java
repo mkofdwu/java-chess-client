@@ -6,20 +6,20 @@ public class SocketMove {
     private int fromRank;
     private int toFile;
     private int toRank;
-    private String moveType;
+    private String specialEffectString;
     private int result; // 0 - nothing, 1 - draw, 2 - white wins, 3 - black wins
     private String updatedFenPosition; // temporary solution but may pose security concerns
 
     public SocketMove() {
     }
 
-    public SocketMove(String gameId, int fromFile, int fromRank, int toFile, int toRank, String moveType, int result, String updatedFenPosition) {
+    public SocketMove(String gameId, int fromFile, int fromRank, int toFile, int toRank, String specialEffectString, int result, String updatedFenPosition) {
         this.gameId = gameId;
         this.fromFile = fromFile;
         this.fromRank = fromRank;
         this.toFile = toFile;
         this.toRank = toRank;
-        this.moveType = moveType;
+        this.specialEffectString = specialEffectString;
         this.result = result;
         this.updatedFenPosition = updatedFenPosition;
     }
@@ -64,12 +64,12 @@ public class SocketMove {
         this.toRank = toRank;
     }
 
-    public String getMoveType() {
-        return moveType;
+    public String getSpecialEffectString() {
+        return specialEffectString;
     }
 
-    public void setMoveType(String moveType) {
-        this.moveType = moveType;
+    public void setSpecialEffectString(String specialEffectString) {
+        this.specialEffectString = specialEffectString;
     }
 
     public int getResult() {

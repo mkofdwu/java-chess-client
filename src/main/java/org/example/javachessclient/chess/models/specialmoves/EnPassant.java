@@ -15,7 +15,7 @@ public class EnPassant extends SpecialEffect {
         Chess chess = pawn.getChess();
         Square square = pawn.getSquare();
         ArrayList<Move> available = new ArrayList<>();
-        Square enPassantSquare = chess.getEnPassantSquare();
+        Square enPassantSquare = chess.getFlagsHandler().getEnPassantSquare();
         if (enPassantSquare != null) {
             int enPassantFile = enPassantSquare.getFile();
             int enPassantRank = enPassantSquare.getRank();
@@ -50,5 +50,10 @@ public class EnPassant extends SpecialEffect {
     @Override
     public void undo() {
         // no additional steps required for en passant
+    }
+
+    @Override
+    public String toString() {
+        return "e" + captureSquare;
     }
 }

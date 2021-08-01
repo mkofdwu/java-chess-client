@@ -16,6 +16,8 @@ import org.example.javachessclient.chess.Chess;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.Piece;
+import org.example.javachessclient.chess.models.specialmoves.EnPassant;
+import org.example.javachessclient.chess.models.specialmoves.SpecialEffect;
 import org.example.javachessclient.models.*;
 import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.services.UserService;
@@ -127,14 +129,16 @@ public class GameController implements Controller {
                 int fromRank = recordedMove.getFromRank();
                 int toFile = recordedMove.getToFile();
                 int toRank = recordedMove.getToRank();
-                MoveType type = Enum.valueOf(MoveType.class, recordedMove.getMoveType());
+                SpecialEffect specialEffect = SpecialEffect.fromString(chess, recordedMove.getSpecialEffectString());
                 Piece piece = chess.pieceAt(fromFile, fromRank);
                 Move move = new Move(
                         piece,
                         new Square(fromFile, fromRank),
                         new Square(toFile, toRank),
-                        type,
-                        type == MoveType.enPassant ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1)) : chess.pieceAt(toFile, toRank)
+                        specialEffect instanceof EnPassant
+                                ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1))
+                                : chess.pieceAt(toFile, toRank),
+                        specialEffect
                 );
                 chess.playMove(move);
                 addMove(move);
@@ -153,7 +157,7 @@ public class GameController implements Controller {
                 fromSquare.getRank(),
                 toSquare.getFile(),
                 toSquare.getRank(),
-                move.getType().name(),
+                move.getSpecialEffect().toString(),
                 chess.getResult(),
                 chess.getNotationParser().toFEN()
         );
@@ -169,14 +173,16 @@ public class GameController implements Controller {
             int fromRank = socketMove.getFromRank();
             int toFile = socketMove.getToFile();
             int toRank = socketMove.getToRank();
-            MoveType type = Enum.valueOf(MoveType.class, socketMove.getMoveType());
+            SpecialEffect specialEffect = SpecialEffect.fromString(chess, socketMove.getSpecialEffectString());
             Piece piece = chess.pieceAt(fromFile, fromRank);
             Move move = new Move(
                     piece,
                     new Square(fromFile, fromRank),
                     new Square(toFile, toRank),
-                    type,
-                    type == MoveType.enPassant ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1)) : chess.pieceAt(toFile, toRank)
+                    specialEffect instanceof EnPassant
+                            ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1))
+                            : chess.pieceAt(toFile, toRank),
+                    specialEffect
             );
             chess.playMove(move);
             addMove(move);

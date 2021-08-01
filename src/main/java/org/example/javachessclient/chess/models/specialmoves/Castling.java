@@ -1,6 +1,7 @@
 package org.example.javachessclient.chess.models.specialmoves;
 
 import org.example.javachessclient.chess.Chess;
+import org.example.javachessclient.chess.FlagsHandler;
 import org.example.javachessclient.chess.exceptions.InvalidMoveException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
@@ -21,18 +22,20 @@ public class Castling extends SpecialEffect {
 
         ArrayList<Move> available = new ArrayList<>();
         if (chess.squareIsAttacked(square, !isWhite)) return available; // cannot castle when in check
+
+        FlagsHandler flags = chess.getFlagsHandler();
         if (isWhite) {
-            if (chess.getWhiteCanCastleKingside() && checkIfCanCastle(chess, true, true)) {
+            if (flags.getWhiteCanCastleKingside() && checkIfCanCastle(chess, true, true)) {
                 available.add(new Move(king, square, new Square(6, 7), null, new Castling(king, true)));
             }
-            if (chess.getWhiteCanCastleQueenside() && checkIfCanCastle(chess, true, false)) {
+            if (flags.getWhiteCanCastleQueenside() && checkIfCanCastle(chess, true, false)) {
                 available.add(new Move(king, square, new Square(2, 7), null, new Castling(king, false)));
             }
         } else {
-            if (chess.getBlackCanCastleKingside() && checkIfCanCastle(chess, false, true)) {
+            if (flags.getBlackCanCastleKingside() && checkIfCanCastle(chess, false, true)) {
                 available.add(new Move(king, square, new Square(6, 0), null, new Castling(king, true)));
             }
-            if (chess.getBlackCanCastleQueenside() && checkIfCanCastle(chess, false, false)) {
+            if (flags.getBlackCanCastleQueenside() && checkIfCanCastle(chess, false, false)) {
                 available.add(new Move(king, square, new Square(2, 0), null, new Castling(king, false)));
             }
         }
@@ -100,13 +103,19 @@ public class Castling extends SpecialEffect {
             chess.moveTo(chess.pieceAt(3, rank), new Square(0, rank));
         }
 
+        FlagsHandler flags = chess.getFlagsHandler();
         if (king.getIsWhite()) {
             // fixme: if the other side already cannot castle because of moving the rook this will reset it to be allowed
-            chess.setWhiteCanCastleKingside(true);
-            chess.setWhiteCanCastleQueenside(true);
+            flags.setWhiteCanCastleKingside(true);
+            flags.setWhiteCanCastleQueenside(true);
         } else {
-            chess.setBlackCanCastleKingside(true);
-            chess.setBlackCanCastleQueenside(true);
+            flags.setBlackCanCastleKingside(true);
+            flags.setBlackCanCastleQueenside(true);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "c" + king.getSquare() + (isKingside ? '1' : '0');
     }
 }
