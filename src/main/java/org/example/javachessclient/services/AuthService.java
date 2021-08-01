@@ -37,7 +37,7 @@ public class AuthService {
         }
     }
 
-    public static boolean authenticate(String username, String password, boolean register) {
+    public static String authenticate(String username, String password, boolean register) {
         try {
             Response<TokenAuthResponse> response = (
                     register
@@ -46,7 +46,7 @@ public class AuthService {
             ).execute();
             if (response.body() == null) {
                 System.out.println("Failed to authenticate: " + response.errorBody().string());
-                return false;
+                return response.message();
             }
 
             TokenAuthResponse authResponse = response.body();
@@ -56,16 +56,14 @@ public class AuthService {
             // save token to file
             File parent = new File(jwtFilePath).getParentFile();
             if (!parent.exists() && !parent.mkdirs()) {
-                throw new IOException("Failed to create jwt file at " + jwtFilePath);
+                return "Failed to create jwt file at " + jwtFilePath;
             }
             BufferedWriter bw = new BufferedWriter(new FileWriter(jwtFilePath));
             bw.write(authResponse.getToken());
             bw.close();
-
-            return true;
+            return null;
         } catch (IOException exception) {
-            System.out.println("Failed to authenticate or write token to file: " + exception.getMessage());
-            return false;
+            return exception.getMessage();
         }
     }
 

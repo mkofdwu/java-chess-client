@@ -25,7 +25,6 @@ public class App extends Application {
     public void start(Stage stage) {
         StackPane root = new StackPane();
         root.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
-        root.getStyleClass().addAll("light-theme", "blue-accent");
         root.getChildren().add(new Pane()); // the first, bottommost child will be controlled by Router
 
         Store.router = new Router(root, 0);
@@ -53,6 +52,9 @@ public class App extends Application {
         Store.userApi = Store.retrofit.create(UserApi.class);
         Store.gameApi = Store.retrofit.create(GameApi.class);
         Store.fileApi = Store.retrofit.create(FileApi.class);
+
+        ThemeService.setTheme(0);
+        ThemeService.setAccent(1);
 
         Store.router.push("/fxml/splash.fxml");
 

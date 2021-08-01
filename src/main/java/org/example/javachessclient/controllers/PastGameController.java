@@ -9,10 +9,11 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import org.example.javachessclient.Store;
 import org.example.javachessclient.chess.Chess;
-import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.Piece;
+import org.example.javachessclient.chess.models.specialmoves.EnPassant;
+import org.example.javachessclient.chess.models.specialmoves.SpecialEffect;
 import org.example.javachessclient.models.*;
 import org.example.javachessclient.services.GameService;
 import org.example.javachessclient.services.UserService;
@@ -23,7 +24,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,14 +66,16 @@ public class PastGameController implements Controller {
             int fromRank = recordedMove.getFromRank();
             int toFile = recordedMove.getToFile();
             int toRank = recordedMove.getToRank();
-            MoveType type = Enum.valueOf(MoveType.class, recordedMove.getMoveType());
+            SpecialEffect specialEffect = SpecialEffect.fromString(chess, recordedMove.getSpecialEffectString());
             Piece piece = chess.pieceAt(fromFile, fromRank);
             Move move = new Move(
                     piece,
                     new Square(fromFile, fromRank),
                     new Square(toFile, toRank),
-                    type,
-                    type == MoveType.enPassant ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1)) : chess.pieceAt(toFile, toRank)
+                    specialEffect instanceof EnPassant
+                            ? chess.pieceAt(toFile, toRank + (piece.getIsWhite() ? -1 : 1))
+                            : chess.pieceAt(toFile, toRank),
+                    specialEffect
             );
             chess.playMove(move);
             fenHistory.add(chess.getNotationParser().toFEN());

@@ -24,15 +24,15 @@ public class LoginController {
     void onLogin() {
         Store.modal.show(LoadingModal.buildModal());
         new Thread(() -> {
-            boolean success = AuthService.authenticate(usernameInput.getText(), passwordInput.getText(), false);
+            String errorMessage = AuthService.authenticate(usernameInput.getText(), passwordInput.getText(), false);
             Platform.runLater(() -> {
                 Store.modal.hide();
-                if (success) {
+                if (errorMessage == null) {
                     ThemeService.setTheme(Store.user.getSettings().getTheme());
                     ThemeService.setAccent(Store.user.getSettings().getAccent());
                     Store.router.push("/fxml/layout.fxml");
                 } else {
-                    Store.modal.showMessage("Failed to login", "Please check your username and password again.");
+                    Store.modal.showMessage("Failed to login", errorMessage);
                 }
             });
         }).start();

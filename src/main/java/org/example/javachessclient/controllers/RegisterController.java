@@ -27,15 +27,15 @@ public class RegisterController {
         if (passwordInput.getText().equals(confirmPasswordInput.getText())) {
             Store.modal.show(LoadingModal.buildModal());
             new Thread(() -> {
-                boolean success = AuthService.authenticate(usernameInput.getText(), passwordInput.getText(), true);
+                String errorMessage = AuthService.authenticate(usernameInput.getText(), passwordInput.getText(), true);
                 Platform.runLater(() -> {
                     Store.modal.hide();
-                    if (success) {
+                    if (errorMessage == null) {
                         ThemeService.setTheme(Store.user.getSettings().getTheme());
                         ThemeService.setAccent(Store.user.getSettings().getAccent());
                         Store.router.push("/fxml/layout.fxml");
                     } else {
-                        Store.modal.showMessage("Failed to register", "Please check your username and password again.");
+                        Store.modal.showMessage("Failed to register", errorMessage);
                     }
                 });
             }).start();

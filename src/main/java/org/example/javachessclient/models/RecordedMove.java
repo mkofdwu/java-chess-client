@@ -5,7 +5,7 @@ public class RecordedMove {
     private int fromRank;
     private int toFile;
     private int toRank;
-    private String moveType;
+    private String specialEffectString;
 
     public RecordedMove() {
     }
@@ -42,11 +42,11 @@ public class RecordedMove {
         this.toRank = toRank;
     }
 
-    public String getMoveType() {
-        return moveType;
+    public String getSpecialEffectString() {
+        return specialEffectString;
     }
 
-    public void setMoveType(String moveType) {
-        this.moveType = moveType;
+    public void setSpecialEffectString(String specialEffectString) {
+        this.specialEffectString = specialEffectString;
     }
 }

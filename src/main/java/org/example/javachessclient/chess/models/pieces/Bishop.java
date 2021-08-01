@@ -29,15 +29,4 @@ public class Bishop extends Piece {
         if (!alongDiagonal) return false;
         return chess.squaresClearUntil(square.getFile(), square.getRank(), otherSquare.getFile(), otherSquare.getRank());
     }
-
-    @Override
-    public Square[] makeSpecialMoveAndGetAffectedSquares(Move move) {
-        // a bishop has no special moves
-        return null;
-    }
-
-    @Override
-    public void undoSpecialMove(Move move) {
-
-    }
 }

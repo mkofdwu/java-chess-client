@@ -29,15 +29,4 @@ public class Rook extends Piece {
         if (!alongLine) return false;
         return chess.squaresClearUntil(square.getFile(), square.getRank(), otherSquare.getFile(), otherSquare.getRank());
     }
-
-    @Override
-    public Square[] makeSpecialMoveAndGetAffectedSquares(Move move) {
-        // A rook has no special moves
-        return null;
-    }
-
-    @Override
-    public void undoSpecialMove(Move move) {
-
-    }
 }

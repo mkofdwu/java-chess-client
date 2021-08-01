@@ -12,6 +12,7 @@ import org.example.javachessclient.services.UserService;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class NotationParser {
         }
 
         // piece placement
-        ArrayList<ArrayList<Piece>> board = new ArrayList<>();
+        List<List<Piece>> board = new ArrayList<>();
         for (String line : matcher.group("piecePlacement").split("/")) {
             board.add(new ArrayList<>());
             for (int i = 0; i < line.length(); ++i) {
@@ -77,37 +78,39 @@ public class NotationParser {
         // active color
         chess.setWhiteToMove(matcher.group("activeColor").equals("w"));
 
+        FlagsHandler flags = chess.getFlagsHandler();
+
         // castling availability
         if (matcher.group("cannotCastle") != null) {
-            chess.setWhiteCanCastleKingside(false);
-            chess.setWhiteCanCastleQueenside(false);
-            chess.setBlackCanCastleKingside(false);
-            chess.setBlackCanCastleQueenside(false);
+            flags.setWhiteCanCastleKingside(false);
+            flags.setWhiteCanCastleQueenside(false);
+            flags.setBlackCanCastleKingside(false);
+            flags.setBlackCanCastleQueenside(false);
         } else {
-            chess.setWhiteCanCastleKingside(matcher.group("wck") != null);
-            chess.setWhiteCanCastleQueenside(matcher.group("wcq") != null);
-            chess.setBlackCanCastleKingside(matcher.group("bck") != null);
-            chess.setBlackCanCastleQueenside(matcher.group("bcq") != null);
+            flags.setWhiteCanCastleKingside(matcher.group("wck") != null);
+            flags.setWhiteCanCastleQueenside(matcher.group("wcq") != null);
+            flags.setBlackCanCastleKingside(matcher.group("bck") != null);
+            flags.setBlackCanCastleQueenside(matcher.group("bcq") != null);
         }
 
         // en passant square
         String enPassantSquareString = matcher.group("enPassantSquare");
         if (!enPassantSquareString.equals("-")) {
-            chess.setEnPassantSquare(new Square(enPassantSquareString));
+            flags.setEnPassantSquare(new Square(enPassantSquareString));
         }
 
         // halfmove clock
-        chess.setHalfmoveClock(Integer.parseInt(matcher.group("halfmoveClock")));
+        flags.setHalfmoveClock(Integer.parseInt(matcher.group("halfmoveClock")));
 
         // fullmove number
-        chess.setFullmoveNumber(Integer.parseInt(matcher.group("fullmoveNumber")));
+        flags.setFullmoveNumber(Integer.parseInt(matcher.group("fullmoveNumber")));
     }
 
     public String toFEN() {
         // convert the current position to FEN
         StringBuilder fen = new StringBuilder();
         int emptySpaces = 0;
-        for (ArrayList<Piece> rankList : chess.getBoard()) {
+        for (List<Piece> rankList : chess.getBoard()) {
             for (Piece piece : rankList) {
                 if (piece == null) emptySpaces++;
                 else {
@@ -139,20 +142,22 @@ public class NotationParser {
 
         fen.append(chess.getWhiteToMove() ? " w " : " b ");
 
-        if (!chess.getWhiteCanCastleKingside()
-                && !chess.getWhiteCanCastleQueenside()
-                && !chess.getBlackCanCastleKingside()
-                && !chess.getBlackCanCastleQueenside()) {
+        FlagsHandler flags = chess.getFlagsHandler();
+
+        if (!flags.getWhiteCanCastleKingside()
+                && !flags.getWhiteCanCastleQueenside()
+                && !flags.getBlackCanCastleKingside()
+                && !flags.getBlackCanCastleQueenside()) {
             fen.append('-');
         } else {
-            if (chess.getWhiteCanCastleKingside()) fen.append('K');
-            if (chess.getWhiteCanCastleQueenside()) fen.append('Q');
-            if (chess.getBlackCanCastleKingside()) fen.append('k');
-            if (chess.getBlackCanCastleQueenside()) fen.append('q');
+            if (flags.getWhiteCanCastleKingside()) fen.append('K');
+            if (flags.getWhiteCanCastleQueenside()) fen.append('Q');
+            if (flags.getBlackCanCastleKingside()) fen.append('k');
+            if (flags.getBlackCanCastleQueenside()) fen.append('q');
         }
 
-        fen.append(" " + (chess.getEnPassantSquare() == null ? '-' : chess.getEnPassantSquare().toString()));
-        fen.append(' ' + chess.getHalfmoveClock() + ' ' + chess.getFullmoveNumber());
+        fen.append(" " + (flags.getEnPassantSquare() == null ? '-' : flags.getEnPassantSquare().toString()));
+        fen.append(' ' + flags.getHalfmoveClock() + ' ' + flags.getFullmoveNumber());
 
         return fen.toString();
     }

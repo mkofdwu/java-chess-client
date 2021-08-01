@@ -3,35 +3,30 @@ package org.example.javachessclient.chess;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import org.example.javachessclient.Store;
-import org.example.javachessclient.chess.enums.MoveType;
 import org.example.javachessclient.chess.exceptions.InvalidBoardException;
 import org.example.javachessclient.chess.models.Move;
 import org.example.javachessclient.chess.models.Square;
 import org.example.javachessclient.chess.models.pieces.*;
+import org.example.javachessclient.chess.models.specialmoves.SpecialEffect;
 import org.example.javachessclient.chess.views.PromotionOptionsModal;
 import org.example.javachessclient.models.UserMoveCallback;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Chess {
     public static final String startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     private final BoardPainter boardPainter;
+    private final FlagsHandler flagsHandler;
     private final NotationParser notationParser;
-    private ArrayList<ArrayList<Piece>> board;
-    private ArrayList<Move> moves;
+    private List<List<Piece>> board;
+    private final List<Move> moves;
     private boolean whiteToMove;
-    private boolean whiteCanCastleKingside;
-    private boolean whiteCanCastleQueenside;
-    private boolean blackCanCastleKingside;
-    private boolean blackCanCastleQueenside;
-    private Square enPassantSquare;
-    private int halfmoveClock;
-    private int fullmoveNumber;
 
     private Square selectedSquare;
-    private ArrayList<Move> availableMoves; // of the selected piece
+    private List<Move> availableMoves; // of the selected piece
 
     // for interface with the actual app
     private boolean canPlayWhite = false;
@@ -41,6 +36,7 @@ public class Chess {
 
     public Chess() {
         boardPainter = new BoardPainter(this);
+        flagsHandler = new FlagsHandler(this);
         notationParser = new NotationParser(this);
         if (Store.user.getSettings().getTheme() == 1) {
             // dark theme
@@ -62,6 +58,7 @@ public class Chess {
     // player input
 
     public void onSquareClicked(Square square) {
+        // fixme: move these two methods to ChessCanvas?
         if (selectedSquare == null) {
             // select first piece
             onFirstSquareSelected(square);
@@ -190,11 +187,11 @@ public class Chess {
         for (int file = fromFile + fileDir, rank = fromRank + rankDir; Square.isValid(file, rank); file += fileDir, rank += rankDir) {
             Piece landingPiece = board.get(rank).get(file);
             if (landingPiece == null) {
-                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.normal, null));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), null, null));
             } else if (landingPiece.getIsWhite() == piece.getIsWhite()) {
                 return;
             } else {
-                available.add(new Move(piece, fromSquare, new Square(file, rank), MoveType.capture, landingPiece));
+                available.add(new Move(piece, fromSquare, new Square(file, rank), landingPiece, null));
                 return;
             }
         }
@@ -223,7 +220,7 @@ public class Chess {
     }
 
     private King findKing(boolean isWhite) {
-        for (ArrayList<Piece> rankList : board) {
+        for (List<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece instanceof King && piece.getIsWhite() == isWhite) {
                     return (King) piece;
@@ -234,7 +231,7 @@ public class Chess {
     }
 
     public boolean squareIsAttacked(Square square, boolean byWhite) {
-        for (ArrayList<Piece> rankList : board) {
+        for (List<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece != null && piece.getIsWhite() == byWhite && piece.isAttackingSquare(square)) {
                     return true;
@@ -245,7 +242,7 @@ public class Chess {
     }
 
     private boolean otherPlayerCannotMove() {
-        for (ArrayList<Piece> rankList : board) {
+        for (List<Piece> rankList : board) {
             for (Piece piece : rankList) {
                 if (piece != null && piece.getIsWhite() == !whiteToMove) {
                     if (!piece.findAvailableMoves().isEmpty()) return false;
@@ -255,18 +252,20 @@ public class Chess {
         return true;
     }
 
+    // actual logic
+
     public void playMove(Move move) {
         // NOTE: The move `move` is assumed to be valid
         // this is also triggered when socket message from other player is sent
         Piece piece = move.getPiece();
         Square fromSquare = move.getFromSquare();
         Square toSquare = move.getToSquare();
-        MoveType type = move.getType();
+        SpecialEffect specialEffect = move.getSpecialEffect();
 
         moveTo(piece, toSquare);
 
-        if (type != MoveType.normal && type != MoveType.capture) {
-            Square[] squaresToRedraw = piece.makeSpecialMoveAndGetAffectedSquares(move);
+        if (specialEffect != null) {
+            List<Square> squaresToRedraw = specialEffect.perform();
             for (Square square : squaresToRedraw) boardPainter.redrawSquare(square);
         }
 
@@ -275,16 +274,21 @@ public class Chess {
                 && (piece.getIsWhite() ? canPlayWhite : canPlayBlack)) {
             Store.modal.show(PromotionOptionsModal.buildModal((pieceName) -> {
                 Piece newPiece;
-                if (pieceName.equals("Queen")) {
-                    newPiece = new Queen(this, toSquare, piece.getIsWhite());
-                } else if (pieceName.equals("Rook")) {
-                    newPiece = new Rook(this, toSquare, piece.getIsWhite());
-                } else if (pieceName.equals("Bishop")) {
-                    newPiece = new Bishop(this, toSquare, piece.getIsWhite());
-                } else if (pieceName.equals("Knight")) {
-                    newPiece = new Knight(this, toSquare, piece.getIsWhite());
-                } else {
-                    return;
+                switch (pieceName) {
+                    case "Queen":
+                        newPiece = new Queen(this, toSquare, piece.getIsWhite());
+                        break;
+                    case "Rook":
+                        newPiece = new Rook(this, toSquare, piece.getIsWhite());
+                        break;
+                    case "Bishop":
+                        newPiece = new Bishop(this, toSquare, piece.getIsWhite());
+                        break;
+                    case "Knight":
+                        newPiece = new Knight(this, toSquare, piece.getIsWhite());
+                        break;
+                    default:
+                        return;
                 }
                 move.setPromotedPiece(newPiece);
                 board.get(toSquare.getRank()).set(toSquare.getFile(), newPiece);
@@ -294,11 +298,8 @@ public class Chess {
 
         moves.add(move);
 
-        // update game flags based on move
-        updateCastlingAvailability();
-        updateEnPassantSquare();
-        updateThreefoldRepetition();
-        updateFiftyMoveRule();
+        // update game flags based on last move
+        flagsHandler.updateFlags(move);
 
         if (kingInCheck(!whiteToMove)) {
             move.setChecksOpponentKing(true); // the opponent king was checked
@@ -333,6 +334,7 @@ public class Chess {
         boardPainter.redrawSquare(toSquare);
     }
 
+    // TODO
 //    public void undoMove() {
 //        Move move = recordedMoves.remove(recordedMoves.size() - 1);
 //        Piece piece = move.getPiece();
@@ -351,21 +353,22 @@ public class Chess {
 //    }
 
     private void testMove(Move move) {
+        // called when checking for check on opponent king
         Piece piece = move.getPiece();
         Square toSquare = move.getToSquare();
-        MoveType type = move.getType();
+        SpecialEffect specialEffect = move.getSpecialEffect();
 
         moveTo(piece, toSquare);
 
-        if (type != MoveType.normal && type != MoveType.capture) {
-            piece.makeSpecialMoveAndGetAffectedSquares(move);
+        if (specialEffect != null) {
+            specialEffect.perform();
         }
     }
 
     private void undoTestMove(Move move) {
         Piece piece = move.getPiece();
         Square fromSquare = move.getFromSquare();
-        MoveType type = move.getType();
+        SpecialEffect specialEffect = move.getSpecialEffect();
 
         moveTo(piece, fromSquare);
 
@@ -374,18 +377,8 @@ public class Chess {
             board.get(capturedPiece.getSquare().getRank()).set(capturedPiece.getSquare().getFile(), capturedPiece);
         }
 
-        if (type != MoveType.normal && type != MoveType.capture) {
-            move.getPiece().undoSpecialMove(move);
-            if (type == MoveType.castling) {
-                if (move.getPiece().getIsWhite()) {
-                    // fixme: if the other side already cannot castle because of moving the rook this will reset it to be allowed
-                    whiteCanCastleKingside = true;
-                    whiteCanCastleQueenside = true;
-                } else {
-                    blackCanCastleKingside = true;
-                    blackCanCastleQueenside = true;
-                }
-            }
+        if (specialEffect != null) {
+            specialEffect.undo();
         }
     }
 
@@ -395,63 +388,14 @@ public class Chess {
     }
 
     private boolean checkForFiftyMoveRule() {
-        return halfmoveClock >= 50;
-    }
-
-    private void updateCastlingAvailability() {
-        Move lastMove = moves.get(moves.size() - 1);
-        if (lastMove.getPiece() instanceof King) {
-            if (whiteToMove) {
-                whiteCanCastleKingside = false;
-                whiteCanCastleQueenside = false;
-            } else {
-                blackCanCastleKingside = false;
-                blackCanCastleQueenside = false;
-            }
-        } else if (lastMove.getPiece() instanceof Rook) {
-            int fromFile = lastMove.getFromSquare().getFile();
-            if (whiteToMove) {
-                if (fromFile == 0) whiteCanCastleQueenside = false;
-                else if (fromFile == 7) whiteCanCastleKingside = false;
-            } else {
-                if (fromFile == 0) blackCanCastleQueenside = false;
-                else if (fromFile == 7) blackCanCastleKingside = false;
-            }
-        }
-    }
-
-    private void updateEnPassantSquare() {
-        Move lastMove = moves.get(moves.size() - 1);
-        Piece piece = lastMove.getPiece();
-        int toFile = lastMove.getToSquare().getFile();
-        int toRank = lastMove.getToSquare().getRank();
-        boolean movedTwoSquares = Math.abs(toRank - lastMove.getFromSquare().getRank()) == 2;
-        if (piece instanceof Pawn && movedTwoSquares) {
-            Piece piece1 = pieceAt(toFile - 1, toRank);
-            Piece piece2 = pieceAt(toFile + 1, toRank);
-            if ((piece1 instanceof Pawn && piece1.getIsWhite() != piece.getIsWhite())
-                    || (piece2 instanceof Pawn && piece2.getIsWhite() != piece.getIsWhite())) {
-                enPassantSquare = new Square(toFile, toRank + (piece.getIsWhite() ? 1 : -1));
-                return;
-            }
-        }
-        enPassantSquare = null;
-    }
-
-    private void updateThreefoldRepetition() {
-        // TODO
-    }
-
-    private void updateFiftyMoveRule() {
-        Move lastMove = moves.get(moves.size() - 1);
-        if (lastMove.getPiece() instanceof Pawn || lastMove.getCapturedPiece() != null) {
-            halfmoveClock = 0;
-        } else {
-            ++halfmoveClock;
-        }
+        return flagsHandler.getHalfmoveClock() >= 50;
     }
 
     // getters and setters
+
+    public FlagsHandler getFlagsHandler() {
+        return flagsHandler;
+    }
 
     public NotationParser getNotationParser() {
         return notationParser;
@@ -461,16 +405,16 @@ public class Chess {
         return boardPainter.getCanvas();
     }
 
-    public ArrayList<ArrayList<Piece>> getBoard() {
+    public List<List<Piece>> getBoard() {
         return board;
     }
 
-    public void setBoard(ArrayList<ArrayList<Piece>> board) {
+    public void setBoard(List<List<Piece>> board) {
         // only used by ChessNotationParser
         this.board = board;
     }
 
-    public ArrayList<Move> getMoves() {
+    public List<Move> getMoves() {
         return moves;
     }
 
@@ -480,62 +424,6 @@ public class Chess {
 
     public void setWhiteToMove(boolean whiteToMove) {
         this.whiteToMove = whiteToMove;
-    }
-
-    public boolean getWhiteCanCastleKingside() {
-        return whiteCanCastleKingside;
-    }
-
-    public void setWhiteCanCastleKingside(boolean whiteCanCastleKingside) {
-        this.whiteCanCastleKingside = whiteCanCastleKingside;
-    }
-
-    public boolean getWhiteCanCastleQueenside() {
-        return whiteCanCastleQueenside;
-    }
-
-    public void setWhiteCanCastleQueenside(boolean whiteCanCastleQueenside) {
-        this.whiteCanCastleQueenside = whiteCanCastleQueenside;
-    }
-
-    public boolean getBlackCanCastleKingside() {
-        return blackCanCastleKingside;
-    }
-
-    public void setBlackCanCastleKingside(boolean blackCanCastleKingside) {
-        this.blackCanCastleKingside = blackCanCastleKingside;
-    }
-
-    public boolean getBlackCanCastleQueenside() {
-        return blackCanCastleQueenside;
-    }
-
-    public void setBlackCanCastleQueenside(boolean blackCanCastleQueenside) {
-        this.blackCanCastleQueenside = blackCanCastleQueenside;
-    }
-
-    public Square getEnPassantSquare() {
-        return enPassantSquare;
-    }
-
-    public void setEnPassantSquare(Square enPassantSquare) {
-        this.enPassantSquare = enPassantSquare;
-    }
-
-    public int getHalfmoveClock() {
-        return halfmoveClock;
-    }
-
-    public void setHalfmoveClock(int halfmoveClock) {
-        this.halfmoveClock = halfmoveClock;
-    }
-
-    public int getFullmoveNumber() {
-        return fullmoveNumber;
-    }
-
-    public void setFullmoveNumber(int fullmoveNumber) {
-        this.fullmoveNumber = fullmoveNumber;
     }
 
     public void setCanPlayWhite(boolean canPlayWhite) {

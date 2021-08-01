@@ -92,6 +92,8 @@ public class ProfileController {
         for (int i = 0; i < 2; ++i) {
             int finalI = i;
             themeBtns[i].setOnMouseClicked((e) -> {
+                themeBtns[ThemeService.getSelectedTheme()].getStyleClass().remove("selected");
+                themeBtns[finalI].getStyleClass().add("selected");
                 ThemeService.setTheme(finalI);
                 Store.user.getSettings().setTheme(finalI);
                 UserService.updateUser();
@@ -102,11 +104,16 @@ public class ProfileController {
         for (int i = 0; i < 3; ++i) {
             int finalI = i;
             accentBtns[i].setOnMouseClicked((e) -> {
+                accentBtns[ThemeService.getSelectedAccent()].getStyleClass().remove("selected");
+                accentBtns[finalI].getStyleClass().add("selected");
                 ThemeService.setAccent(finalI);
                 Store.user.getSettings().setAccent(finalI);
                 UserService.updateUser();
             });
         }
+
+        themeBtns[ThemeService.getSelectedTheme()].getStyleClass().add("selected");
+        accentBtns[ThemeService.getSelectedAccent()].getStyleClass().add("selected");
     }
 
     @FXML
