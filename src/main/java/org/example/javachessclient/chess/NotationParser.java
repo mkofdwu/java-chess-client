@@ -110,7 +110,9 @@ public class NotationParser {
         // convert the current position to FEN
         StringBuilder fen = new StringBuilder();
         int emptySpaces = 0;
-        for (List<Piece> rankList : chess.getBoard()) {
+        List<List<Piece>> board = chess.getBoard();
+        for (int i = 0; i < board.size(); ++i) {
+            List<Piece> rankList = board.get(i);
             for (Piece piece : rankList) {
                 if (piece == null) emptySpaces++;
                 else {
@@ -137,7 +139,7 @@ public class NotationParser {
                 fen.append(emptySpaces);
                 emptySpaces = 0;
             }
-            fen.append('/');
+            if (i < board.size() - 1) fen.append('/');
         }
 
         fen.append(chess.getWhiteToMove() ? " w " : " b ");
@@ -157,7 +159,7 @@ public class NotationParser {
         }
 
         fen.append(" " + (flags.getEnPassantSquare() == null ? '-' : flags.getEnPassantSquare().toString()));
-        fen.append(' ' + flags.getHalfmoveClock() + ' ' + flags.getFullmoveNumber());
+        fen.append(" " + flags.getHalfmoveClock() + " " + flags.getFullmoveNumber());
 
         return fen.toString();
     }

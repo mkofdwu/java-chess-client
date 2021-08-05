@@ -17,6 +17,7 @@ public abstract class SpecialEffect {
     public abstract void undo();
 
     public static SpecialEffect fromString(Chess chess, String string) {
+        if (string == null) return null;
         switch (string.charAt(0)) {
             case 'c':
                 return Castling.fromString(chess, string.substring(1));

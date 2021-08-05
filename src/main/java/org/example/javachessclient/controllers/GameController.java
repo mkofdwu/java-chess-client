@@ -274,7 +274,7 @@ public class GameController implements Controller {
     private void addMove(Move move) {
         // update recording
         if (move.getPiece().getIsWhite()) {
-            recordTextArea.appendText(chess.getMoves().size() + ". " + move + " ");
+            recordTextArea.appendText((chess.getMoves().size() + 1) / 2 + ". " + move + " ");
         } else {
             recordTextArea.appendText(move + "\n");
         }
